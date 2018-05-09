@@ -164,7 +164,7 @@ BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以�
 
 ## 开源协议
 ```
-   Copyright Kongzue BaseFragment
+   Copyright BaseFragment
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

@@ -125,18 +125,31 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 
 #### 除此之外，BaseActivity还支持以下小工具
 //简易吐司：
+
 toast(Obj);
+
 //简易Log打印日志：
+
 log(Obj);
+
 //软键盘开关：
+
 setIMMStatus(boolean show, EditText editText);
+
 //dip与像素px转换：
+
 dip2px(Context context, float dpValue);
+
 //像素px与dip转换：
+
 dip2px(Context context, float dpValue);
+
 //属性动画：
+
 moveAnimation(Object obj, String perference, float aimValue, long time, long delay);
+
 //数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：
+
 isNull(String);
 
 ## BaseFragment功能

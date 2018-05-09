@@ -161,6 +161,24 @@ BaseFragment 与普通的 Fragment 有什么区别？
 
 BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以轻松使用它们。
 
+
+## 开源协议
+```
+   Copyright Kongzue BaseFragment
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+```
+
 ## 更新日志：
 v6.2.0:
 - 支持新的jump(...)跳转方法；

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">BaseFrameworkDemo</string>
+    <string name="jump_code">jump(JumpActivity.class, new Parameter()\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;.put(\"参数1\", \"这是一段文字参数\")\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;.put(\"参数2\", BitmapFactory.decodeResource(getResources(), R.mipmap.img_bkg))\n );</string>
+    <string name="response_code">jump(ResponseActivity.class, new OnResponseListener() {\n&#160;&#160;&#160;&#160;@Override\n&#160;&#160;&#160;&#160;public void OnResponse(Parameter parameter) {\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;if (parameter==null){\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;toast(\"未返回任何数据\");\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;}else{\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;toast(\"收到返回数据，参数“返回数据1”中的值为：\" + parameter.get(\"返回数据1\"));\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;}\n&#160;&#160;&#160;&#160;}\n });</string>
+    <string name="jump_get_code">String parameter1 = (String) getParameter().get(\"参数1\"); \nif (!isNull(parameter1)) txtP1.setText(\"第一个参数读取到的值为：\" + parameter1); \nBitmap parameter2 = (Bitmap) getParameter().get(\"参数2\"); \nif (parameter2 != null) imgP2.setImageBitmap(parameter2);</string>
+    <string name="response_set_code">if ((boolean) getParameter().get(\"needResponse\") == true) {\n&#160;&#160;&#160;&#160;setResponse(new Parameter().put(\"返回数据1\", \"测试成功\")); \n} </string>
+    <string name="welcome_github"><![CDATA[欢迎Star&Fork！]]></string>
 </resources>

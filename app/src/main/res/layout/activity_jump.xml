@@ -1,0 +1,145 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.kongzue.baseframeworkdemo.JumpActivity">
+
+    <!--此部分为非安全区域，在此处可放置会叠加在状态栏、导航栏下的背景图等内容-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <!--此部分是除了状态栏和导航栏外，内容安全区域-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#0affffff"
+                android:orientation="horizontal">
+
+                <!--这个是我自制的ActionBar，需要的话也可以自定义-->
+
+                <TextView
+                    android:id="@+id/txt_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="jump(...)测试"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="15dp">
+
+                    <TextView
+                        android:id="@+id/txt_p1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="第一个参数读取到的值为："
+                        android:textColor="#fff"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="第二个参数读取到的值应该是一个Bitmap，展示如下："
+                        android:textColor="#fff"
+                        android:textSize="12dp" />
+
+                    <ImageView
+                        android:id="@+id/img_p2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="跳转代码范例"
+                        android:textColor="#fff"
+                        android:textSize="20dp" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:background="#64000000"
+                            android:padding="5dp"
+                            android:text="@string/jump_code"
+                            android:textColor="#fff"
+                            android:textIsSelectable="true"
+                            android:textSize="12dp"
+                            android:typeface="monospace" />
+
+                    </HorizontalScrollView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="接收代码范例"
+                        android:textColor="#fff"
+                        android:textSize="20dp" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:background="#64000000"
+                            android:padding="5dp"
+                            android:scrollbars="horizontal"
+                            android:text="@string/jump_get_code"
+                            android:textColor="#fff"
+                            android:textIsSelectable="true"
+                            android:textSize="12dp"
+                            android:typeface="monospace" />
+                    </HorizontalScrollView>
+
+                    <Button
+                        android:id="@+id/btn_close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="关闭" />
+
+                </LinearLayout>
+
+            </ScrollView>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

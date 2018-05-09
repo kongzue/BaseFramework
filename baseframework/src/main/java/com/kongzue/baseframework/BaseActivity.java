@@ -2,6 +2,7 @@ package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,8 +14,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,6 +29,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.util.OnPermissionResponseListener;
+import com.kongzue.baseframework.util.OnResponseListener;
+import com.kongzue.baseframework.util.Parameter;
+import com.kongzue.baseframework.util.ParameterCache;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,6 +42,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -50,6 +59,10 @@ import java.util.Set;
 public abstract class BaseActivity extends AppCompatActivity {
 
     public boolean DEBUG = true;
+    public boolean isActive = false;                                        //当前Activity是否处于前台
+
+    private OnResponseListener onResponseListener;                          //jump跳转回调
+    private OnPermissionResponseListener onPermissionResponseListener;      //权限申请回调
 
     public BaseActivity me = this;
 
@@ -83,7 +96,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            }else{
+            } else {
                 window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
@@ -315,12 +328,12 @@ public abstract class BaseActivity extends AppCompatActivity {
      * Android6.0+即便需要动态请求权限（重点）但不代表着不需要在AndroidManifest.xml中进行声明。
      *
      * @param permissions 请求的权限
-     * @param requestCode 请求权限的请求码
+     * @param onPermissionResponseListener 回调监听器
      */
-    public void requestPermission(String[] permissions, int requestCode) {
-        this.REQUEST_CODE_PERMISSION = requestCode;
+    public void requestPermission(String[] permissions, OnPermissionResponseListener onPermissionResponseListener) {
+        this.onPermissionResponseListener = onPermissionResponseListener;
         if (checkPermissions(permissions)) {
-            permissionSuccess(REQUEST_CODE_PERMISSION);
+            if (onPermissionResponseListener != null) onPermissionResponseListener.onSuccess(permissions);
         } else {
             List<String> needPermissions = getDeniedPermissions(permissions);
             ActivityCompat.requestPermissions(this, needPermissions.toArray(new String[needPermissions.size()]), REQUEST_CODE_PERMISSION);
@@ -378,9 +391,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (verifyPermissions(grantResults)) {
-                permissionSuccess(REQUEST_CODE_PERMISSION);
+                if (onPermissionResponseListener != null) onPermissionResponseListener.onSuccess(permissions);
             } else {
-                permissionFail(REQUEST_CODE_PERMISSION);
+                if (onPermissionResponseListener != null) onPermissionResponseListener.onFail();
                 showTipsDialog();
             }
         }
@@ -421,14 +434,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }).show();
     }
 
-    /**
-     * 权限获取失败
-     *
-     * @param requestCode
-     */
-    public void permissionFail(int requestCode) {
-        Log.d(TAG, "获取权限失败=" + requestCode);
-    }
 
     /**
      * 启动当前应用设置页面
@@ -437,16 +442,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);
-    }
-
-    /**
-     * 获取权限成功
-     *
-     * @param requestCode
-     */
-    public void permissionSuccess(int requestCode) {
-        Log.d(TAG, "获取权限成功=" + requestCode);
-
     }
 
     //获取屏幕宽度
@@ -500,5 +495,94 @@ public abstract class BaseActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+
+    //更好用的跳转方式
+    public boolean jump(Class<?> cls) {
+        try {
+            startActivity(new Intent(me, cls));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    //可以传任何类型参数的跳转方式
+    public boolean jump(Class<?> cls, Parameter parameter) {
+        try {
+            startActivity(new Intent(me, cls));
+            ParameterCache.getInstance().set(cls.getName(), parameter);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    //带返回值的跳转
+    public boolean jump(Class<?> cls, OnResponseListener onResponseListener) {
+        try {
+            startActivity(new Intent(me, cls));
+            ParameterCache.getInstance().cleanResponse(me.getClass().getName());
+            ParameterCache.getInstance().set(cls.getName(), new Parameter()
+                    .put("needResponse", true)
+                    .put("responseClassName", me.getClass().getName())
+            );
+            this.onResponseListener = onResponseListener;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    //带返回值的跳转
+    public boolean jump(Class<?> cls, Parameter parameter, OnResponseListener onResponseListener) {
+        try {
+            startActivity(new Intent(me, cls));
+            ParameterCache.getInstance().cleanResponse(me.getClass().getName());
+            ParameterCache.getInstance().set(cls.getName(), parameter
+                    .put("needResponse", true)
+                    .put("responseClassName", me.getClass().getName())
+            );
+            this.onResponseListener = onResponseListener;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    //目标Activity：设定要返回的数据
+    public void setResponse(Parameter parameter) {
+        ParameterCache.getInstance().setResponse((String) getParameter().get("responseClassName"), parameter);
+    }
+
+    //获取跳转参数
+    public Parameter getParameter() {
+        return ParameterCache.getInstance().get(me.getClass().getName());
+    }
+
+    @Override
+    protected void onResume() {
+        isActive = true;
+        if (onResponseListener != null) {
+            onResponseListener.OnResponse(ParameterCache.getInstance().getResponse(me.getClass().getName()));
+            onResponseListener = null;
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        isActive = false;
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (getParameter() != null) getParameter().cleanAll();
     }
 }

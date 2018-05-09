@@ -46,7 +46,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="BaseActivity"
+                    android:text="BaseFramework"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
             </LinearLayout>
@@ -95,14 +95,39 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="功能"
+                        android:text="其他功能"
+                        android:textSize="20dp" />
+
+                    <Button
+                        android:id="@+id/btn_jump"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="带自定义参数的跳转" />
+
+                    <Button
+                        android:id="@+id/btn_result"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更简单的跳转后返回数据" />
+
+                    <Button
+                        android:id="@+id/btn_permission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="申请权限（测试用，无实际业务逻辑）" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="请注意"
                         android:textSize="20dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="· 在BaseActivity中，约定关键词me代替Activity.this，因此您在编写代码时，在异步线程中可以轻松使用me关键字直接引用当前Activity。\n\n· 在BaseActivity中您可以使用多种小工具，包含不限于：\n//简易吐司：\ntoast(Obj);\n//简易Log打印日志：\nlog(Obj);\n//软键盘开关：\nsetIMMStatus(boolean show, EditText editText);\n//dip与像素px转换：\ndip2px(Context context, float dpValue);\n//像素px与dip转换：\ndip2px(Context context, float dpValue);\n//申请权限（0x0001是返回值，需要的可以重写onRequestPermissionsResult做回调处理）：\nrequestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN}, 0x0001);\n//属性动画：\nmoveAnimation(Object obj, String perference, float aimValue, long time, long delay);"
+                        android:text="· 在BaseActivity中，约定关键词me代替Activity.this，因此您在编写代码时，在异步线程中可以轻松使用me关键字直接引用当前Activity。\n\n· 在BaseActivity中您可以使用多种小工具，包含不限于：\n//简易吐司：\ntoast(Obj);\n//简易Log打印日志：\nlog(Obj);\n//软键盘开关：\nsetIMMStatus(boolean show, EditText editText);\n//dip与像素px转换：\ndip2px(Context context, float dpValue);\n//像素px与dip转换：\ndip2px(Context context, float dpValue);\n//申请权限：\nrequestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {...});\n//属性动画：\nmoveAnimation(Object obj, String perference, float aimValue, long time, long delay);\n//数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：\nisNull(String);"
                         android:textSize="12dp" />
 
                     <TextView
@@ -153,6 +178,13 @@
                         android:layout_marginTop="5dp"
                         android:text="Kongzue's Dialog - 多种样式及风格的对话框组件"
                         android:textColor="#4472c4"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/welcome_github"
                         android:textSize="12dp" />
 
                 </LinearLayout>

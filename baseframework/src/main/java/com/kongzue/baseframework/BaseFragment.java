@@ -31,7 +31,7 @@ public abstract class BaseFragment extends Fragment {
     public BaseFragment() {
     }
 
-    public View rootView;
+    public View rootView;       //根布局，可以直接用
 
     @Deprecated
     @Nullable

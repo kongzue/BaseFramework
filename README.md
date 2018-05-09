@@ -1,7 +1,6 @@
 # BaseFramework
 BaseFramework框架是我对之前编程开发的一些总结，目的是以最快的方式完成项目开发，因此将一些常用的小工具，例如简易吐司、简易log等放在了基础类中，只需要将您项目中的Activity或Fragment继承本框架中的BaseActivity以及BaseFragment，即可使用。
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
-本界面就是基于BaseActivity实现的Demo。
 
 <a href="https://github.com/kongzue/BaseFramework/">
 <img src="https://img.shields.io/badge/BaseFramework-6.2.0-green.svg" alt="Kongzue Dialog">

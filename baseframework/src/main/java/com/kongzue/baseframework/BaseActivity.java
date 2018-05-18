@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
@@ -29,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnResponseListener;
 import com.kongzue.baseframework.util.Parameter;
@@ -49,7 +51,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Ver.6.1.0
+ * Ver.6.3.0
  * 自动化代码流水线作业
  * 以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持
  * 同时提供一些小工具简化开发难度
@@ -66,7 +68,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public BaseActivity me = this;
 
-    //使用本方法创建Activity则会自动执行沉浸式
+    //不再推荐重写onCreate创建Activity，新版本推荐直接在Activity上注解：@Layout(你的layout资源id)
+    @Deprecated
     protected void onCreate(Bundle savedInstanceState, int layoutResId) {
         super.onCreate(savedInstanceState);
         setContentView(layoutResId);
@@ -76,10 +79,37 @@ public abstract class BaseActivity extends AppCompatActivity {
         setEvents();
     }
 
-    //基础方法
+    @Override
+    @Deprecated
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        int layoutResId = android.R.layout.list_content;
+        try {
+            Layout layout = getClass().getAnnotation(Layout.class);
+            log("layout.value()="+layout.value());
+            if (layout.value() != -1) {
+                layoutResId = layout.value();
+            }else{
+                throw new Exception("请在您的Activity的Class上注解：@Layout(你的layout资源id)");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        setContentView(layoutResId);
+        setTranslucentStatus(true, false);
+        initViews();
+        initDatas();
+        setEvents();
     }
+
+    //可被重写的接口
+    public abstract void initViews();
+
+    public abstract void initDatas();
+
+    public abstract void setEvents();
 
     //状态栏主题
     protected void setTranslucentStatus(boolean on, boolean whiteMode) {
@@ -165,6 +195,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     private static final String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
     private static final String KEY_MIUI_INTERNAL_STORAGE = "ro.miui.internal.storage";
 
+    //获取状态栏的高度
+    public int getStatusBarHeight() {
+        try {
+            Class<?> c = Class.forName("com.android.internal.R$dimen");
+            Object obj = c.newInstance();
+            Field field = c.getField("status_bar_height");
+            int x = Integer.parseInt(field.get(obj).toString());
+            return getResources().getDimensionPixelSize(x);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     //MIUI判断
     public static boolean isMIUI() {
         try {
@@ -239,13 +283,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             return new BuildProperties();
         }
     }
-
-    //可被重写的接口
-    public abstract void initViews();
-
-    public abstract void initDatas();
-
-    public abstract void setEvents();
 
     protected final static String NULL = "";
     private Toast toast;
@@ -327,13 +364,14 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 警告：此处除了用户拒绝外，唯一可能出现无法获取权限或失败的情况是在AndroidManifest.xml中未声明权限信息
      * Android6.0+即便需要动态请求权限（重点）但不代表着不需要在AndroidManifest.xml中进行声明。
      *
-     * @param permissions 请求的权限
+     * @param permissions                  请求的权限
      * @param onPermissionResponseListener 回调监听器
      */
     public void requestPermission(String[] permissions, OnPermissionResponseListener onPermissionResponseListener) {
         this.onPermissionResponseListener = onPermissionResponseListener;
         if (checkPermissions(permissions)) {
-            if (onPermissionResponseListener != null) onPermissionResponseListener.onSuccess(permissions);
+            if (onPermissionResponseListener != null)
+                onPermissionResponseListener.onSuccess(permissions);
         } else {
             List<String> needPermissions = getDeniedPermissions(permissions);
             ActivityCompat.requestPermissions(this, needPermissions.toArray(new String[needPermissions.size()]), REQUEST_CODE_PERMISSION);
@@ -391,7 +429,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (verifyPermissions(grantResults)) {
-                if (onPermissionResponseListener != null) onPermissionResponseListener.onSuccess(permissions);
+                if (onPermissionResponseListener != null)
+                    onPermissionResponseListener.onSuccess(permissions);
             } else {
                 if (onPermissionResponseListener != null) onPermissionResponseListener.onFail();
                 showTipsDialog();
@@ -584,5 +623,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (getParameter() != null) getParameter().cleanAll();
+    }
+
+    public void jumpAnim(int enterAnim, int exitAnim) {
+        int version = Integer.valueOf(android.os.Build.VERSION.SDK);
+        if (version > 5) {
+            overridePendingTransition(enterAnim, exitAnim);
+        }
     }
 }

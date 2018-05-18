@@ -1,7 +1,6 @@
 package com.kongzue.baseframeworkdemo;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,17 +8,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseFragment;
+import com.kongzue.baseframework.interfaces.Layout;
 
+@Layout(R.layout.fragment_demo)
 public class FragmentDemo extends BaseFragment {
 
     private TextView info;
     private Button btnHide;
-
-    @Override
-    public int getLayout() {
-        //此处return你的布局id
-        return R.layout.fragment_demo;
-    }
 
     @Override
     public void initViews() {

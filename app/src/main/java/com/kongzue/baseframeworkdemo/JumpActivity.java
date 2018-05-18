@@ -10,18 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.interfaces.Layout;
 
+@Layout(R.layout.activity_jump)
 public class JumpActivity extends BaseActivity {
 
     private TextView txtP1;
     private ImageView imgP2;
     private Button btnClose;
-
-    @SuppressLint("MissingSuperCall")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_jump);
-    }
 
     @Override
     public void initViews() {

@@ -20,10 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnResponseListener;
 import com.kongzue.baseframework.util.Parameter;
 
+@Layout(R.layout.activity_main)
 public class MainActivity extends BaseActivity {
 
     private FragmentDemo fragmentDemo;
@@ -39,11 +41,6 @@ public class MainActivity extends BaseActivity {
     private TextView linkUpdate;
     private TextView linkDialog;
     private FrameLayout frame;
-
-    @SuppressLint("MissingSuperCall")
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_main);
-    }
 
     @Override
     public void initViews() {

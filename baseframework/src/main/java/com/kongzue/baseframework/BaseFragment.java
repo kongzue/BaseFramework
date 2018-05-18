@@ -2,6 +2,7 @@ package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -12,8 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.util.OnPermissionResponseListener;
+import com.kongzue.baseframework.util.OnResponseListener;
+import com.kongzue.baseframework.util.Parameter;
+import com.kongzue.baseframework.util.ParameterCache;
+
 /**
- * Ver.6.1.0
+ * Ver.6.3.0
  * 自动化代码流水线作业
  * 超级简单的布局绑定
  * 同时提供一些小工具简化开发难度
@@ -21,6 +28,8 @@ import android.widget.Toast;
  */
 
 public abstract class BaseFragment extends Fragment {
+
+    public int layoutResId = -1;
 
     public BaseActivity me;
 
@@ -37,12 +46,21 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        int resId = getLayout();
-        if (resId == 0) {
-            new Exception("getLayout()需要被重写");
-        } else {
-            rootView = LayoutInflater.from(getActivity()).inflate(resId, container, false);
+        try {
+            Layout layout = getClass().getAnnotation(Layout.class);
+            if (layout == null) {
+                layoutResId = getLayout();
+            } else {
+                if (layout.value() != -1) {
+                    layoutResId = layout.value();
+                } else {
+                    throw new Exception("请在您的Fragment的Class上注解：@Layout(你的layout资源id)");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
         me = (BaseActivity) getActivity();
         initViews();
         initDatas();
@@ -50,8 +68,11 @@ public abstract class BaseFragment extends Fragment {
         return rootView;
     }
 
-    //可被重写的接口
-    public abstract int getLayout();
+    //不再推荐使用，建议直接在Fragment上注解：@Layout(你的layout资源id)
+    @Deprecated
+    public int getLayout() {
+        return layoutResId;
+    }
 
     public abstract void initViews();
 
@@ -134,6 +155,49 @@ public abstract class BaseFragment extends Fragment {
             return true;
         }
         return false;
+    }
+
+    //更好用的跳转方式
+    public boolean jump(Class<?> cls) {
+        return me.jump(cls);
+    }
+
+    //可以传任何类型参数的跳转方式
+    public boolean jump(Class<?> cls, Parameter parameter) {
+        return me.jump(cls, parameter);
+    }
+
+    //带返回值的跳转
+    public boolean jump(Class<?> cls, OnResponseListener onResponseListener) {
+        return me.jump(cls, onResponseListener);
+    }
+
+    //带返回值的跳转
+    public boolean jump(Class<?> cls, Parameter parameter, OnResponseListener onResponseListener) {
+        return me.jump(cls, parameter, onResponseListener);
+    }
+
+    //目标Activity：设定要返回的数据
+    public void setResponse(Parameter parameter) {
+        me.setResponse(parameter);
+    }
+
+    //获取跳转参数
+    public Parameter getParameter() {
+        return me.getParameter();
+    }
+
+    //跳转动画
+    public void jumpAnim(int enterAnim, int exitAnim) {
+        int version = Integer.valueOf(android.os.Build.VERSION.SDK);
+        if (version > 5) {
+            me.overridePendingTransition(enterAnim, exitAnim);
+        }
+    }
+
+    //权限申请
+    public void requestPermission(String[] permissions, OnPermissionResponseListener onPermissionResponseListener) {
+        me.requestPermission(permissions, onPermissionResponseListener);
     }
 }
 

@@ -8,20 +8,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.Parameter;
 
+@Layout(R.layout.activity_response)
 public class ResponseActivity extends BaseActivity {
 
     private TextView txtTitle;
     private TextView txtP1;
     private Button btnSet;
     private Button btnClose;
-
-    @SuppressLint("MissingSuperCall")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, R.layout.activity_response);
-    }
 
     @Override
     public void initViews() {

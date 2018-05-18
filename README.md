@@ -1,7 +1,6 @@
 # BaseFramework
 BaseFramework框架是我对之前编程开发的一些总结，目的是以最快的方式完成项目开发，因此将一些常用的小工具，例如简易吐司、简易log等放在了基础类中，只需要将您项目中的Activity或Fragment继承本框架中的BaseActivity以及BaseFragment，即可使用。
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
-本界面就是基于BaseActivity实现的Demo。
 
 <a href="https://github.com/kongzue/BaseFramework/">
 <img src="https://img.shields.io/badge/BaseFramework-6.3.0-green.svg" alt="Kongzue Dialog">
@@ -165,6 +164,24 @@ BaseFragment 与普通的 Fragment 有什么区别？
 除此之外，我们还支持了直接使用 findViewById ，而不需要额外的找到根布局 rootView，再 rootView.findViewById(...)，查看代码了解更多
 
 BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以轻松使用它们。
+
+
+## 开源协议
+```
+   Copyright BaseFragment
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+```
 
 ## 更新日志：
 v6.3.0:

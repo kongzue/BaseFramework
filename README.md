@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.3.0-green.svg" alt="Kongzue Dialog">
+<img src="https://img.shields.io/badge/BaseFramework-6.4.0-green.svg" alt="Kongzue Dialog">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.3.0/link">
-<img src="https://img.shields.io/badge/Maven-6.3.0-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.0/link">
+<img src="https://img.shields.io/badge/Maven-6.4.0-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="Maven">
@@ -30,20 +30,22 @@ Demo预览图如下：
 
 - 规范化！无论是在 BaseActivity 还是 BaseFragment ，默认都有 initViews()、initDatas()、setEvents() 三个方法，他们分别代表加载组件、初始化数据、组件绑定事件三个步骤，因其执行顺序是固定的，且为了代码规范化，这三个方法必须重写，也建议将相关业务逻辑写在对应方法中，以方便维护和管理。
 
+- 请注意，我们会尽可能快的支持最新的 Android Support库，当前BaseFragment已经集成“com.android.support:appcompat-v7:27.1.1”，如有冲突可能需要删除您的工程中的 Android Support 库。
+
 ## Maven仓库或Gradle的引用方式
 Maven仓库：
 ```
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.3.0</version>
+  <version>6.4.0</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.3.0'
+implementation 'com.kongzue.baseframework:baseframework:6.4.0'
 ```
 
 ## BaseActivity功能
@@ -165,6 +167,27 @@ BaseFragment 与普通的 Fragment 有什么区别？
 
 BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以轻松使用它们。
 
+## Preferences
+Preferences是SharedPreferences的简易封装。
+
+每次手写SharedPreferences过于繁琐，因此封装了一个简易的属性记录读取类。 通过对属性的常见数据类型进行封装，使属性读取写入更方便，同时提供一些属性管理方法。
+```
+//读取属性为String类型
+//参数：context上下文索引，path路径，preferencesName属性名
+getString(context, path, preferencesName)
+//类似的，提供读取为Boolean的方法：
+getBoolean(context, path, preferencesName)
+//提供读取为Int的方法：
+getInt(context, path, preferencesName)
+
+//写入属性方法是统一的
+//参数：context上下文索引，path路径，preferencesName属性名，value根据属性数据类型定义
+set(context, path, preferencesName, ?)
+
+//提供清除（清空）所有属性的方法
+cleanAll();
+```
+
 
 ## 开源协议
 ```
@@ -184,6 +207,9 @@ BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以�
 ```
 
 ## 更新日志：
+v6.4.0:
+- 集成Preferences（SharedPreferences的封装，仅使用简单的get、set方法即可）
+
 v6.3.0:
 - 直接使用注解的方式绑定布局资源（@Layout）
 - 为BaseFragment增添支持新的jump(...)跳转方法；

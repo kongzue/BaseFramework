@@ -3,16 +3,16 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.4.0-green.svg" alt="Kongzue Dialog">
+<img src="https://img.shields.io/badge/BaseFramework-6.4.6-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.0/link">
-<img src="https://img.shields.io/badge/Maven-6.4.0-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.6/link">
+<img src="https://img.shields.io/badge/Maven-6.4.6-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
-<img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="Maven">
+<img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
 </a> 
 <a href="http://www.kongzue.com">
-<img src="https://img.shields.io/badge/Homepage-Kongzue.com-brightgreen.svg" alt="Maven">
+<img src="https://img.shields.io/badge/Homepage-Kongzue.com-brightgreen.svg" alt="Homepage">
 </a> 
 
 Demo预览图如下：
@@ -28,6 +28,18 @@ Demo预览图如下：
 
 - 请忘掉重写你的 onCreate 吧！在新版本的 BaseFramework 中，您可以直接在 class 上使用注解 @Layout(R.layout.xxx) ，剩下的事情我们会自动帮您完成！
 
+- 在 BaseActivity 中，您还可以使用以下注解对沉浸式进行控制：
+```
+@DarkStatusBarTheme(true)           //开启顶部状态栏图标、文字暗色模式
+@DarkNavigationBarTheme(true)       //开启底部导航栏按钮暗色模式
+@NavigationBarBackgroundColor(a = 255,r = 255,g = 255,b = 255)      //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
+
+//也可从代码中进行控制：
+setDarkStatusBarTheme(true);            //开启顶部状态栏图标、文字暗色模式
+setDarkNavigationBarTheme(true);        //开启底部导航栏按钮暗色模式
+setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
+```
+
 - 规范化！无论是在 BaseActivity 还是 BaseFragment ，默认都有 initViews()、initDatas()、setEvents() 三个方法，他们分别代表加载组件、初始化数据、组件绑定事件三个步骤，因其执行顺序是固定的，且为了代码规范化，这三个方法必须重写，也建议将相关业务逻辑写在对应方法中，以方便维护和管理。
 
 - 请注意，我们会尽可能快的支持最新的 Android Support库，当前BaseFragment已经集成“com.android.support:appcompat-v7:27.1.1”，如有冲突可能需要删除您的工程中的 Android Support 库。
@@ -38,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.4.0</version>
+  <version>6.4.6</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.4.0'
+implementation 'com.kongzue.baseframework:baseframework:6.4.6'
 ```
 
 ## BaseActivity功能
@@ -188,6 +200,16 @@ set(context, path, preferencesName, ?)
 cleanAll();
 ```
 
+## AppManager
+AppManager 是 BaseActivity 的管理工具类，原工具是由 @xiaohaibin(https://github.com/xiaohaibin) 所开发，经同意集成在 BaseFramework 中，此处略加修改更适合 BaseActivity 的管理工作。
+
+提供如下方法：
+```
+killActivity(baseActivity)      //结束指定BaseActivity
+killAllActivity()               //结束所有BaseActivity
+AppExit()                       //退出App
+```
+其他方法，例如 pushActivity 添加Activity到堆栈，都是自动执行的，不需要手动调用。
 
 ## 开源协议
 ```
@@ -207,6 +229,10 @@ cleanAll();
 ```
 
 ## 更新日志：
+v6.4.6:
+- 新增AppManager管理器；
+- 新增DarkNavigationBarTheme、DarkStatusBarTheme、NavigationBarBackgroundColor注解；
+
 v6.4.0:
 - 集成Preferences（SharedPreferences的封装，仅使用简单的get、set方法即可）
 

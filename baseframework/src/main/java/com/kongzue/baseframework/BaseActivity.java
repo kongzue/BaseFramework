@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.support.annotation.ColorInt;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
@@ -30,7 +31,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
+import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
+import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnResponseListener;
 import com.kongzue.baseframework.util.Parameter;
@@ -51,11 +56,11 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Ver.6.3.0
- * 自动化代码流水线作业
- * 以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持
- * 同时提供一些小工具简化开发难度
- * 详细说明文档：https://github.com/kongzue/BaseFramework
+ * @Version: 6.4.5
+ * @Author: Kongzue
+ * @github: https://github.com/kongzue/BaseFramework
+ * @link: http://kongzue.com/
+ * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -68,12 +73,22 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public BaseActivity me = this;
 
+    private boolean darkStatusBarThemeValue = false;
+    private boolean darkNavigationBarThemeValue = false;
+    private int navigationBarBackgroundColorValue = Color.BLACK;
+    private int layoutResId = android.R.layout.list_content;
+
     //不再推荐重写onCreate创建Activity，新版本推荐直接在Activity上注解：@Layout(你的layout资源id)
     @Deprecated
     protected void onCreate(Bundle savedInstanceState, int layoutResId) {
         super.onCreate(savedInstanceState);
         setContentView(layoutResId);
-        setTranslucentStatus(true, false);
+
+        initAttributes();
+
+        setTranslucentStatus(true);
+        AppManager.getInstance().pushActivity(me);
+
         initViews();
         initDatas();
         setEvents();
@@ -84,24 +99,51 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        int layoutResId = android.R.layout.list_content;
+        initAttributes();
+        if (layoutResId == android.R.layout.list_content) {
+            Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
+            return;
+        }
+
+        setContentView(layoutResId);
+        setTranslucentStatus(true);
+        AppManager.getInstance().pushActivity(me);
+
+        initViews();
+        initDatas();
+        setEvents();
+
+    }
+
+    private void initAttributes() {
         try {
             Layout layout = getClass().getAnnotation(Layout.class);
-            log("layout.value()="+layout.value());
-            if (layout.value() != -1) {
-                layoutResId = layout.value();
-            }else{
-                throw new Exception("请在您的Activity的Class上注解：@Layout(你的layout资源id)");
+            DarkNavigationBarTheme darkNavigationBarTheme = getClass().getAnnotation(DarkNavigationBarTheme.class);
+            DarkStatusBarTheme darkStatusBarTheme = getClass().getAnnotation(DarkStatusBarTheme.class);
+            NavigationBarBackgroundColor navigationBarBackgroundColor = getClass().getAnnotation(NavigationBarBackgroundColor.class);
+            if (layout != null) {
+                if (layout.value() != -1) layoutResId = layout.value();
+            }
+            if (darkStatusBarTheme != null) darkStatusBarThemeValue = darkStatusBarTheme.value();
+            if (darkNavigationBarTheme != null)
+                darkNavigationBarThemeValue = darkNavigationBarTheme.value();
+            if (navigationBarBackgroundColor != null) {
+                if (navigationBarBackgroundColor.a() != -1 && navigationBarBackgroundColor.r() != -1 && navigationBarBackgroundColor.g() != -1 && navigationBarBackgroundColor.b() != -1) {
+                    navigationBarBackgroundColorValue = Color.argb(navigationBarBackgroundColor.a(), navigationBarBackgroundColor.r(), navigationBarBackgroundColor.g(), navigationBarBackgroundColor.b());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
 
-        setContentView(layoutResId);
-        setTranslucentStatus(true, false);
-        initViews();
-        initDatas();
-        setEvents();
+    @Override
+    public void finish() {
+        AppManager.getInstance().killActivity(me);
+    }
+
+    public void finishActivity() {
+        super.finish();
     }
 
     //可被重写的接口
@@ -111,43 +153,83 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     public abstract void setEvents();
 
+    public void setDarkStatusBarTheme(boolean value) {
+        darkStatusBarThemeValue = value;
+        setTranslucentStatus(true);
+    }
+
+    public void setDarkNavigationBarTheme(boolean value) {
+        darkNavigationBarThemeValue = value;
+        setTranslucentStatus(true);
+    }
+
+    public void setNavigationBarBackgroundColor(@ColorInt int color) {
+        navigationBarBackgroundColorValue = color;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(navigationBarBackgroundColorValue);
+        }
+    }
+
+    public void setNavigationBarBackgroundColor(int a, int r, int g, int b) {
+        navigationBarBackgroundColorValue = Color.argb(a, r, g, b);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setNavigationBarColor(navigationBarBackgroundColorValue);
+        }
+    }
+
     //状态栏主题
-    protected void setTranslucentStatus(boolean on, boolean whiteMode) {
-        Log.i("SDK_INT", Build.VERSION.SDK_INT + "");
-        if (isMIUI()) setStatusBarDarkModeInMIUI(whiteMode, this);
-        if (isFlyme()) setStatusBarDarkIconInFlyme(getWindow(), whiteMode);
+    protected void setTranslucentStatus(boolean on) {
+        if (isMIUI()) setStatusBarDarkModeInMIUI(darkStatusBarThemeValue, this);
+        if (isFlyme()) setStatusBarDarkIconInFlyme(getWindow(), darkStatusBarThemeValue);
+        Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                     | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
-            if (whiteMode) {
-                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            if (darkStatusBarThemeValue) {
+                if (darkNavigationBarThemeValue) {
+                    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                    );
+                } else {
+                    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    );
+                }
             } else {
-                window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                if (darkNavigationBarThemeValue) {
+                    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                    );
+                } else {
+                    window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    );
+                }
             }
 
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
-            window.setNavigationBarColor(Color.BLACK);
-
-            return;
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            Window win = getWindow();
-            WindowManager.LayoutParams winParams = win.getAttributes();
+            WindowManager.LayoutParams winParams = window.getAttributes();
             final int bits = WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
             if (on) {
                 winParams.flags |= bits;
             } else {
                 winParams.flags &= ~bits;
             }
-            win.setAttributes(winParams);
-            return;
+            window.setAttributes(winParams);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setNavigationBarColor(navigationBarBackgroundColorValue);
         }
     }
 
@@ -621,8 +703,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         if (getParameter() != null) getParameter().cleanAll();
+        AppManager.getInstance().deleteActivity(me);
+        super.onDestroy();
     }
 
     public void jumpAnim(int enterAnim, int exitAnim) {

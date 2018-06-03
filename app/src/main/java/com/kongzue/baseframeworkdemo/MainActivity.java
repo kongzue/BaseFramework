@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
@@ -20,12 +21,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
+import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnResponseListener;
 import com.kongzue.baseframework.util.Parameter;
 
 @Layout(R.layout.activity_main)
+@DarkStatusBarTheme(true)
+@NavigationBarBackgroundColor(a = 255,r = 255,g = 255,b = 255)
+@DarkNavigationBarTheme(true)
 public class MainActivity extends BaseActivity {
 
     private FragmentDemo fragmentDemo;
@@ -60,12 +67,17 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initDatas() {
+        log(Color.rgb(70,155,223));
         //此处编写初始化代码
         linkHome.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         linkBokhttp.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         linkBvolley.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         linkUpdate.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         linkDialog.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+
+//        setDarkStatusBarTheme(true);
+//        setDarkNavigationBarThemeValue(true);
+//        setNavigationBarBackgroundColorValue(Color.argb(255,255,255,255));
     }
 
     @Override

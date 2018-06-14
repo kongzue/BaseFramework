@@ -3,6 +3,8 @@ package com.kongzue.baseframework;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -65,7 +67,7 @@ import java.util.Set;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    public boolean DEBUG = true;
+    public static boolean DEBUGMODE = true;
     public boolean isActive = false;                                        //当前Activity是否处于前台
 
     private OnResponseListener onResponseListener;                          //jump跳转回调
@@ -398,7 +400,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 @Override
                 public void run() {
-                    if (DEBUG) {
+                    if (DEBUGMODE) {
                         Log.i("log", obj.toString());
                     }
                 }
@@ -611,6 +613,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         return moveAnimation(obj, perference, aimValue, 300, 0);
     }
 
+    //复制文本到剪贴板
+    public boolean copy(String s){
+        if (isNull(s)){
+            log("要复制的文本为空");
+            return false;
+        }
+        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData mClipData = ClipData.newPlainText("Label", s);
+        cm.setPrimaryClip(mClipData);
+        return true;
+    }
+
+    //网络传输文本判空规则
     public boolean isNull(String s) {
         if (s == null || s.trim().isEmpty() || s.equals("null")) {
             return true;

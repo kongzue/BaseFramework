@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.4.6-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.4.7-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.6/link">
-<img src="https://img.shields.io/badge/Maven-6.4.6-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.7/link">
+<img src="https://img.shields.io/badge/Maven-6.4.7-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.4.6</version>
+  <version>6.4.7</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.4.6'
+implementation 'com.kongzue.baseframework:baseframework:6.4.7'
 ```
 
 ## BaseActivity功能
@@ -143,7 +143,7 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 
 toast(Obj);
 
-//简易Log打印日志：
+//简易Log打印日志（可通过BaseActivity.DEBUGMODE = false关闭）：
 
 log(Obj);
 
@@ -229,6 +229,9 @@ AppExit()                       //退出App
 ```
 
 ## 更新日志：
+v6.4.7:
+- 修复一些bug；
+
 v6.4.6:
 - 新增AppManager管理器；
 - 新增DarkNavigationBarTheme、DarkStatusBarTheme、NavigationBarBackgroundColor注解；

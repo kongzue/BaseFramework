@@ -30,16 +30,17 @@ import com.kongzue.baseframework.util.OnResponseListener;
 import com.kongzue.baseframework.util.Parameter;
 
 @Layout(R.layout.activity_main)
-@DarkStatusBarTheme(true)
+@DarkStatusBarTheme(false)
 @NavigationBarBackgroundColor(a = 255,r = 255,g = 255,b = 255)
 @DarkNavigationBarTheme(true)
 public class MainActivity extends BaseActivity {
 
     private FragmentDemo fragmentDemo;
-
+    
     private TextView txtTitle;
     private TextView linkHome;
     private Button intentToFragment;
+    private Button intentToBaseAdapter;
     private Button btnJump;
     private Button btnResult;
     private Button btnPermission;
@@ -48,13 +49,14 @@ public class MainActivity extends BaseActivity {
     private TextView linkUpdate;
     private TextView linkDialog;
     private FrameLayout frame;
-
+    
     @Override
     public void initViews() {
         //此处加载组件
         txtTitle = findViewById(R.id.txt_title);
         linkHome = findViewById(R.id.link_home);
         intentToFragment = findViewById(R.id.intentToFragment);
+        intentToBaseAdapter = findViewById(R.id.intentToBaseAdapter);
         btnJump = findViewById(R.id.btn_jump);
         btnResult = findViewById(R.id.btn_result);
         btnPermission = findViewById(R.id.btn_permission);
@@ -83,6 +85,13 @@ public class MainActivity extends BaseActivity {
     @Override
     public void setEvents() {
         //此处为组件绑定事件
+        intentToBaseAdapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                jump(AdapterTestActivity.class);
+            }
+        });
+        
         btnPermission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

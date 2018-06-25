@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.4.7-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.4.8-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.7/link">
-<img src="https://img.shields.io/badge/Maven-6.4.7-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.8/link">
+<img src="https://img.shields.io/badge/Maven-6.4.8-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -19,9 +19,9 @@ Demo预览图如下：
 
 ![BaseFramework](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/BaseFramework.png)
 
-试用版可以前往 http://kongzue.com/open_source/BaseFramework.apk 下载
+试用版和使用方法 Demo 可以前往 https://fir.im/basefw 下载
 
-![Kongzue's Dialog Demo](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseframework.png)
+![Kongzue's BaseFramework](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseframework.png)
 
 ## 使用前的约定与须知
 - 更轻松！在 BaseActivity 中，约定关键词me代替Activity.this，因此您在编写代码时，在异步线程中可以轻松使用me关键字直接引用当前的父Activity。
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.4.7</version>
+  <version>6.4.8</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.4.7'
+implementation 'com.kongzue.baseframework:baseframework:6.4.8'
 ```
 
 ## BaseActivity功能
@@ -229,6 +229,9 @@ AppExit()                       //退出App
 ```
 
 ## 更新日志：
+v6.4.8:
+- 新增BaseAdapter；
+
 v6.4.7:
 - 修复一些bug；
 

@@ -92,6 +92,14 @@
                         android:layout_marginTop="5dp"
                         android:text="查看BaseFragment的Demo" />
 
+                    <Button
+                        android:id="@+id/intentToBaseAdapter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="查看BaseAdapter的Demo" />
+
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

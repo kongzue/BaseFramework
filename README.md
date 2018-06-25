@@ -221,6 +221,7 @@ AppExit()                       //退出App
 但再重写过程中实际上是有很多重复性的代码，导致我们的项目臃肿不堪，从 v6.4.8 版本起，新增了 BaseAdapter 来实现各种自定义布局适配器的需求：
 
 1. JavaBean 适配方式
+
 使用此方式需要先创建继承自 BaseAdapter.BaseDataBean 的 JavaBean 数据集合来封装数据，例如在我们 Demo 中的：
 ```
 List<CustomDatas> datas = new ArrayList();
@@ -274,6 +275,7 @@ SimpleAdapterSettings 是一个适配器控制器的回调接口，在其中重�
 注意在此方法中您可以将 dataBean 强转为您的 JavaBean 类，viewHolder 也可以强转为您的 ViewHolder。
 
 2. Map 适配方式
+
 应对复杂多变的数据我们可能会选择使用 Map 来存储我们的需要展现的数据，BaseAdapter 亦支持此方式的数据，与上述方法类似，您可以轻松完成数据的绑定和组件的展现：
 ```
 List<Map<String, Object>> datas = new ArrayList<>();
@@ -304,6 +306,7 @@ list.setAdapter(baseAdapter);
 ```
 
 3. 多种布局的绑定方式
+
 根据实际业务需求，我们可能需要在一个组件中展现多种布局，此时您首先需要对您的布局进行编号，从0开始，依次往后，并将他们添加为一个 Map 集合，其中键值对：id对应布局资源id（LayoutResId）：
 ```
 Map<Integer, Integer> layoutResIdMap = new HashMap<>();

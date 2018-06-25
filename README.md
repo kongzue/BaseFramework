@@ -211,6 +211,166 @@ AppExit()                       //退出App
 ```
 其他方法，例如 pushActivity 添加Activity到堆栈，都是自动执行的，不需要手动调用。
 
+## 变形金刚BaseAdapter
+注意，此处的 BaseAdapter 特指 com.kongzue.baseframework.BaseAdapter。
+
+![Kongzue's BaseAdapter](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseadapter.png)
+
+通常由系统提供的的 android.widget.BaseAdapter 和 android.widget.SimpleAdapter 虽然都能满足我们的日常所需，但面对各种自定义需求以及多种布局的需求时往往捉襟见肘，以至于我们不得不重写 Adapter 来满足需求。
+
+但再重写过程中实际上是有很多重复性的代码，导致我们的项目臃肿不堪，从 v6.4.8 版本起，新增了 BaseAdapter 来实现各种自定义布局适配器的需求：
+
+1. JavaBean 适配方式
+使用此方式需要先创建继承自 BaseAdapter.BaseDataBean 的 JavaBean 数据集合来封装数据，例如在我们 Demo 中的：
+```
+List<CustomDatas> datas = new ArrayList();
+datas.add(new CustomDatas().setTitle("我是布局1"));
+datas.add(new CustomDatas().setTitle("我是布局2"));
+datas.add(new CustomDatas().setTitle("我是布局3"));
+```
+其中 CustomDatas 的具体代码为：
+```
+private class CustomDatas extends BaseAdapter.BaseDataBean {
+    String title;
+
+    @Override
+    public CustomDatas setType(int type) {
+        this.type = type;
+        return this;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public CustomDatas setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+}
+```
+它是一个典型的 JavaBean，其中所有属性请根据实际业务需求添加，并建议生成相应的 get、set 方法。
+
+接下来创建适配器并绑定在相应组件上：
+```
+baseAdapter = new BaseAdapter(me, datas, R.layout.item_list_layout1, new SimpleAdapterSettings() {
+    @Override
+    public Object setViewHolder(View convertView) {
+        ViewHolder1 viewHolder1 = new ViewHolder1();
+        viewHolder1.txtTitle = convertView.findViewById(R.id.txt_title);
+        return viewHolder1;
+    }
+
+    @Override
+    public void setData(Object viewHolder, BaseAdapter.BaseDataBean dataBean) {
+        CustomDatas data = (CustomDatas) dataBean;
+        ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
+        viewHolder1.txtTitle.setText(data.getTitle());
+    }
+});
+list.setAdapter(baseAdapter);
+```
+SimpleAdapterSettings 是一个适配器控制器的回调接口，在其中重写 setViewHolder 和 setData方法，其中 setViewHolder 需要您在此处根据父布局 convertView 创建布局管理组件 ViewHolder，并回传您的 ViewHolder。接下来会在 setData 中将 ViewHolder 和 相对应的数据 dataBean给出，请在此方法中对组件进行赋值和事件绑定。
+注意在此方法中您可以将 dataBean 强转为您的 JavaBean 类，viewHolder 也可以强转为您的 ViewHolder。
+
+2. Map 适配方式
+应对复杂多变的数据我们可能会选择使用 Map 来存储我们的需要展现的数据，BaseAdapter 亦支持此方式的数据，与上述方法类似，您可以轻松完成数据的绑定和组件的展现：
+```
+List<Map<String, Object>> datas = new ArrayList<>();
+Map<String, Object> map = new HashMap<>();
+map.put("title", "我是布局1");
+datas.add(map);
+map = new HashMap<>();
+map.put("title", "我是布局2");
+datas.add(map);
+map = new HashMap<>();
+map.put("title", "我是布局3");
+datas.add(map);
+baseAdapter = new BaseAdapter(me, datas, R.layout.item_list_layout1, new SimpleMapAdapterSettings() {
+    @Override
+    public Object setViewHolder(View convertView) {
+        ViewHolder1 viewHolder1 = new ViewHolder1();
+        viewHolder1.txtTitle = convertView.findViewById(R.id.txt_title);
+        return viewHolder1;
+    }
+
+    @Override
+    public void setData(Object viewHolder, Map<String, Object> data) {
+        ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
+        viewHolder1.txtTitle.setText(data.get("title") + "");
+    }
+});
+list.setAdapter(baseAdapter);
+```
+
+3. 多种布局的绑定方式
+根据实际业务需求，我们可能需要在一个组件中展现多种布局，此时您首先需要对您的布局进行编号，从0开始，依次往后，并将他们添加为一个 Map 集合，其中键值对：id对应布局资源id（LayoutResId）：
+```
+Map<Integer, Integer> layoutResIdMap = new HashMap<>();
+layoutResIdMap.put(0, R.layout.item_list_layout1);
+layoutResIdMap.put(1, R.layout.item_list_layout2);
+layoutResIdMap.put(2, R.layout.item_list_layout3);
+```
+接下来，您需要将数据存储为一个集合，此处展示的是 JavaBean 形式的存储方式，您亦可以使用 Map 作为数据的存储器，最后将它打包为一个 List即可：
+```
+List<CustomDatas> datas = new ArrayList();
+datas.add(new CustomDatas().setTitle("我是布局1").setType(0));
+datas.add(new CustomDatas().setTitle("我是布局2").setType(1));
+datas.add(new CustomDatas().setTitle("我是布局3").setType(2));
+```
+需要注意的是，之前提到过，您的 JavaBean（CustomDatas）需要继承自 BaseAdapter.BaseDataBean，而在 BaseAdapter.BaseDataBean 中，我们默认实现了一个属性“type”，它是 int 整数型，用于存储与布局对应的编号 id。
+
+如果您默认使用 Map 的方式存储数据，您需要手动 put("type", 对应布局编号id ) 以保证能够和布局资源相匹配。
+
+最后，创建适配器和绑定展示组件：
+```
+baseAdapter = new BaseAdapter(me, datas, layoutResIdMap, new MultipleAdapterSettings() {
+    @Override
+    public Object setViewHolder(int type, View convertView) {
+        switch (type) {
+            case 0:
+                ViewHolder1 viewHolder1 = new ViewHolder1();
+                viewHolder1.txtTitle = convertView.findViewById(R.id.txt_title);
+                return viewHolder1;
+            case 1:
+                ViewHolder2 viewHolder2 = new ViewHolder2();
+                viewHolder2.txtTitle = convertView.findViewById(R.id.txt_title);
+                return viewHolder2;
+            case 2:
+                ViewHolder3 viewHolder3 = new ViewHolder3();
+                viewHolder3.txtTitle = convertView.findViewById(R.id.txt_title);
+                return viewHolder3;
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void setData(int type, Object viewHolder, BaseAdapter.BaseDataBean dataBean) {
+        CustomDatas data = (CustomDatas) dataBean;
+        switch (type) {
+            case 0:
+                ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
+                viewHolder1.txtTitle.setText(data.getTitle());
+                break;
+            case 1:
+                ViewHolder2 viewHolder2 = (ViewHolder2) viewHolder;
+                viewHolder2.txtTitle.setText(data.getTitle());
+                break;
+            case 2:
+                ViewHolder3 viewHolder3 = (ViewHolder3) viewHolder;
+                viewHolder3.txtTitle.setText(data.getTitle());
+                break;
+        }
+    }
+});
+list.setAdapter(baseAdapter);
+```
+从上述代码中可以看到，回调函数中出现了一个 type 的值，在这里您可以根据不同的值绑定不同的布局，设置不同的数据和事件。
+
+以上就是关于 BaseAdapter 的简单介绍了。您还可以通过文档前半部分的二维码下载 Demo ，其中会为您展现关于 BaseAdapter 全部的绑定方式。
+
+
 ## 开源协议
 ```
    Copyright BaseFragment

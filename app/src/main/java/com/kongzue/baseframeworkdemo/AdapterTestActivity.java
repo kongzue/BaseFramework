@@ -14,6 +14,7 @@ import com.kongzue.baseframework.interfaces.MultipleAdapterSettings;
 import com.kongzue.baseframework.interfaces.MultipleMapAdapterSettings;
 import com.kongzue.baseframework.interfaces.SimpleAdapterSettings;
 import com.kongzue.baseframework.interfaces.SimpleMapAdapterSettings;
+import com.kongzue.baseframework.util.JumpParameter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +46,7 @@ public class AdapterTestActivity extends BaseActivity {
     private BaseAdapter baseAdapter;
     
     @Override
-    public void initDatas() {
+    public void initDatas(JumpParameter parameter) {
 //        initMultipleBeanTest();
 //        initMultipleMapTest();
 //        initSimpleMapTest();

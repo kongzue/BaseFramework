@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.4.8-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.4.9-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.8/link">
-<img src="https://img.shields.io/badge/Maven-6.4.8-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.4.9/link">
+<img src="https://img.shields.io/badge/Maven-6.4.9-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.4.8</version>
+  <version>6.4.9</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.4.8'
+implementation 'com.kongzue.baseframework:baseframework:6.4.9'
 ```
 
 ## BaseActivity功能
@@ -211,7 +211,7 @@ AppExit()                       //退出App
 ```
 其他方法，例如 pushActivity 添加Activity到堆栈，都是自动执行的，不需要手动调用。
 
-## 变形金刚BaseAdapter
+## BaseAdapter
 注意，此处的 BaseAdapter 特指 com.kongzue.baseframework.BaseAdapter。
 
 ![Kongzue's BaseAdapter](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseadapter.png)
@@ -392,6 +392,10 @@ list.setAdapter(baseAdapter);
 ```
 
 ## 更新日志：
+v6.4.9:
+- 为避免与 BaseOkHttp 框架冲突修改 com.kongzue.baseframework.util.Parameter 类名为 com.kongzue.baseframework.util.JumpParameter;
+- initDatas() 现已改为携带参数的 initDatas(JumpParameter paramer); 可以直接获取使用jump方法跳转时所携带的跳转参数，请注意非空判断；
+
 v6.4.8:
 - 新增BaseAdapter；
 

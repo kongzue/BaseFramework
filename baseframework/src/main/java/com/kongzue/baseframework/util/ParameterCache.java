@@ -21,29 +21,29 @@ public class ParameterCache {
         return parameterCache;
     }
 
-    private Map<String, Parameter> parameterList;
+    private Map<String, JumpParameter> parameterList;
 
-    public Parameter get(String className) {
+    public JumpParameter get(String className) {
         if (parameterList == null) return null;
         return parameterList.get(className);
     }
 
-    public void set(String className, Parameter parameter) {
+    public void set(String className, JumpParameter jumpParameter) {
         if (parameterList == null) parameterList = new HashMap<>();
-        parameterList.put(className, parameter);
+        parameterList.put(className, jumpParameter);
     }
 
 
-    private Map<String, Parameter> parameterResponseList;
+    private Map<String, JumpParameter> parameterResponseList;
 
-    public Parameter getResponse(String className) {
+    public JumpParameter getResponse(String className) {
         if (parameterResponseList == null) return null;
         return parameterResponseList.get(className);
     }
 
-    public void setResponse(String className, Parameter parameter) {
+    public void setResponse(String className, JumpParameter jumpParameter) {
         if (parameterResponseList == null) parameterResponseList = new HashMap<>();
-        parameterResponseList.put(className, parameter);
+        parameterResponseList.put(className, jumpParameter);
     }
 
     public void cleanResponse(String className) {

@@ -2,7 +2,6 @@ package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -14,10 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnResponseListener;
-import com.kongzue.baseframework.util.Parameter;
-import com.kongzue.baseframework.util.ParameterCache;
 
 /**
  * @Version:    6.4.5
@@ -163,8 +161,8 @@ public abstract class BaseFragment extends Fragment {
     }
 
     //可以传任何类型参数的跳转方式
-    public boolean jump(Class<?> cls, Parameter parameter) {
-        return me.jump(cls, parameter);
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter) {
+        return me.jump(cls, jumpParameter);
     }
 
     //带返回值的跳转
@@ -173,17 +171,17 @@ public abstract class BaseFragment extends Fragment {
     }
 
     //带返回值的跳转
-    public boolean jump(Class<?> cls, Parameter parameter, OnResponseListener onResponseListener) {
-        return me.jump(cls, parameter, onResponseListener);
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnResponseListener onResponseListener) {
+        return me.jump(cls, jumpParameter, onResponseListener);
     }
 
     //目标Activity：设定要返回的数据
-    public void setResponse(Parameter parameter) {
-        me.setResponse(parameter);
+    public void setResponse(JumpParameter jumpParameter) {
+        me.setResponse(jumpParameter);
     }
 
     //获取跳转参数
-    public Parameter getParameter() {
+    public JumpParameter getParameter() {
         return me.getParameter();
     }
 

@@ -1,10 +1,8 @@
 package com.kongzue.baseframeworkdemo;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,12 +10,9 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
@@ -27,7 +22,7 @@ import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnResponseListener;
-import com.kongzue.baseframework.util.Parameter;
+import com.kongzue.baseframework.util.JumpParameter;
 
 @Layout(R.layout.activity_main)
 @DarkStatusBarTheme(false)
@@ -68,7 +63,7 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
-    public void initDatas() {
+    public void initDatas(JumpParameter parameter) {
         log(Color.rgb(70,155,223));
         //此处编写初始化代码
         linkHome.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -120,22 +115,22 @@ public class MainActivity extends BaseActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         jump(ResponseActivity.class, new OnResponseListener() {
                             @Override
-                            public void OnResponse(Parameter parameter) {
-                                if (parameter == null) {
+                            public void OnResponse(JumpParameter jumpParameter) {
+                                if (jumpParameter == null) {
                                     toast("未返回任何数据");
                                 } else {
-                                    toast("收到返回数据，参数“返回数据1”中的值为：" + parameter.get("返回数据1"));
+                                    toast("收到返回数据，参数“返回数据1”中的值为：" + jumpParameter.get("返回数据1"));
                                 }
                             }
                         });
 
                         //亦可选用同时带参数+返回值的跳转
-                        //jump(ResponseActivity.class,new Parameter()
+                        //jump(ResponseActivity.class,new JumpParameter()
                         //                .put("参数1", "这是一段文字参数")
                         //                .put("参数2", "这是一段文字参数")
                         //        , new OnResponseListener() {
                         //    @Override
-                        //    public void OnResponse(Parameter parameter) {
+                        //    public void OnResponse(JumpParameter parameter) {
                         //        if (parameter==null){
                         //            toast("未返回任何数据");
                         //        }else{
@@ -160,7 +155,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.img_bkg);
-                        jump(JumpActivity.class, new Parameter()
+                        jump(JumpActivity.class, new JumpParameter()
                                 .put("参数1", "这是一段文字参数")
                                 .put("参数2", bmp)
                         );

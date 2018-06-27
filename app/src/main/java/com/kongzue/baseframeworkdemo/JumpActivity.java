@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.util.JumpParameter;
 
 @Layout(R.layout.activity_jump)
 public class JumpActivity extends BaseActivity {
@@ -27,7 +28,7 @@ public class JumpActivity extends BaseActivity {
     }
 
     @Override
-    public void initDatas() {
+    public void initDatas(JumpParameter parameter) {
         String parameter1 = (String) getParameter().get("参数1");
         if (!isNull(parameter1)) txtP1.setText("第一个参数读取到的值为：" + parameter1);
 

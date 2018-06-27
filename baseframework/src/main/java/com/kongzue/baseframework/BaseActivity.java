@@ -2,7 +2,6 @@ package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -17,11 +16,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.support.annotation.ColorInt;
-import android.support.annotation.IdRes;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -38,9 +34,9 @@ import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnResponseListener;
-import com.kongzue.baseframework.util.Parameter;
 import com.kongzue.baseframework.util.ParameterCache;
 
 import java.io.File;
@@ -51,7 +47,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -92,7 +87,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         AppManager.getInstance().pushActivity(me);
 
         initViews();
-        initDatas();
+        initDatas(getParameter());
         setEvents();
     }
 
@@ -112,7 +107,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         AppManager.getInstance().pushActivity(me);
 
         initViews();
-        initDatas();
+        initDatas(getParameter());
         setEvents();
 
     }
@@ -151,7 +146,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     //可被重写的接口
     public abstract void initViews();
 
-    public abstract void initDatas();
+    public abstract void initDatas(JumpParameter paramer);
 
     public abstract void setEvents();
 
@@ -645,10 +640,10 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     //可以传任何类型参数的跳转方式
-    public boolean jump(Class<?> cls, Parameter parameter) {
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter) {
         try {
             startActivity(new Intent(me, cls));
-            ParameterCache.getInstance().set(cls.getName(), parameter);
+            ParameterCache.getInstance().set(cls.getName(), jumpParameter);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -661,7 +656,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         try {
             startActivity(new Intent(me, cls));
             ParameterCache.getInstance().cleanResponse(me.getClass().getName());
-            ParameterCache.getInstance().set(cls.getName(), new Parameter()
+            ParameterCache.getInstance().set(cls.getName(), new JumpParameter()
                     .put("needResponse", true)
                     .put("responseClassName", me.getClass().getName())
             );
@@ -674,11 +669,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     //带返回值的跳转
-    public boolean jump(Class<?> cls, Parameter parameter, OnResponseListener onResponseListener) {
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnResponseListener onResponseListener) {
         try {
             startActivity(new Intent(me, cls));
             ParameterCache.getInstance().cleanResponse(me.getClass().getName());
-            ParameterCache.getInstance().set(cls.getName(), parameter
+            ParameterCache.getInstance().set(cls.getName(), jumpParameter
                     .put("needResponse", true)
                     .put("responseClassName", me.getClass().getName())
             );
@@ -691,12 +686,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     //目标Activity：设定要返回的数据
-    public void setResponse(Parameter parameter) {
-        ParameterCache.getInstance().setResponse((String) getParameter().get("responseClassName"), parameter);
+    public void setResponse(JumpParameter jumpParameter) {
+        ParameterCache.getInstance().setResponse((String) getParameter().get("responseClassName"), jumpParameter);
     }
 
     //获取跳转参数
-    public Parameter getParameter() {
+    public JumpParameter getParameter() {
         return ParameterCache.getInstance().get(me.getClass().getName());
     }
 

@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.util.JumpParameter;
 
 @Layout(R.layout.fragment_demo)
 public class FragmentDemo extends BaseFragment {
@@ -22,7 +23,7 @@ public class FragmentDemo extends BaseFragment {
         info = findViewById(R.id.info);
         btnHide = findViewById(R.id.btn_hide);
     }
-
+    
     @Override
     public void initDatas() {
         //此处编写初始化代码

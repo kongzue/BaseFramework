@@ -68,7 +68,7 @@ Android 默认的 Intent无法支持自定义类型参数的跳转，BaseActivit
 跳转代码范例：
 ```
 Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.img_bkg);
-jump(JumpActivity.class, new Parameter()
+jump(JumpActivity.class, new JumpParameter()
         .put("参数1", "这是一段文字参数")
         .put("参数2", bmp)
 );
@@ -89,7 +89,7 @@ if (parameter2 != null) imgP2.setImageBitmap(parameter2);
 ```
 jump(ResponseActivity.class, new OnResponseListener() {
     @Override
-    public void OnResponse(Parameter parameter) {
+    public void OnResponse(JumpParameter parameter) {
         if (parameter == null) {
             toast("未返回任何数据");
         } else {
@@ -101,12 +101,12 @@ jump(ResponseActivity.class, new OnResponseListener() {
 
 亦可选用同时带参数+返回值的跳转：
 ```
-jump(ResponseActivity.class,new Parameter()
+jump(ResponseActivity.class,new JumpParameter()
                 .put("参数1", "这是一段文字参数")
                 .put("参数2", "这是一段文字参数")
         , new OnResponseListener() {
     @Override
-    public void OnResponse(Parameter parameter) {
+    public void OnResponse(JumpParameter parameter) {
         if (parameter==null){
             toast("未返回任何数据");
         }else{

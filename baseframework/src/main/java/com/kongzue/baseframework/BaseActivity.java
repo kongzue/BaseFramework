@@ -407,6 +407,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     //软键盘打开与收起
     public void setIMMStatus(boolean show, EditText editText) {
+        if (editText==null){
+            return;
+        }
         if (show) {
             editText.requestFocus();
             editText.setFocusableInTouchMode(true);
@@ -556,7 +559,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * 启动当前应用设置页面
      */
-    private void startAppSettings() {
+    public void startAppSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);

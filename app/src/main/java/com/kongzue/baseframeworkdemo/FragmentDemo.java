@@ -1,6 +1,8 @@
 package com.kongzue.baseframeworkdemo;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,14 +38,9 @@ public class FragmentDemo extends BaseFragment {
         btnHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.hideFragment();
+                ((MainActivity)me).hideFragment();
             }
         });
     }
-
-    private MainActivity mainActivity;
-
-    public void setMainActivity(MainActivity mainActivity){
-        this.mainActivity = mainActivity;
-    }
+    
 }

@@ -3,6 +3,7 @@ package com.kongzue.baseframework;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -46,6 +47,7 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        me = (BaseActivity) getActivity();
         try {
             Layout layout = getClass().getAnnotation(Layout.class);
             if (layout == null) {
@@ -61,7 +63,6 @@ public abstract class BaseFragment extends Fragment {
             e.printStackTrace();
         }
         rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
-        me = (BaseActivity) getActivity();
         initViews();
         initDatas();
         setEvents();
@@ -86,28 +87,11 @@ public abstract class BaseFragment extends Fragment {
     
     private Toast toast;
     
-    protected void runOnMain(Runnable runnable) {
-        me.runOnUiThread(runnable);
-    }
-    
     protected final static String NULL = "";
     
     //简易吐司
     public void toast(final Object obj) {
-        try {
-            runOnMain(new Runnable() {
-                
-                @Override
-                public void run() {
-                    if (toast == null)
-                        toast = Toast.makeText(me, NULL, Toast.LENGTH_SHORT);
-                    toast.setText(obj.toString());
-                    toast.show();
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        me.toast(obj);
     }
     
     public void log(final Object obj) {
@@ -190,6 +174,18 @@ public abstract class BaseFragment extends Fragment {
     //权限申请
     public void requestPermission(String[] permissions, OnPermissionResponseListener onPermissionResponseListener) {
         me.requestPermission(permissions, onPermissionResponseListener);
+    }
+    
+    protected void runOnMain(Runnable runnable) {
+        me.runOnMain(runnable);
+    }
+    
+    protected void runOnMainDelayed(Runnable runnable, long time) {
+        me.runOnMainDelayed(runnable, time);
+    }
+    
+    protected void runDelayed(Runnable runnable, long time) {
+        me.runDelayed(runnable, time);
     }
 }
 

@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -186,7 +187,6 @@ public class MainActivity extends BaseActivity {
                     fragmentDemo = new FragmentDemo();
                     transaction.add(R.id.frame, fragmentDemo);
                 }
-                fragmentDemo.setMainActivity((MainActivity) me);
                 transaction.show(fragmentDemo);
                 transaction.commit();
             }

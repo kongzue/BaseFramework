@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
@@ -61,57 +62,62 @@ import java.util.Set;
  */
 
 public abstract class BaseActivity extends AppCompatActivity {
-
+    
     public static boolean DEBUGMODE = true;
     public boolean isActive = false;                                        //当前Activity是否处于前台
-
+    public boolean isAlive = false;                                        //当前Activity是否处于前台
+    
     private OnResponseListener onResponseListener;                          //jump跳转回调
     private OnPermissionResponseListener onPermissionResponseListener;      //权限申请回调
-
+    
     public BaseActivity me = this;
-
+    
     private boolean darkStatusBarThemeValue = false;
     private boolean darkNavigationBarThemeValue = false;
     private int navigationBarBackgroundColorValue = Color.BLACK;
     private int layoutResId = android.R.layout.list_content;
-
+    
     //不再推荐重写onCreate创建Activity，新版本推荐直接在Activity上注解：@Layout(你的layout资源id)
     @Deprecated
     protected void onCreate(Bundle savedInstanceState, int layoutResId) {
         super.onCreate(savedInstanceState);
         setContentView(layoutResId);
-
+        
+        isAlive = true;
+        
         initAttributes();
-
+        
         setTranslucentStatus(true);
         AppManager.getInstance().pushActivity(me);
-
+        
         initViews();
         initDatas(getParameter());
         setEvents();
     }
-
+    
     @Override
     @Deprecated
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
+        isAlive = true;
+        
         initAttributes();
         if (layoutResId == android.R.layout.list_content) {
             Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
             return;
         }
-
+        
         setContentView(layoutResId);
         setTranslucentStatus(true);
         AppManager.getInstance().pushActivity(me);
-
+        
         initViews();
         initDatas(getParameter());
         setEvents();
-
+        
     }
-
+    
     private void initAttributes() {
         try {
             Layout layout = getClass().getAnnotation(Layout.class);
@@ -133,47 +139,47 @@ public abstract class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    
     @Override
     public void finish() {
         AppManager.getInstance().killActivity(me);
     }
-
+    
     public void finishActivity() {
         super.finish();
     }
-
+    
     //可被重写的接口
     public abstract void initViews();
-
+    
     public abstract void initDatas(JumpParameter paramer);
-
+    
     public abstract void setEvents();
-
+    
     public void setDarkStatusBarTheme(boolean value) {
         darkStatusBarThemeValue = value;
         setTranslucentStatus(true);
     }
-
+    
     public void setDarkNavigationBarTheme(boolean value) {
         darkNavigationBarThemeValue = value;
         setTranslucentStatus(true);
     }
-
+    
     public void setNavigationBarBackgroundColor(@ColorInt int color) {
         navigationBarBackgroundColorValue = color;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(navigationBarBackgroundColorValue);
         }
     }
-
+    
     public void setNavigationBarBackgroundColor(int a, int r, int g, int b) {
         navigationBarBackgroundColorValue = Color.argb(a, r, g, b);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setNavigationBarColor(navigationBarBackgroundColorValue);
         }
     }
-
+    
     //状态栏主题
     protected void setTranslucentStatus(boolean on) {
         if (isMIUI()) setStatusBarDarkModeInMIUI(darkStatusBarThemeValue, this);
@@ -181,38 +187,38 @@ public abstract class BaseActivity extends AppCompatActivity {
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-
+                                      | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            
             if (darkStatusBarThemeValue) {
                 if (darkNavigationBarThemeValue) {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                                                                        | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                                                        | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                     );
                 } else {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                                                        | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     );
                 }
             } else {
                 if (darkNavigationBarThemeValue) {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                                                        | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                     );
                 } else {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     );
                 }
             }
-
+            
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -229,7 +235,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             window.setNavigationBarColor(navigationBarBackgroundColorValue);
         }
     }
-
+    
     private void setStatusBarDarkModeInMIUI(boolean darkmode, Activity activity) {
         Class<? extends Window> clazz = activity.getWindow().getClass();
         try {
@@ -243,7 +249,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    
     private boolean setStatusBarDarkIconInFlyme(Window window, boolean dark) {
         boolean result = false;
         if (window != null) {
@@ -269,11 +275,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return result;
     }
-
+    
     private static final String KEY_MIUI_VERSION_CODE = "ro.miui.ui.version.code";
     private static final String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
     private static final String KEY_MIUI_INTERNAL_STORAGE = "ro.miui.internal.storage";
-
+    
     //获取状态栏的高度
     public int getStatusBarHeight() {
         try {
@@ -287,7 +293,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return 0;
     }
-
+    
     //MIUI判断
     public static boolean isMIUI() {
         try {
@@ -297,84 +303,109 @@ public abstract class BaseActivity extends AppCompatActivity {
             return false;
         }
     }
-
+    
     //Flyme判断
     public static boolean isFlyme() {
         try {
             final Method method = Build.class.getMethod("hasSmartBar");
-
+            
             return method != null;
         } catch (final Exception e) {
             return false;
         }
     }
-
+    
     public static class BuildProperties {
-
+        
         private final Properties properties;
-
+        
         private BuildProperties() throws IOException {
             properties = new Properties();
             properties.load(new FileInputStream(new File(Environment.getRootDirectory(), "build.prop")));
         }
-
+        
         public boolean containsKey(final Object key) {
             return properties.containsKey(key);
         }
-
+        
         public boolean containsValue(final Object value) {
             return properties.containsValue(value);
         }
-
+        
         public Set<Map.Entry<Object, Object>> entrySet() {
             return properties.entrySet();
         }
-
+        
         public String getProperty(final String name) {
             return properties.getProperty(name);
         }
-
+        
         public String getProperty(final String name, final String defaultValue) {
             return properties.getProperty(name, defaultValue);
         }
-
+        
         public boolean isEmpty() {
             return properties.isEmpty();
         }
-
+        
         public Enumeration<Object> keys() {
             return properties.keys();
         }
-
+        
         public Set<Object> keySet() {
             return properties.keySet();
         }
-
+        
         public int size() {
             return properties.size();
         }
-
+        
         public Collection<Object> values() {
             return properties.values();
         }
-
+        
         public static BuildProperties newInstance() throws IOException {
             return new BuildProperties();
         }
     }
-
+    
     protected final static String NULL = "";
     private Toast toast;
-
+    
     protected void runOnMain(Runnable runnable) {
-        runOnUiThread(runnable);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (isAlive) {
+                    runnable.run();
+                }
+            }
+        });
     }
-
+    
+    protected void runOnMainDelayed(Runnable runnable, long time) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runOnMain(runnable);
+            }
+        }, time);
+    }
+    
+    protected void runDelayed(Runnable runnable, long time) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        }, time);
+    }
+    
     //简易吐司
     public void toast(final Object obj) {
         try {
             runOnMain(new Runnable() {
-
+                
                 @Override
                 public void run() {
                     if (toast == null)
@@ -387,12 +418,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    
     //简易Log
     public void log(final Object obj) {
         try {
             runOnMain(new Runnable() {
-
+                
                 @Override
                 public void run() {
                     if (DEBUGMODE) {
@@ -404,10 +435,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    
     //软键盘打开与收起
     public void setIMMStatus(boolean show, EditText editText) {
-        if (editText==null){
+        if (editText == null) {
             return;
         }
         if (show) {
@@ -420,26 +451,26 @@ public abstract class BaseActivity extends AppCompatActivity {
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
         }
     }
-
+    
     public static String StartFindWords = "";
-
+    
     //用于进行dip和px转换
     public static int dip2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
-
+    
     //用于进行px和dip转换
     public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
-
-
+    
+    
     //权限相关
     private final String TAG = "PermissionsUtil";
     private int REQUEST_CODE_PERMISSION = 0x00099;
-
+    
     /**
      * 请求权限
      * <p>
@@ -459,7 +490,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, needPermissions.toArray(new String[needPermissions.size()]), REQUEST_CODE_PERMISSION);
         }
     }
-
+    
     /**
      * 检测所有的权限是否都已授权
      *
@@ -470,7 +501,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
-
+        
         for (String permission : permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) !=
                     PackageManager.PERMISSION_GRANTED) {
@@ -479,7 +510,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return true;
     }
-
+    
     /**
      * 获取权限集中需要申请权限的列表
      *
@@ -497,8 +528,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return needRequestPermissionList;
     }
-
-
+    
+    
     /**
      * 系统请求权限回调
      *
@@ -519,7 +550,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
     }
-
+    
     /**
      * 确认所有的权限是否都已授权
      *
@@ -534,7 +565,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return true;
     }
-
+    
     /**
      * 显示提示对话框
      */
@@ -554,8 +585,8 @@ public abstract class BaseActivity extends AppCompatActivity {
                     }
                 }).show();
     }
-
-
+    
+    
     /**
      * 启动当前应用设置页面
      */
@@ -564,7 +595,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);
     }
-
+    
     //获取屏幕宽度
     public int getDisPlayWidth() {
         Display disp = getWindowManager().getDefaultDisplay();
@@ -572,7 +603,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         disp.getSize(outP);
         return outP.x;
     }
-
+    
     //获取屏幕可用部分高度（屏幕高度-状态栏高度-屏幕底栏高度）
     public int getDisPlayHeight() {
         Display disp = getWindowManager().getDefaultDisplay();
@@ -580,7 +611,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         disp.getSize(outP);
         return outP.y;
     }
-
+    
     public int getNavbarHeight() {
         int resourceId = 0;
         int rid = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
@@ -590,7 +621,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         } else
             return 0;
     }
-
+    
     //位移动画
     public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue, long time, long delay) {
         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
@@ -602,18 +633,18 @@ public abstract class BaseActivity extends AppCompatActivity {
         objectAnimator.start();
         return objectAnimator;
     }
-
+    
     public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue, long time) {
         return moveAnimation(obj, perference, aimValue, time, 0);
     }
-
+    
     public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue) {
         return moveAnimation(obj, perference, aimValue, 300, 0);
     }
-
+    
     //复制文本到剪贴板
-    public boolean copy(String s){
-        if (isNull(s)){
+    public boolean copy(String s) {
+        if (isNull(s)) {
             log("要复制的文本为空");
             return false;
         }
@@ -622,7 +653,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         cm.setPrimaryClip(mClipData);
         return true;
     }
-
+    
     //网络传输文本判空规则
     public boolean isNull(String s) {
         if (s == null || s.trim().isEmpty() || s.equals("null")) {
@@ -630,7 +661,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return false;
     }
-
+    
     //更好用的跳转方式
     public boolean jump(Class<?> cls) {
         try {
@@ -641,7 +672,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return true;
     }
-
+    
     //可以传任何类型参数的跳转方式
     public boolean jump(Class<?> cls, JumpParameter jumpParameter) {
         try {
@@ -653,7 +684,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return true;
     }
-
+    
     //带返回值的跳转
     public boolean jump(Class<?> cls, OnResponseListener onResponseListener) {
         try {
@@ -670,7 +701,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return true;
     }
-
+    
     //带返回值的跳转
     public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnResponseListener onResponseListener) {
         try {
@@ -687,17 +718,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         return true;
     }
-
+    
     //目标Activity：设定要返回的数据
     public void setResponse(JumpParameter jumpParameter) {
         ParameterCache.getInstance().setResponse((String) getParameter().get("responseClassName"), jumpParameter);
     }
-
+    
     //获取跳转参数
     public JumpParameter getParameter() {
         return ParameterCache.getInstance().get(me.getClass().getName());
     }
-
+    
     @Override
     protected void onResume() {
         isActive = true;
@@ -707,20 +738,21 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         super.onResume();
     }
-
+    
     @Override
     protected void onPause() {
         isActive = false;
         super.onPause();
     }
-
+    
     @Override
     protected void onDestroy() {
+        isAlive = false;
         if (getParameter() != null) getParameter().cleanAll();
         AppManager.getInstance().deleteActivity(me);
         super.onDestroy();
     }
-
+    
     public void jumpAnim(int enterAnim, int exitAnim) {
         int version = Integer.valueOf(android.os.Build.VERSION.SDK);
         if (version > 5) {

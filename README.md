@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.5.2-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.5.3-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.2/link">
-<img src="https://img.shields.io/badge/Maven-6.5.2-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.3/link">
+<img src="https://img.shields.io/badge/Maven-6.5.3-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,17 +50,18 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.5.2</version>
+  <version>6.5.3</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.5.2'
+implementation 'com.kongzue.baseframework:baseframework:6.5.3'
 ```
 
 ## BaseActivity功能
+
 
 #### 带自定义参数的跳转
 Android 默认的 Intent无法支持自定义类型参数的跳转，BaseActivity 通过自有的数据通道允许传输自定义类型的数据给要跳转到的另一个 BaseActivity：
@@ -210,6 +211,33 @@ killAllActivity()               //结束所有BaseActivity
 AppExit()                       //退出App
 ```
 其他方法，例如 pushActivity 添加Activity到堆栈，都是自动执行的，不需要手动调用。
+
+## 异步或同步
+有时我们需要等待一段时间执行事务，也有时我们需要从异步线程返回主线程进行 UI 等操作，这时往往需要在线程间进行切换进行操作，但偶尔也会因为执行过程中因 Activity 被关闭等问题出现空指针异常。
+
+此时可以使用 BaseFramework 自带的异步同步方法轻松跳跃线程进行操作，此方法包含在 BaseActivity 和 BaseFragment 中：
+
+1) 回到主线程操作：
+```
+runOnMain(new Runnable(){
+    //此处可切换回主线程进行操作
+});
+```
+
+2) 创建延迟在主线程执行操作：
+```
+runOnMainDelayed(new Runnable(){
+    //此处可切换回主线程进行延迟操作
+}, time);       //time 即延迟时间，毫秒单位
+```
+
+3) 创建延迟操作（用于代替 new Handler().postDelayed(Runnable, time)）：
+```
+runDelayed(new Runnable(){
+    //此处可进行延迟操作（可能在异步线程）
+}, time);       //time 即延迟时间，毫秒单位
+```
+
 
 ## BaseAdapter
 注意，此处的 BaseAdapter 特指 com.kongzue.baseframework.BaseAdapter。
@@ -392,6 +420,11 @@ list.setAdapter(baseAdapter);
 ```
 
 ## 更新日志：
+v6.5.3:
+- 可以使用 runOnMain(Runnable) 来执行需要在主线程执行的事务，该方法与 runOnUiThread() 的不同点在于会自动判断当前 BaseActivity 是否处于存活状态，无须担心因此出现的空指针问题；
+- 可以使用 runOnMainDelayed(Runnable, time) 来执行需要在主线程延迟执行的事务；
+- 可以使用 runDelayed(Runnable, time) 来替代 new Handler().postDelayed(Runnable, time) 执行延迟事务；
+
 v6.5.2:
 - 修复 setIMMStatus(boolean, Edittext) 开关输入法方法中，Edittext 可能为 NULL 导致空指针的问题；
 - 跳转到应用设置方法 startAppSettings() 不再是私有的，他现在可以公开调用；

@@ -30,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
@@ -54,7 +55,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * @Version: 6.4.5
+ * @Version: 6.5.4
  * @Author: Kongzue
  * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
@@ -63,9 +64,11 @@ import java.util.Set;
 
 public abstract class BaseActivity extends AppCompatActivity {
     
+    private LifeCircleListener lifeCircleListener;          //快速管理生命周期
+    
     public static boolean DEBUGMODE = true;
     public boolean isActive = false;                                        //当前Activity是否处于前台
-    public boolean isAlive = false;                                        //当前Activity是否处于前台
+    public boolean isAlive = false;                                         //当前Activity是否处于前台
     
     private OnResponseListener onResponseListener;                          //jump跳转回调
     private OnPermissionResponseListener onPermissionResponseListener;      //权限申请回调
@@ -89,6 +92,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         
         setTranslucentStatus(true);
         AppManager.getInstance().pushActivity(me);
+        
+        if (lifeCircleListener != null) lifeCircleListener.onCreate();
         
         initViews();
         initDatas(getParameter());
@@ -116,6 +121,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         initDatas(getParameter());
         setEvents();
         
+    }
+    
+    public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
+        this.lifeCircleListener = lifeCircleListener;
     }
     
     private void initAttributes() {
@@ -729,6 +738,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         return ParameterCache.getInstance().get(me.getClass().getName());
     }
     
+    
+    
     @Override
     protected void onResume() {
         isActive = true;
@@ -737,11 +748,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             onResponseListener = null;
         }
         super.onResume();
+        if (lifeCircleListener != null) lifeCircleListener.onResume();
     }
     
     @Override
     protected void onPause() {
         isActive = false;
+        if (lifeCircleListener != null) lifeCircleListener.onPause();
         super.onPause();
     }
     
@@ -750,6 +763,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         isAlive = false;
         if (getParameter() != null) getParameter().cleanAll();
         AppManager.getInstance().deleteActivity(me);
+        if (lifeCircleListener != null) lifeCircleListener.onDestroy();
         super.onDestroy();
     }
     

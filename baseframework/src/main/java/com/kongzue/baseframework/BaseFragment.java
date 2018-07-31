@@ -1,27 +1,27 @@
 package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnResponseListener;
 
-import static com.kongzue.baseframework.BaseActivity.DEBUGMODE;
-
 /**
- * @Version: 6.4.5
+ * @Version: 6.5.4
  * @Author: Kongzue
  * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
@@ -32,7 +32,9 @@ public abstract class BaseFragment extends Fragment {
     
     public int layoutResId = -1;
     
-    public BaseActivity me;
+    private LifeCircleListener lifeCircleListener;          //快速管理生命周期
+    
+    public BaseActivity me;                                                 //绑定的BaseActivity
     
     public void setActivity(BaseActivity activity) {
         this.me = activity;
@@ -63,10 +65,17 @@ public abstract class BaseFragment extends Fragment {
             e.printStackTrace();
         }
         rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+        
+        if (lifeCircleListener != null) lifeCircleListener.onCreate();
+        
         initViews();
         initDatas();
         setEvents();
         return rootView;
+    }
+    
+    public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
+        this.lifeCircleListener = lifeCircleListener;
     }
     
     //不再推荐使用，建议直接在Fragment上注解：@Layout(你的layout资源id)
@@ -186,6 +195,34 @@ public abstract class BaseFragment extends Fragment {
     
     protected void runDelayed(Runnable runnable, long time) {
         me.runDelayed(runnable, time);
+    }
+    
+    //复制文本到剪贴板
+    public boolean copy(String s) {
+        return me.copy(s);
+    }
+    
+    //软键盘打开与收起
+    public void setIMMStatus(boolean show, EditText editText) {
+        me.setIMMStatus(show, editText);
+    }
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (lifeCircleListener != null) lifeCircleListener.onResume();
+    }
+    
+    @Override
+    public void onPause() {
+        if (lifeCircleListener != null) lifeCircleListener.onResume();
+        super.onPause();
+    }
+    
+    @Override
+    public void onDestroy() {
+        if (lifeCircleListener != null) lifeCircleListener.onDestroy();
+        super.onDestroy();
     }
 }
 

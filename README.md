@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.5.3-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.5.4-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.3/link">
-<img src="https://img.shields.io/badge/Maven-6.5.3-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.4/link">
+<img src="https://img.shields.io/badge/Maven-6.5.4-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,20 +50,52 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.5.3</version>
+  <version>6.5.4</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.5.3'
+implementation 'com.kongzue.baseframework:baseframework:6.5.4'
 ```
 
-## BaseActivity功能
+# 目录
+
+· <a href="#1">BaseActivity功能</a>
+
+···· <a href="#1-1">带自定义参数的跳转</a>
+
+···· <a href="#1-2">更简单的跳转后返回数据</a>
+
+···· <a href="#1-3">权限申请</a>
+
+···· <a href="#1-4">BaseActivity提供的小工具</a>
+
+···· <a href="#1-5">BaseActivity的生命周期</a>
+
+· <a href="#2">BaseFragment功能</a>
+
+· <a href="#3">BaseActivity提供的小工具</a>
+
+· <a href="#4">Preferences</a>
+
+· <a href="#5">AppManager</a>
+
+· <a href="#6">BaseAdapter</a>
+
+···· <a href="#6-1">JavaBean 适配方式</a>
+
+···· <a href="#6-2">Map 适配方式</a>
+
+···· <a href="#6-3">多种布局的绑定方式</a>
+
+···· <a href="#6-4">数据刷新方法</a>
+
+## <a name="1">BaseActivity功能</a>
 
 
-#### 带自定义参数的跳转
+#### <a name="1-1">带自定义参数的跳转</a>
 Android 默认的 Intent无法支持自定义类型参数的跳转，BaseActivity 通过自有的数据通道允许传输自定义类型的数据给要跳转到的另一个 BaseActivity：
 
 跳转代码范例：
@@ -83,7 +115,7 @@ Bitmap parameter2 = (Bitmap) getParameter().get("参数2");
 if (parameter2 != null) imgP2.setImageBitmap(parameter2);
 ```
 
-#### 更简单的跳转后返回数据
+#### <a name="1-2">更简单的跳转后返回数据</a>
 以往我们需要通过重写实现 onActivityResult 来实现回传数据，但在 BaseActivity 中，你只需要一个监听器：
 
 跳转代码范例：
@@ -124,7 +156,7 @@ if ((boolean) getParameter().get("needResponse") == true) {
 }
 ```
 
-#### 权限申请
+#### <a name="1-3">权限申请</a>
 要进行权限申请也变得更加简单，只需要实现相应的回调 OnPermissionResponseListener 即可：
 ```
 requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
@@ -139,7 +171,7 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 });
 ```
 
-#### 除此之外，BaseActivity还支持以下小工具
+#### <a name="1-4">BaseActivity提供的小工具</a>
 //简易吐司：
 
 toast(Obj);
@@ -171,7 +203,34 @@ isNull(String);
 //跳转动画（参数为您的动画资源id）：
 jumpAnim(int enterAnim, int exitAnim)
 
-## BaseFragment功能
+#### <a name="1-5">BaseActivity的生命周期</a>
+
+通常的，您可以通过重写 onCreate()、 onResume()、 onPause()、 onDestroy() 四个方法来监控 Activity 的生命周期，但因为每个方法为独立的方法函数，可能在较多代码时不容易寻找他们的存在。
+
+在 BaseActivity 中，您可以通过 setLifeCircleListener(LifeCircleListener LifeCircleListener) 来直接添加一个生命周期监听器，其中就包含了上述的四个方法，进行统一管理：
+
+```
+setLifeCircleListener(new LifeCircleListener() {
+    @Override
+    public void onCreate() {
+
+    }
+    @Override
+    public void onResume() {
+
+    }
+    @Override
+    public void onPause() {
+
+    }
+    @Override
+    public void onDestroy() {
+
+    }
+});
+```
+
+## <a name="2">BaseFragment功能</a>
 BaseFragment 与普通的 Fragment 有什么区别？
 
 首先，创建它变得异常的简单，你只需要在class上注解@Layout(你的布局资源文件id，例如R.layout.xxx)即可，剩下的事情BaseFragment会自动帮你完成。
@@ -180,7 +239,9 @@ BaseFragment 与普通的 Fragment 有什么区别？
 
 BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以轻松使用它们。
 
-## Preferences
+BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment 中通过 setLifeCircleListener(LifeCircleListener LifeCircleListener) 监控 BaseFragment 的生命周期。
+
+## <a name="3">Preferences</a>
 Preferences是SharedPreferences的简易封装。
 
 每次手写SharedPreferences过于繁琐，因此封装了一个简易的属性记录读取类。 通过对属性的常见数据类型进行封装，使属性读取写入更方便，同时提供一些属性管理方法。
@@ -201,7 +262,7 @@ set(context, path, preferencesName, ?)
 cleanAll();
 ```
 
-## AppManager
+## <a name="4">AppManager</a>
 AppManager 是 BaseActivity 的管理工具类，原工具是由 @xiaohaibin(https://github.com/xiaohaibin) 所开发，经同意集成在 BaseFramework 中，此处略加修改更适合 BaseActivity 的管理工作。
 
 提供如下方法：
@@ -212,7 +273,7 @@ AppExit()                       //退出App
 ```
 其他方法，例如 pushActivity 添加Activity到堆栈，都是自动执行的，不需要手动调用。
 
-## 异步或同步
+## <a name="5">异步或同步</a>
 有时我们需要等待一段时间执行事务，也有时我们需要从异步线程返回主线程进行 UI 等操作，这时往往需要在线程间进行切换进行操作，但偶尔也会因为执行过程中因 Activity 被关闭等问题出现空指针异常。
 
 此时可以使用 BaseFramework 自带的异步同步方法轻松跳跃线程进行操作，此方法包含在 BaseActivity 和 BaseFragment 中：
@@ -239,7 +300,7 @@ runDelayed(new Runnable(){
 ```
 
 
-## BaseAdapter
+## <a name="6">BaseAdapter</a>
 注意，此处的 BaseAdapter 特指 com.kongzue.baseframework.BaseAdapter。
 
 ![Kongzue's BaseAdapter](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseadapter.png)
@@ -248,7 +309,7 @@ runDelayed(new Runnable(){
 
 但再重写过程中实际上是有很多重复性的代码，导致我们的项目臃肿不堪，从 v6.4.8 版本起，新增了 BaseAdapter 来实现各种自定义布局适配器的需求：
 
-1. JavaBean 适配方式
+#### <a name="6-1">JavaBean 适配方式</a>
 
 使用此方式需要先创建继承自 BaseAdapter.BaseDataBean 的 JavaBean 数据集合来封装数据，例如在我们 Demo 中的：
 ```
@@ -302,7 +363,7 @@ list.setAdapter(baseAdapter);
 SimpleAdapterSettings 是一个适配器控制器的回调接口，在其中重写 setViewHolder 和 setData方法，其中 setViewHolder 需要您在此处根据父布局 convertView 创建布局管理组件 ViewHolder，并回传您的 ViewHolder。接下来会在 setData 中将 ViewHolder 和 相对应的数据 dataBean给出，请在此方法中对组件进行赋值和事件绑定。
 注意在此方法中您可以将 dataBean 强转为您的 JavaBean 类，viewHolder 也可以强转为您的 ViewHolder。
 
-2. Map 适配方式
+#### <a name="6-2">Map 适配方式</a>
 
 应对复杂多变的数据我们可能会选择使用 Map 来存储我们的需要展现的数据，BaseAdapter 亦支持此方式的数据，与上述方法类似，您可以轻松完成数据的绑定和组件的展现：
 ```
@@ -333,7 +394,7 @@ baseAdapter = new BaseAdapter(me, datas, R.layout.item_list_layout1, new SimpleM
 list.setAdapter(baseAdapter);
 ```
 
-3. 多种布局的绑定方式
+#### <a name="6-3">多种布局的绑定方式</a>
 
 根据实际业务需求，我们可能需要在一个组件中展现多种布局，此时您首先需要对您的布局进行编号，从0开始，依次往后，并将他们添加为一个 Map 集合，其中键值对：id对应布局资源id（LayoutResId）：
 ```
@@ -401,6 +462,16 @@ list.setAdapter(baseAdapter);
 
 以上就是关于 BaseAdapter 的简单介绍了。您还可以通过文档前半部分的二维码下载 Demo ，其中会为您展现关于 BaseAdapter 全部的绑定方式。
 
+#### <a name="6-4">数据刷新方法</a>
+
+从 v6.5.4 版本起，我们添加了 refreshDataChanged(...) 用于代替 notifyDataSetChanged() 刷新数据，该方法主要目的为解决 notifyDataSetChanged() 对于某些内容变化不敏感的问题。
+
+使用方法为：
+```
+baseAdapter.refreshDataChanged(List<Map<String, Object>> newDatas);
+//或
+baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
+```
 
 ## 开源协议
 ```
@@ -420,6 +491,10 @@ list.setAdapter(baseAdapter);
 ```
 
 ## 更新日志：
+v6.5.4:
+- 增加 BaseActivity 与 BaseFragment 一键管理生命周期监听器，可在 BaseActivity 的子类中使用 setLifeCircleListener(LifeCircleListener);
+- BaseAdapter 增加了 refreshDataChanged(...) 用于代替 notifyDataSetChanged() 刷新数据，新方法对于内容的变化也很敏感；
+
 v6.5.3:
 - 可以使用 runOnMain(Runnable) 来执行需要在主线程执行的事务，该方法与 runOnUiThread() 的不同点在于会自动判断当前 BaseActivity 是否处于存活状态，无须担心因此出现的空指针问题；
 - 可以使用 runOnMainDelayed(Runnable, time) 来执行需要在主线程延迟执行的事务；

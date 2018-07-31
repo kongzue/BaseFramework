@@ -10,13 +10,13 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
@@ -76,6 +76,28 @@ public class MainActivity extends BaseActivity {
 //        setDarkStatusBarTheme(true);
 //        setDarkNavigationBarThemeValue(true);
 //        setNavigationBarBackgroundColorValue(Color.argb(255,255,255,255));
+        
+        setLifeCircleListener(new LifeCircleListener() {
+            @Override
+            public void onCreate() {
+        
+            }
+    
+            @Override
+            public void onResume() {
+        
+            }
+    
+            @Override
+            public void onPause() {
+        
+            }
+    
+            @Override
+            public void onDestroy() {
+        
+            }
+        });
     }
 
     @Override

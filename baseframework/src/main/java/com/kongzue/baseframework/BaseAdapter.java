@@ -2,7 +2,6 @@ package com.kongzue.baseframework;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import com.kongzue.baseframework.interfaces.MultipleMapAdapterSettings;
 import com.kongzue.baseframework.interfaces.SimpleAdapterSettings;
 import com.kongzue.baseframework.interfaces.SimpleMapAdapterSettings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -203,6 +203,22 @@ public class BaseAdapter extends android.widget.BaseAdapter {
         public BaseDataBean setType(int type) {
             this.type = type;
             return this;
+        }
+    }
+    
+    public void refreshDataChanged(List<Map<String, Object>> newDatas) {
+        if (mapDatas != null) {
+            mapDatas = new ArrayList<>();
+            mapDatas.addAll(newDatas);
+            notifyDataSetChanged();
+        }
+    }
+    
+    public void refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas) {
+        if (datas != null) {
+            datas = new ArrayList<>();
+            datas = newDatas;
+            notifyDataSetChanged();
         }
     }
     

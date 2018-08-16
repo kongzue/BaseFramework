@@ -70,7 +70,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean isActive = false;                                        //当前Activity是否处于前台
     public boolean isAlive = false;                                         //当前Activity是否处于前台
     
-    private OnResponseListener onResponseListener;                          //jump跳转回调
+    public OnResponseListener onResponseListener;                          //jump跳转回调
     private OnPermissionResponseListener onPermissionResponseListener;      //权限申请回调
     
     public BaseActivity me = this;

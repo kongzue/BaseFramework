@@ -188,11 +188,11 @@ setIMMStatus(boolean show, EditText editText);
 
 //dip与像素px转换：
 
-dip2px(Context context, float dpValue);
+dip2px(float dpValue);
 
 //像素px与dip转换：
 
-dip2px(Context context, float dpValue);
+dip2px(float dpValue);
 
 //属性动画：
 

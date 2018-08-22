@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.5.4-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.5.5.1-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.4/link">
-<img src="https://img.shields.io/badge/Maven-6.5.4-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.5.1/link">
+<img src="https://img.shields.io/badge/Maven-6.5.5.1-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,15 +50,17 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.5.4</version>
+  <version>6.5.5.1</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.5.4'
+implementation 'com.kongzue.baseframework:baseframework:6.5.5.1'
 ```
+
+⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
 
 # 目录
 
@@ -120,7 +122,7 @@ if (parameter2 != null) imgP2.setImageBitmap(parameter2);
 
 跳转代码范例：
 ```
-jump(ResponseActivity.class, new OnResponseListener() {
+jump(ResponseActivity.class, new OnJumpResponseListener() {
     @Override
     public void OnResponse(JumpParameter parameter) {
         if (parameter == null) {
@@ -137,7 +139,7 @@ jump(ResponseActivity.class, new OnResponseListener() {
 jump(ResponseActivity.class,new JumpParameter()
                 .put("参数1", "这是一段文字参数")
                 .put("参数2", "这是一段文字参数")
-        , new OnResponseListener() {
+        , new OnJumpResponseListener() {
     @Override
     public void OnResponse(JumpParameter parameter) {
         if (parameter==null){
@@ -490,7 +492,18 @@ baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
    limitations under the License.
 ```
 
-## 更新日志：
+## <a name="about">更新日志</a>：
+v6.5.5.1:
+- 警告：因命名冲突，6.5.5版本起，跳转回调参数 OnResponseListener 改名为 OnJumpResponseListener；
+- 可以使用bigLog(...)打印更长的日志了；
+- dip2px和px2dip不再需要context参数；
+- 显示/关闭键盘的方法setIMMStatus(...)将被更名为showIME(...)，目前新旧方法都可以使用；
+- 更新getNavbarHeight()方法，可以获取到更为准确的底栏高度；
+- 新增getRootHeight()方法，可以获取准确真正的屏幕高度（含底栏和状态栏）；
+- 新增BaseActivity注解 @FullScreen(true)可以直接使Activity全屏；
+- 修正了 @NavigationBarBackgroundColor(a,r,g,b)的默认值；
+- jump支持了共享元素，只需要在原参数末尾增加共享元素view，例如jump(Class<?> cls, View transitionView)；
+
 v6.5.4:
 - 增加 BaseActivity 与 BaseFragment 一键管理生命周期监听器，可在 BaseActivity 的子类中使用 setLifeCircleListener(LifeCircleListener);
 - BaseAdapter 增加了 refreshDataChanged(...) 用于代替 notifyDataSetChanged() 刷新数据，新方法对于内容的变化也很敏感；

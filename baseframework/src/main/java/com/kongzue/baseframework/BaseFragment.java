@@ -1,8 +1,6 @@
 package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -18,10 +16,10 @@ import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
-import com.kongzue.baseframework.util.OnResponseListener;
+import com.kongzue.baseframework.util.OnJumpResponseListener;
 
 /**
- * @Version: 6.5.4
+ * @Version: 6.5.5
  * @Author: Kongzue
  * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
@@ -153,13 +151,35 @@ public abstract class BaseFragment extends Fragment {
     }
     
     //带返回值的跳转
-    public boolean jump(Class<?> cls, OnResponseListener onResponseListener) {
-        return me.jump(cls, onResponseListener);
+    public boolean jump(Class<?> cls, OnJumpResponseListener onJumpResponseListener) {
+        return me.jump(cls, onJumpResponseListener);
     }
     
     //带返回值的跳转
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnResponseListener onResponseListener) {
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener) {
         return me.jump(cls, jumpParameter, onResponseListener);
+    }
+    
+    //带共享元素的跳转方式
+    public boolean jump(Class<?> cls, View transitionView) {
+        return me.jump(cls, transitionView);
+    }
+    
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
+        return me.jump(cls, jumpParameter, transitionView);
+    }
+    
+    public boolean jump(Class<?> cls, OnJumpResponseListener onJumpResponseListener, View transitionView) {
+        return me.jump(cls, onJumpResponseListener, transitionView);
+    }
+    
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener, View transitionView) {
+        return me.jump(cls, jumpParameter, onJumpResponseListener, transitionView);
+    }
+    
+    //大型打印使用，Log默认是有字数限制的，如有需要打印更长的文本可以使用此方法
+    public void bigLog(String msg) {
+        me.bigLog(msg);
     }
     
     //目标Activity：设定要返回的数据

@@ -16,21 +16,22 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
-import com.kongzue.baseframework.util.OnResponseListener;
+import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.JumpParameter;
 
 @Layout(R.layout.activity_main)
 @DarkStatusBarTheme(false)
-@NavigationBarBackgroundColor(a = 255,r = 255,g = 255,b = 255)
+@NavigationBarBackgroundColor(a = 255, r = 255, g = 255, b = 255)
 @DarkNavigationBarTheme(true)
 public class MainActivity extends BaseActivity {
-
+    
     private FragmentDemo fragmentDemo;
     
     private TextView txtTitle;
@@ -39,6 +40,7 @@ public class MainActivity extends BaseActivity {
     private Button intentToBaseAdapter;
     private Button btnJump;
     private Button btnResult;
+    private Button btnTransition;
     private Button btnPermission;
     private TextView linkBokhttp;
     private TextView linkBvolley;
@@ -55,6 +57,7 @@ public class MainActivity extends BaseActivity {
         intentToBaseAdapter = findViewById(R.id.intentToBaseAdapter);
         btnJump = findViewById(R.id.btn_jump);
         btnResult = findViewById(R.id.btn_result);
+        btnTransition = findViewById(R.id.btn_transition);
         btnPermission = findViewById(R.id.btn_permission);
         linkBokhttp = findViewById(R.id.link_bokhttp);
         linkBvolley = findViewById(R.id.link_bvolley);
@@ -62,10 +65,12 @@ public class MainActivity extends BaseActivity {
         linkDialog = findViewById(R.id.link_dialog);
         frame = findViewById(R.id.frame);
     }
-
+    
     @Override
     public void initDatas(JumpParameter parameter) {
-        log(Color.rgb(70,155,223));
+        log(".>>" + getNavbarHeight());
+        
+        log(Color.rgb(70, 155, 223));
         //此处编写初始化代码
         linkHome.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         linkBokhttp.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
@@ -80,29 +85,37 @@ public class MainActivity extends BaseActivity {
         setLifeCircleListener(new LifeCircleListener() {
             @Override
             public void onCreate() {
-        
+            
             }
-    
+            
             @Override
             public void onResume() {
-        
+            
             }
-    
+            
             @Override
             public void onPause() {
-        
+            
             }
-    
+            
             @Override
             public void onDestroy() {
-        
+            
             }
         });
     }
-
+    
     @Override
     public void setEvents() {
         //此处为组件绑定事件
+        
+        btnTransition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                jump(TransitionActivity.class, btnTransition);
+            }
+        });
+        
         intentToBaseAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +131,7 @@ public class MainActivity extends BaseActivity {
                     public void onSuccess(String[] permissions) {
                         toast("申请权限成功");
                     }
-
+                    
                     @Override
                     public void onFail() {
                         toast("申请权限失败");
@@ -126,7 +139,7 @@ public class MainActivity extends BaseActivity {
                 });
             }
         });
-
+        
         btnResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,7 +149,7 @@ public class MainActivity extends BaseActivity {
                 builder.setPositiveButton("知道了", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        jump(ResponseActivity.class, new OnResponseListener() {
+                        jump(ResponseActivity.class, new OnJumpResponseListener() {
                             @Override
                             public void OnResponse(JumpParameter jumpParameter) {
                                 if (jumpParameter == null) {
@@ -146,7 +159,7 @@ public class MainActivity extends BaseActivity {
                                 }
                             }
                         });
-
+                        
                         //亦可选用同时带参数+返回值的跳转
                         //jump(ResponseActivity.class,new JumpParameter()
                         //                .put("参数1", "这是一段文字参数")
@@ -167,7 +180,7 @@ public class MainActivity extends BaseActivity {
                 dialog.show();
             }
         });
-
+        
         btnJump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,7 +201,7 @@ public class MainActivity extends BaseActivity {
                 dialog.show();
             }
         });
-
+        
         linkHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -197,7 +210,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
+        
         intentToFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,7 +226,7 @@ public class MainActivity extends BaseActivity {
                 transaction.commit();
             }
         });
-
+        
         linkUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -222,7 +235,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
+        
         linkDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -231,7 +244,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
+        
         linkBvolley.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -240,7 +253,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
+        
         linkBokhttp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,7 +263,7 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-
+    
     public void hideFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

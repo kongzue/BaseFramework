@@ -21,7 +21,8 @@
         </activity>
         <activity android:name=".JumpActivity" />
         <activity android:name=".ResponseActivity" />
-        <activity android:name=".AdapterTestActivity"></activity>
+        <activity android:name=".AdapterTestActivity" />
+        <activity android:name=".TransitionActivity"></activity>
     </application>
 
 </manifest>

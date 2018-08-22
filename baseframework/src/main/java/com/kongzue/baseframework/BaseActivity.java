@@ -2,6 +2,7 @@ package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -19,8 +20,10 @@ import android.provider.Settings;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -30,6 +33,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
@@ -38,7 +42,7 @@ import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
-import com.kongzue.baseframework.util.OnResponseListener;
+import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
 
 import java.io.File;
@@ -55,7 +59,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * @Version: 6.5.4
+ * @Version: 6.5.5
  * @Author: Kongzue
  * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
@@ -70,11 +74,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean isActive = false;                                        //当前Activity是否处于前台
     public boolean isAlive = false;                                         //当前Activity是否处于前台
     
-    public OnResponseListener onResponseListener;                          //jump跳转回调
+    public OnJumpResponseListener onResponseListener;                          //jump跳转回调
     private OnPermissionResponseListener onPermissionResponseListener;      //权限申请回调
     
     public BaseActivity me = this;
     
+    private boolean isFullScreen = false;
     private boolean darkStatusBarThemeValue = false;
     private boolean darkNavigationBarThemeValue = false;
     private int navigationBarBackgroundColorValue = Color.BLACK;
@@ -84,13 +89,20 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Deprecated
     protected void onCreate(Bundle savedInstanceState, int layoutResId) {
         super.onCreate(savedInstanceState);
-        setContentView(layoutResId);
-        
-        isAlive = true;
         
         initAttributes();
         
-        setTranslucentStatus(true);
+        if (isFullScreen) requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(layoutResId);
+        if (isFullScreen) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        } else {
+            setTranslucentStatus(true);
+        }
+        
+        isAlive = true;
+        
         AppManager.getInstance().pushActivity(me);
         
         if (lifeCircleListener != null) lifeCircleListener.onCreate();
@@ -113,8 +125,14 @@ public abstract class BaseActivity extends AppCompatActivity {
             return;
         }
         
+        if (isFullScreen) requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(layoutResId);
-        setTranslucentStatus(true);
+        if (isFullScreen) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
+        } else {
+            setTranslucentStatus(true);
+        }
         AppManager.getInstance().pushActivity(me);
         
         initViews();
@@ -127,12 +145,17 @@ public abstract class BaseActivity extends AppCompatActivity {
         this.lifeCircleListener = lifeCircleListener;
     }
     
+    //加载注解设置
     private void initAttributes() {
         try {
+            FullScreen fullScreen = getClass().getAnnotation(FullScreen.class);
             Layout layout = getClass().getAnnotation(Layout.class);
             DarkNavigationBarTheme darkNavigationBarTheme = getClass().getAnnotation(DarkNavigationBarTheme.class);
             DarkStatusBarTheme darkStatusBarTheme = getClass().getAnnotation(DarkStatusBarTheme.class);
             NavigationBarBackgroundColor navigationBarBackgroundColor = getClass().getAnnotation(NavigationBarBackgroundColor.class);
+            if (fullScreen != null) {
+                isFullScreen = fullScreen.value();
+            }
             if (layout != null) {
                 if (layout.value() != -1) layoutResId = layout.value();
             }
@@ -446,7 +469,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     //软键盘打开与收起
-    public void setIMMStatus(boolean show, EditText editText) {
+    public void showIME(boolean show, EditText editText) {
         if (editText == null) {
             return;
         }
@@ -461,17 +484,23 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
     
+    //兼容用
+    @Deprecated
+    public void setIMMStatus(boolean show, EditText editText) {
+        showIME(show, editText);
+    }
+    
     public static String StartFindWords = "";
     
     //用于进行dip和px转换
-    public static int dip2px(Context context, float dpValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
+    public int dip2px(float dpValue) {
+        final float scale = getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
     
     //用于进行px和dip转换
-    public static int px2dip(Context context, float pxValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
+    public int px2dip(float pxValue) {
+        final float scale = getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
     
@@ -595,10 +624,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }).show();
     }
     
-    
-    /**
-     * 启动当前应用设置页面
-     */
+    //启动当前应用设置页面
     public void startAppSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + getPackageName()));
@@ -614,21 +640,35 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     //获取屏幕可用部分高度（屏幕高度-状态栏高度-屏幕底栏高度）
-    public int getDisPlayHeight() {
+    public int getDisplayHeight() {
         Display disp = getWindowManager().getDefaultDisplay();
         Point outP = new Point();
         disp.getSize(outP);
         return outP.y;
     }
     
+    //获取底栏高度
     public int getNavbarHeight() {
-        int resourceId = 0;
-        int rid = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
-        if (rid != 0) {
-            resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-            return getResources().getDimensionPixelSize(resourceId);
-        } else
-            return 0;
+        int rootHeight = getRootHeight();
+        int navbarHeight = rootHeight - getWindowManager().getDefaultDisplay().getHeight();
+        if (navbarHeight < 0) navbarHeight = 0;
+        return navbarHeight;
+    }
+    
+    //获取真实的屏幕高度，注意判断非0
+    public int getRootHeight() {
+        int diaplayHeight = 0;
+        Display display = getWindowManager().getDefaultDisplay();
+        Point point = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            display.getRealSize(point);
+            diaplayHeight = point.y;
+        } else {
+            DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            diaplayHeight = dm.heightPixels; //得到高度```
+        }
+        return diaplayHeight;
     }
     
     //位移动画
@@ -676,7 +716,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         try {
             startActivity(new Intent(me, cls));
         } catch (Exception e) {
-            e.printStackTrace();
+            if (DEBUGMODE) e.printStackTrace();
             return false;
         }
         return true;
@@ -685,47 +725,132 @@ public abstract class BaseActivity extends AppCompatActivity {
     //可以传任何类型参数的跳转方式
     public boolean jump(Class<?> cls, JumpParameter jumpParameter) {
         try {
+            if (jumpParameter != null)
+                ParameterCache.getInstance().set(cls.getName(), jumpParameter);
             startActivity(new Intent(me, cls));
-            ParameterCache.getInstance().set(cls.getName(), jumpParameter);
         } catch (Exception e) {
-            e.printStackTrace();
+            if (DEBUGMODE) e.printStackTrace();
             return false;
         }
         return true;
     }
     
     //带返回值的跳转
-    public boolean jump(Class<?> cls, OnResponseListener onResponseListener) {
-        try {
-            startActivity(new Intent(me, cls));
-            ParameterCache.getInstance().cleanResponse(me.getClass().getName());
-            ParameterCache.getInstance().set(cls.getName(), new JumpParameter()
-                    .put("needResponse", true)
-                    .put("responseClassName", me.getClass().getName())
-            );
-            this.onResponseListener = onResponseListener;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+    public boolean jump(Class<?> cls, OnJumpResponseListener onResponseListener) {
+        return jump(cls, null, onResponseListener);
     }
     
-    //带返回值的跳转
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnResponseListener onResponseListener) {
+    //带参数和返回值跳转
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener) {
         try {
             startActivity(new Intent(me, cls));
             ParameterCache.getInstance().cleanResponse(me.getClass().getName());
+            if (jumpParameter == null) jumpParameter = new JumpParameter();
             ParameterCache.getInstance().set(cls.getName(), jumpParameter
                     .put("needResponse", true)
                     .put("responseClassName", me.getClass().getName())
             );
             this.onResponseListener = onResponseListener;
         } catch (Exception e) {
-            e.printStackTrace();
+            if (DEBUGMODE) e.printStackTrace();
             return false;
         }
         return true;
+    }
+    
+    //可使用共享元素的跳转方式
+    public boolean jump(Class<?> cls, View transitionView) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                me.setExitSharedElementCallback(new SharedElementCallback() {
+                    @Override
+                    public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                        super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
+                        for (View view : sharedElements) {
+                            view.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+                startActivity(new Intent(me, cls), ActivityOptions.makeSceneTransitionAnimation(me, transitionView, transitionView.getTransitionName()).toBundle());
+            } else {
+                startActivity(new Intent(me, cls));
+            }
+        } catch (Exception e) {
+            if (DEBUGMODE) e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    //可使用共享元素的带参数跳转方式
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
+        try {
+            if (jumpParameter != null)
+                ParameterCache.getInstance().set(cls.getName(), jumpParameter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                me.setExitSharedElementCallback(new SharedElementCallback() {
+                    @Override
+                    public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                        super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
+                        for (View view : sharedElements) {
+                            view.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+                startActivity(new Intent(me, cls), ActivityOptions.makeSceneTransitionAnimation(me, transitionView, transitionView.getTransitionName()).toBundle());
+            } else {
+                startActivity(new Intent(me, cls));
+            }
+        } catch (Exception e) {
+            if (DEBUGMODE) e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    //可使用共享元素的带返回值的跳转
+    public boolean jump(Class<?> cls, OnJumpResponseListener onResponseListener, View transitionView) {
+        return jump(cls, null, onResponseListener, transitionView);
+    }
+    
+    //可使用共享元素的带参数和返回值跳转
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener, View transitionView) {
+        try {
+            ParameterCache.getInstance().cleanResponse(me.getClass().getName());
+            if (jumpParameter == null) jumpParameter = new JumpParameter();
+            ParameterCache.getInstance().set(cls.getName(), jumpParameter
+                    .put("needResponse", true)
+                    .put("responseClassName", me.getClass().getName())
+            );
+            this.onResponseListener = onResponseListener;
+            
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                me.setExitSharedElementCallback(new SharedElementCallback() {
+                    @Override
+                    public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                        super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
+                        for (View view : sharedElements) {
+                            view.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+                startActivity(new Intent(me, cls), ActivityOptions.makeSceneTransitionAnimation(me, transitionView, transitionView.getTransitionName()).toBundle());
+            } else {
+                startActivity(new Intent(me, cls));
+                
+            }
+        } catch (Exception e) {
+            if (DEBUGMODE) e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    public void jumpAnim(int enterAnim, int exitAnim) {
+        int version = Integer.valueOf(android.os.Build.VERSION.SDK);
+        if (version > 5) {
+            overridePendingTransition(enterAnim, exitAnim);
+        }
     }
     
     //目标Activity：设定要返回的数据
@@ -737,8 +862,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     public JumpParameter getParameter() {
         return ParameterCache.getInstance().get(me.getClass().getName());
     }
-    
-    
     
     @Override
     protected void onResume() {
@@ -767,10 +890,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         super.onDestroy();
     }
     
-    public void jumpAnim(int enterAnim, int exitAnim) {
-        int version = Integer.valueOf(android.os.Build.VERSION.SDK);
-        if (version > 5) {
-            overridePendingTransition(enterAnim, exitAnim);
+    //大型打印使用，Log默认是有字数限制的，如有需要打印更长的文本可以使用此方法
+    public void bigLog(String msg) {
+        log("BIGLOG.start=================================");
+        if (isNull(msg)) return;
+        int strLength = msg.length();
+        int start = 0;
+        int end = 2000;
+        for (int i = 0; i < 100; i++) {
+            //剩下的文本还是大于规定长度则继续重复截取并输出
+            if (strLength > end) {
+                log(msg.substring(start, end));
+                start = end;
+                end = end + 2000;
+            } else {
+                log(msg.substring(start, strLength));
+                break;
+            }
         }
+        log("BIGLOG.end=================================");
     }
 }

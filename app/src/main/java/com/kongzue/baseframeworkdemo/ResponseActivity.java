@@ -36,7 +36,7 @@ public class ResponseActivity extends BaseActivity {
             public void onClick(View v) {
                 if ((boolean) getParameter().get("needResponse") == true) {
                     setResponse(new JumpParameter().put("返回数据1", "测试成功"));
-                    toast("已设置返回数据：key=返回数据1  value=测试成功");
+                    btnSet.setText("已设置返回数据：key=返回数据1  value=测试成功");
                 } else {
                     toast("needResponse = false：不需要返回数据给上一个界面");
                 }

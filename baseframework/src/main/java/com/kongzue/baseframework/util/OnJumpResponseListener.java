@@ -1,5 +1,5 @@
 package com.kongzue.baseframework.util;
 
-public interface OnResponseListener {
+public interface OnJumpResponseListener {
     void OnResponse(JumpParameter jumpParameter);
 }

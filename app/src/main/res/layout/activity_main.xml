@@ -120,6 +120,13 @@
                         android:text="更简单的跳转后返回数据" />
 
                     <Button
+                        android:id="@+id/btn_transition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:transitionName="test"
+                        android:text="跳转共享元素动画" />
+
+                    <Button
                         android:id="@+id/btn_permission"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

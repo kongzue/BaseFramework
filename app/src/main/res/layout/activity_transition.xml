@@ -1,0 +1,32 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.kongzue.baseframeworkdemo.JumpActivity">
+
+    <!--此部分为非安全区域，在此处可放置会叠加在状态栏、导航栏下的背景图等内容-->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <!--此部分是除了状态栏和导航栏外，内容安全区域-->
+
+        <Button
+            android:id="@+id/btn_transition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:transitionName="test"
+            android:text="跳转共享元素动画" />
+
+    </RelativeLayout>
+
+
+</RelativeLayout>

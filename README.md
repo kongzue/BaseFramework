@@ -477,7 +477,7 @@ baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
 
 ## 开源协议
 ```
-   Copyright BaseFragment
+   Copyright BaseFramework
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

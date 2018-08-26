@@ -134,6 +134,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             setTranslucentStatus(true);
         }
         AppManager.getInstance().pushActivity(me);
+    
+        if (lifeCircleListener != null) lifeCircleListener.onCreate();
         
         initViews();
         initDatas(getParameter());

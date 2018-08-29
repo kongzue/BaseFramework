@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.5.5.2-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.5.5.3-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.5.2/link">
-<img src="https://img.shields.io/badge/Maven-6.5.5.2-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.5.3/link">
+<img src="https://img.shields.io/badge/Maven-6.5.5.3-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.5.5.2</version>
+  <version>6.5.5.3</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.5.5.2'
+implementation 'com.kongzue.baseframework:baseframework:6.5.5.3'
 ```
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
@@ -493,6 +493,10 @@ baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
 ```
 
 ## <a name="about">更新日志</a>：
+v6.5.5.3:
+- 修复遗留问题，BaseFragment的dip2px和px2dip将无需context参数；
+- 修复遗留问题，getDisplayWidth()函数名已被修改正确；
+
 v6.5.5.2:
 - 修复 lifeCircleListener.onCreate() 无效的问题；
 

@@ -105,11 +105,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         
         AppManager.getInstance().pushActivity(me);
         
-        if (lifeCircleListener != null) lifeCircleListener.onCreate();
-        
         initViews();
         initDatas(getParameter());
         setEvents();
+    
+        if (lifeCircleListener != null) lifeCircleListener.onCreate();
     }
     
     @Override
@@ -134,13 +134,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             setTranslucentStatus(true);
         }
         AppManager.getInstance().pushActivity(me);
-    
-        if (lifeCircleListener != null) lifeCircleListener.onCreate();
         
         initViews();
         initDatas(getParameter());
         setEvents();
-        
+    
+        if (lifeCircleListener != null) lifeCircleListener.onCreate();
     }
     
     public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
@@ -634,7 +633,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     //获取屏幕宽度
-    public int getDisPlayWidth() {
+    public int getDisplayWidth() {
         Display disp = getWindowManager().getDefaultDisplay();
         Point outP = new Point();
         disp.getSize(outP);

@@ -43,6 +43,34 @@ public class JumpParameter {
         return (String) datas.get(key);
     }
     
+    public double getDouble(String key) {
+        if (datas.get(key) == null) {
+            return 0;
+        }
+        return (double) datas.get(key);
+    }
+    
+    public long getLong(String key) {
+        if (datas.get(key) == null) {
+            return 0;
+        }
+        return (long) datas.get(key);
+    }
+    
+    public short getShort(String key) {
+        if (datas.get(key) == null) {
+            return 0;
+        }
+        return (short) datas.get(key);
+    }
+    
+    public float getFloat(String key) {
+        if (datas.get(key) == null) {
+            return 0;
+        }
+        return (float) datas.get(key);
+    }
+    
     public Map<String, Object> getAll() {
         return datas;
     }

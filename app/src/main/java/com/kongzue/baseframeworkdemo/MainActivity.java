@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.interfaces.FullScreen;
+import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
@@ -103,6 +104,7 @@ public class MainActivity extends BaseActivity {
             
             }
         });
+        
     }
     
     @Override

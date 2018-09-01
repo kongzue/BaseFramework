@@ -34,6 +34,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kongzue.baseframework.interfaces.FullScreen;
+import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
@@ -59,7 +60,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * @Version: 6.5.5
+ * @Version: 6.5.6
  * @Author: Kongzue
  * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
@@ -68,7 +69,8 @@ import java.util.Set;
 
 public abstract class BaseActivity extends AppCompatActivity {
     
-    private LifeCircleListener lifeCircleListener;          //快速管理生命周期
+    private LifeCircleListener lifeCircleListener;                          //快速管理生命周期
+    private static GlobalLifeCircleListener globalLifeCircleListener;       //全局生命周期
     
     public static boolean DEBUGMODE = true;
     public boolean isActive = false;                                        //当前Activity是否处于前台
@@ -108,8 +110,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         initViews();
         initDatas(getParameter());
         setEvents();
-    
+        
         if (lifeCircleListener != null) lifeCircleListener.onCreate();
+        if (globalLifeCircleListener != null)
+            globalLifeCircleListener.onCreate(me, me.getClass().getName());
     }
     
     @Override
@@ -138,8 +142,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         initViews();
         initDatas(getParameter());
         setEvents();
-    
+        
         if (lifeCircleListener != null) lifeCircleListener.onCreate();
+        if (globalLifeCircleListener != null)
+            globalLifeCircleListener.onCreate(me, me.getClass().getName());
     }
     
     public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
@@ -859,9 +865,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         ParameterCache.getInstance().setResponse((String) getParameter().get("responseClassName"), jumpParameter);
     }
     
+    //目标Activity：设定要返回的数据，写法2
+    public void returnParameter(JumpParameter parameter) {
+        setResponse(parameter);
+    }
+    
     //获取跳转参数
     public JumpParameter getParameter() {
-        return ParameterCache.getInstance().get(me.getClass().getName());
+        JumpParameter jumpParameter = ParameterCache.getInstance().get(me.getClass().getName());
+        if (jumpParameter == null) jumpParameter = new JumpParameter();
+        return jumpParameter;
     }
     
     @Override
@@ -873,12 +886,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
         super.onResume();
         if (lifeCircleListener != null) lifeCircleListener.onResume();
+        if (globalLifeCircleListener != null)
+            globalLifeCircleListener.onResume(me, me.getClass().getName());
     }
     
     @Override
     protected void onPause() {
         isActive = false;
         if (lifeCircleListener != null) lifeCircleListener.onPause();
+        if (globalLifeCircleListener != null)
+            globalLifeCircleListener.onPause(me, me.getClass().getName());
         super.onPause();
     }
     
@@ -888,6 +905,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (getParameter() != null) getParameter().cleanAll();
         AppManager.getInstance().deleteActivity(me);
         if (lifeCircleListener != null) lifeCircleListener.onDestroy();
+        if (globalLifeCircleListener != null)
+            globalLifeCircleListener.onDestroy(me, me.getClass().getName());
         super.onDestroy();
     }
     
@@ -910,5 +929,13 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
         log("BIGLOG.end=================================");
+    }
+    
+    public static GlobalLifeCircleListener getGlobalLifeCircleListener() {
+        return globalLifeCircleListener;
+    }
+    
+    public static void setGlobalLifeCircleListener(GlobalLifeCircleListener globalLifeCircleListener) {
+        BaseActivity.globalLifeCircleListener = globalLifeCircleListener;
     }
 }

@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.5.5.3-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.5.6-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.5.3/link">
-<img src="https://img.shields.io/badge/Maven-6.5.5.3-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.6/link">
+<img src="https://img.shields.io/badge/Maven-6.5.6-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.5.5.3</version>
+  <version>6.5.6</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.5.5.3'
+implementation 'com.kongzue.baseframework:baseframework:6.5.6'
 ```
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
@@ -156,6 +156,11 @@ jump(ResponseActivity.class,new JumpParameter()
 if ((boolean) getParameter().get("needResponse") == true) {
     setResponse(new Parameter().put("返回数据1", "测试成功"));
 }
+
+//或也可以使用：
+if ((boolean) getParameter().get("needResponse") == true) {
+    returnParameter(new Parameter().put("返回数据1", "测试成功"));
+}
 ```
 
 #### <a name="1-3">权限申请</a>
@@ -231,6 +236,29 @@ setLifeCircleListener(new LifeCircleListener() {
     }
 });
 ```
+
+如果你要监控所有 BaseActivity 的生命周期，在 6.5.6 版本起新增了 setGlobalLifeCircleListener(GlobalLifeCircleListener globalLifeCircleListener) 用于对所有 BaseActivity 进行统一管理：
+```
+BaseActivity.setGlobalLifeCircleListener(new GlobalLifeCircleListener() {
+    @Override
+    public void onCreate(BaseActivity me, String className) {
+
+    }
+    @Override
+    public void onResume(BaseActivity me, String className) {
+
+    }
+    @Override
+    public void onPause(BaseActivity me, String className) {
+
+    }
+    @Override
+    public void onDestroy(BaseActivity me, String className) {
+
+    }
+});
+```
+注意此方法为静态的，要使用它建议在 Application 中对它进行管理。
 
 ## <a name="2">BaseFragment功能</a>
 BaseFragment 与普通的 Fragment 有什么区别？
@@ -493,6 +521,12 @@ baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
 ```
 
 ## <a name="about">更新日志</a>：
+v6.5.6:
+- BaseActivity 新增全局生命周期管理 GlobalLifeCircleListener；
+- 回传数据方法 setResponse(...) 现新增更符合直觉的 returnParameter(...)；
+- JumpParameter 可直接解析更多数据类型，例如 double、float、long、short 等；
+- initDatas(JumpParameter parameter) 中的参数 parameter 不再需要非空校验了；
+
 v6.5.5.3:
 - 修复遗留问题，BaseFragment的dip2px和px2dip将无需context参数；
 - 修复遗留问题，getDisplayWidth()函数名已被修改正确；

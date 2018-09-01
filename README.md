@@ -544,6 +544,7 @@ v6.5.5.1:
 - 新增BaseActivity注解 @FullScreen(true)可以直接使Activity全屏；
 - 修正了 @NavigationBarBackgroundColor(a,r,g,b)的默认值；
 - jump支持了共享元素，只需要在原参数末尾增加共享元素view，例如jump(Class<?> cls, View transitionView)；
+
 详细的更新说明请阅读：《BaseFramework 6.5.5.1版本更新报告》：https://www.jianshu.com/p/9c2e0039aca1
 
 v6.5.4:

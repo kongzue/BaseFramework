@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.5.6</version>
+  <version>6.5.6.2</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.5.6'
+implementation 'com.kongzue.baseframework:baseframework:6.5.6.2'
 ```
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
@@ -521,6 +521,9 @@ baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
 ```
 
 ## <a name="about">更新日志</a>：
+v6.5.6.1:
+- 修复 JumpParameter 空指针问题；
+
 v6.5.6:
 - BaseActivity 新增全局生命周期管理 GlobalLifeCircleListener；
 - 回传数据方法 setResponse(...) 现新增更符合直觉的 returnParameter(...)；

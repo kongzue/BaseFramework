@@ -507,7 +507,7 @@ baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
 
 ## <a name="7">行为与日志监听</a>
 
-![Kongzue's Beta Plan](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/betaplan_baseframework.png)
+![Kongzue's Beta Plan](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/betaplan_baseframework.jpg)
 
 从 6.5.7 版本起新增了行为与日志监听功能，此功能默认是关闭的，此功能旨在帮助开发者进行良好的排错，包含Activity基本生命周期、使用log(...)语句输出的、使用toast(...)语句建立提示的、以及崩溃信息，在开启BETA_PLAN模式的情况下将按照App启动时间生成活动日志文件，以方便将App移交测试组进行测试。
 

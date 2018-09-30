@@ -10,22 +10,25 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
-import com.kongzue.baseframework.interfaces.FullScreen;
-import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
+import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
+import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.JumpParameter;
+
+import java.io.File;
 
 @Layout(R.layout.activity_main)
 @DarkStatusBarTheme(false)
@@ -43,6 +46,7 @@ public class MainActivity extends BaseActivity {
     private Button btnResult;
     private Button btnTransition;
     private Button btnPermission;
+    private Button btnError;
     private TextView linkBokhttp;
     private TextView linkBvolley;
     private TextView linkUpdate;
@@ -60,6 +64,7 @@ public class MainActivity extends BaseActivity {
         btnResult = findViewById(R.id.btn_result);
         btnTransition = findViewById(R.id.btn_transition);
         btnPermission = findViewById(R.id.btn_permission);
+        btnError = findViewById(R.id.btn_error);
         linkBokhttp = findViewById(R.id.link_bokhttp);
         linkBvolley = findViewById(R.id.link_bvolley);
         linkUpdate = findViewById(R.id.link_update);
@@ -69,7 +74,6 @@ public class MainActivity extends BaseActivity {
     
     @Override
     public void initDatas(JumpParameter parameter) {
-        log(".>>" + getNavbarHeight());
         
         log(Color.rgb(70, 155, 223));
         //此处编写初始化代码
@@ -110,6 +114,13 @@ public class MainActivity extends BaseActivity {
     @Override
     public void setEvents() {
         //此处为组件绑定事件
+    
+        btnError.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                doTestError();
+            }
+        });
         
         btnTransition.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +218,7 @@ public class MainActivity extends BaseActivity {
         linkHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("https://github.com/kongzue/BaseFramework");
+                Uri uri = Uri.parse("https://github.com/kongzue/BaseFrameworkSettings");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }
@@ -273,5 +284,9 @@ public class MainActivity extends BaseActivity {
             transaction.hide(fragmentDemo);
         }
         transaction.commit();
+    }
+    
+    private void doTestError() throws NullPointerException {
+        throw new NullPointerException("This is a exception for test");
     }
 }

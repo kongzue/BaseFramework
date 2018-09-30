@@ -21,7 +21,7 @@ import com.kongzue.baseframework.util.OnJumpResponseListener;
 /**
  * @Version: 6.5.5
  * @Author: Kongzue
- * @github: https://github.com/kongzue/BaseFramework
+ * @github: https://github.com/kongzue/BaseFrameworkSettings
  * @link: http://kongzue.com/
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */

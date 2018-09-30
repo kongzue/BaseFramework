@@ -18,10 +18,10 @@ import java.util.Stack;
 public class AppManager {
     private static Stack<BaseActivity> activityStack;
     private static AppManager instance;
-
+    
     private AppManager() {
     }
-
+    
     /**
      * @return 获取activity管理实例
      */
@@ -31,7 +31,7 @@ public class AppManager {
         }
         return instance;
     }
-
+    
     /**
      * 添加Activity到堆栈
      */
@@ -41,7 +41,7 @@ public class AppManager {
         }
         activityStack.add(activity);
     }
-
+    
     /**
      * 获取当前Activity（堆栈中最后一个压入的）
      */
@@ -51,7 +51,7 @@ public class AppManager {
             activity = activityStack.lastElement();
         return activity;
     }
-
+    
     /**
      * 结束当前Activity（堆栈中最后一个压入的）
      */
@@ -59,7 +59,7 @@ public class AppManager {
         BaseActivity activity = activityStack.lastElement();
         killActivity(activity);
     }
-
+    
     /**
      * 结束指定的Activity
      */
@@ -70,26 +70,29 @@ public class AppManager {
             activity = null;
         }
     }
-
+    
     /**
      * 结束指定类名的Activity
      */
     public void killActivity(Class<?> cls) {
         Iterator<BaseActivity> iterator = activityStack.iterator();
+        BaseActivity temp = null;
         while (iterator.hasNext()) {
-            Activity activity = iterator.next();
+            BaseActivity activity = iterator.next();
             if (activity.getClass().equals(cls)) {
-                activity.finish();
-                iterator.remove();
+                temp = activity;
             }
         }
+        if (temp != null) {
+            temp.finish();
+        }
     }
-
+    
     /**
      * 结束所有Activity
      */
     public void killAllActivity() {
-        if (activityStack!=null) {
+        if (activityStack != null) {
             while (!activityStack.empty()) {
                 BaseActivity activity = currentActivity();
                 killActivity(activity);
@@ -97,7 +100,7 @@ public class AppManager {
             activityStack.clear();
         }
     }
-
+    
     /**
      * 退出应用程序
      */
@@ -112,7 +115,7 @@ public class AppManager {
         } catch (Exception e) {
         }
     }
-
+    
     public void deleteActivity(BaseActivity activity) {
         if (activity != null) {
             activityStack.remove(activity);

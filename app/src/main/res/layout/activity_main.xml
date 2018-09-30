@@ -132,6 +132,12 @@
                         android:layout_height="wrap_content"
                         android:text="申请权限（测试用，无实际业务逻辑）" />
 
+                    <Button
+                        android:id="@+id/btn_error"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="触发一个崩溃" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

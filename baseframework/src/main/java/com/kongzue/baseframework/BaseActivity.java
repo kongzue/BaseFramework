@@ -41,6 +41,7 @@ import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
@@ -59,10 +60,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
+import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+
 /**
  * @Version: 6.5.6
  * @Author: Kongzue
- * @github: https://github.com/kongzue/BaseFramework
+ * @github: https://github.com/kongzue/BaseFrameworkSettings
  * @link: http://kongzue.com/
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
@@ -72,7 +76,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     private LifeCircleListener lifeCircleListener;                          //快速管理生命周期
     private static GlobalLifeCircleListener globalLifeCircleListener;       //全局生命周期
     
-    public static boolean DEBUGMODE = true;
     public boolean isActive = false;                                        //当前Activity是否处于前台
     public boolean isAlive = false;                                         //当前Activity是否处于前台
     
@@ -91,6 +94,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Deprecated
     protected void onCreate(Bundle savedInstanceState, int layoutResId) {
         super.onCreate(savedInstanceState);
+        
+        logG("\n" + me.getClass().getSimpleName() , "onCreate");
         
         initAttributes();
         
@@ -120,6 +125,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Deprecated
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    
+        logG("\n" + me.getClass().getSimpleName() , "onCreate");
         
         isAlive = true;
         
@@ -444,9 +451,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     public void toast(final Object obj) {
         try {
             runOnMain(new Runnable() {
-                
                 @Override
                 public void run() {
+                    logG("toast", obj.toString());
                     if (toast == null)
                         toast = Toast.makeText(BaseActivity.this, NULL, Toast.LENGTH_SHORT);
                     toast.setText(obj.toString());
@@ -461,15 +468,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     //简易Log
     public void log(final Object obj) {
         try {
-            runOnMain(new Runnable() {
-                
-                @Override
-                public void run() {
-                    if (DEBUGMODE) {
-                        Log.i("log", obj.toString());
-                    }
+            if (DEBUGMODE) {
+                String msg = obj.toString();
+                if (isNull(msg)) return;
+                if (obj.toString().length() > 4000) {
+                    bigLog(msg);
+                } else {
+                    logG("log", msg);
+                    Log.i("log", msg);
                 }
-            });
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -880,6 +888,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         isActive = true;
+        logG("\n" + me.getClass().getSimpleName() , "onResume");
         if (onResponseListener != null) {
             onResponseListener.OnResponse(ParameterCache.getInstance().getResponse(me.getClass().getName()));
             onResponseListener = null;
@@ -893,6 +902,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         isActive = false;
+        logG("\n" + me.getClass().getSimpleName() , "onPause");
         if (lifeCircleListener != null) lifeCircleListener.onPause();
         if (globalLifeCircleListener != null)
             globalLifeCircleListener.onPause(me, me.getClass().getName());
@@ -902,6 +912,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         isAlive = false;
+        logG("\n" + me.getClass().getSimpleName() , "onDestroy");
         if (getParameter() != null) getParameter().cleanAll();
         AppManager.getInstance().deleteActivity(me);
         if (lifeCircleListener != null) lifeCircleListener.onDestroy();
@@ -912,23 +923,24 @@ public abstract class BaseActivity extends AppCompatActivity {
     
     //大型打印使用，Log默认是有字数限制的，如有需要打印更长的文本可以使用此方法
     public void bigLog(String msg) {
-        log("BIGLOG.start=================================");
+        Log.i("bigLog", "BIGLOG.start=================================");
         if (isNull(msg)) return;
+        logG("log", msg);
         int strLength = msg.length();
         int start = 0;
         int end = 2000;
         for (int i = 0; i < 100; i++) {
             //剩下的文本还是大于规定长度则继续重复截取并输出
             if (strLength > end) {
-                log(msg.substring(start, end));
+                Log.i("", msg.substring(start, end));
                 start = end;
                 end = end + 2000;
             } else {
-                log(msg.substring(start, strLength));
+                Log.i("", msg.substring(start, strLength));
                 break;
             }
         }
-        log("BIGLOG.end=================================");
+        Log.i("bigLog", "BIGLOG.end=================================");
     }
     
     public static GlobalLifeCircleListener getGlobalLifeCircleListener() {
@@ -937,5 +949,15 @@ public abstract class BaseActivity extends AppCompatActivity {
     
     public static void setGlobalLifeCircleListener(GlobalLifeCircleListener globalLifeCircleListener) {
         BaseActivity.globalLifeCircleListener = globalLifeCircleListener;
+    }
+    
+    public static boolean DEBUGMODE() {
+        return DEBUGMODE;
+    }
+    
+    private void logG(String tag, Object o) {
+        if (BETA_PLAN) {
+            DebugLogG.LogG(me, tag + ">>>" + o.toString());
+        }
     }
 }

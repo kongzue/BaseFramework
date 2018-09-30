@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.5.6-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.5.7-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.6/link">
-<img src="https://img.shields.io/badge/Maven-6.5.6-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.7/link">
+<img src="https://img.shields.io/badge/Maven-6.5.7-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.5.6.2</version>
+  <version>6.5.7</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.5.6.2'
+implementation 'com.kongzue.baseframework:baseframework:6.5.7'
 ```
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
@@ -93,6 +93,8 @@ implementation 'com.kongzue.baseframework:baseframework:6.5.6.2'
 ···· <a href="#6-3">多种布局的绑定方式</a>
 
 ···· <a href="#6-4">数据刷新方法</a>
+
+· <a href="#7">行为与日志监听</a>
 
 ## <a name="1">BaseActivity功能</a>
 
@@ -183,7 +185,7 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 
 toast(Obj);
 
-//简易Log打印日志（可通过BaseActivity.DEBUGMODE = false关闭，注意此开关是同时影响 BaseActivity 和 BaseFragment的）：
+//简易Log打印日志（BaseFrameworkSettings.DEBUGMODE = false关闭，注意此开关是同时影响 BaseActivity 和 BaseFragment的）：
 
 log(Obj);
 
@@ -503,24 +505,67 @@ baseAdapter.refreshDataChanged(List<Map<String, Object>> newDatas);
 baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
 ```
 
+## <a name="7">行为与日志监听</a>
+
+从 6.5.7 版本起新增了行为与日志监听功能，此功能默认是关闭的，此功能旨在帮助开发者进行良好的排错，包含Activity基本生命周期、使用log(...)语句输出的、使用toast(...)语句建立提示的、以及崩溃信息，在开启BETA_PLAN模式的情况下将按照App启动时间生成活动日志文件，以方便将App移交测试组进行测试。
+
+此功能的优势在于：
+
+1.可记录设备信息、系统版本信息、软件版本信息、设备ID等；
+
+2.可根据需要重点记录一些日志信息：注意，此工具仅限记录各Activity启停状态、使用BaseActivity、BaseFragment的log、toast方法生成的信息以及崩溃信息）而不会记录其他方式生成的日Logcat信息；
+
+3.可根据日志顺序按流程追溯用户操作步骤；
+
+您可以前往此处查看<a href="BUGREPORT.md">日志文件内容样例</a>
+
+#### 开启功能
+
+开启所有日志保存功能，包含 Activity 基本生命周期、使用 log(...) 语句输出的、使用 toast(...) 输出的信息：
+```
+BaseFrameworkSettings.BETA_PLAN = true;
+```
+
+开启崩溃日志监控功能：
+```
+BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportListener() {
+    @Override
+    public void onReporter(File file) {
+        Log.i(">>>", "onReporter: "+file.getAbsolutePath());
+    }
+});
+```
+当发生崩溃时，会在下次 App 启动后，此监听器中返回发生崩溃的整个 App 运行周期的日志文件（含崩溃信息）
+
+崩溃日志监控功能可以在不开启 BETA_PLAN 的情况下单独开启。
+
+#### 建议
+建议在 OnBugReportListener 中接收到日志文件后，显示对话框提示用户是否愿意帮助改进App，并在用户同意后上传文件到您的服务器。
+
+
 ## 开源协议
 ```
-   Copyright BaseFramework
+Copyright BaseFramework
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+  http://www.apache.org/licenses/LICENSE-2.0
 
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.5.7:
+- 修复了 AppManager 中 killActivity(Class) 可能引发崩溃的bug；
+- 修改，将 BaseActivity.DEBUGMODE 移动到了 BaseFrameworkSettings.DEBUGMODE，原 BaseActivity.DEBUGMODE 不再使用；
+- 新增<a href="#7">行为与日志监听</a>功能；
+
 v6.5.6.1:
 - 修复 JumpParameter 空指针问题；
 

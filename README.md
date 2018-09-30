@@ -539,7 +539,9 @@ BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportLis
 ```
 当发生崩溃时，会在下次 App 启动后，此监听器中返回发生崩溃的整个 App 运行周期的日志文件（含崩溃信息）
 
-崩溃日志监控功能可以在不开启 BETA_PLAN 的情况下单独开启。
+崩溃日志监控功能可以在不开启 BETA_PLAN 的情况下单独使用。
+
+注：获取的日志文件为 .bfl 格式的文本文件，可通过任意文本编辑器打开。
 
 #### 建议
 建议在 OnBugReportListener 中接收到日志文件后，显示对话框提示用户是否愿意帮助改进App，并在用户同意后上传文件到您的服务器。

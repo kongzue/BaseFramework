@@ -136,7 +136,7 @@
                         android:id="@+id/btn_error"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="触发一个崩溃" />
+                        android:text="触发一个崩溃（请再次打开后查看效果！）" />
 
                     <TextView
                         android:layout_width="wrap_content"

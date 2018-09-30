@@ -24,11 +24,5 @@ public class App extends Application {
         BaseFrameworkSettings.DEBUGMODE = true;
         BaseFrameworkSettings.BETA_PLAN = true;
         
-        BaseFrameworkSettings.turnOnReadErrorInfoPermissions(this, new OnBugReportListener() {
-            @Override
-            public void onReporter(File file) {
-                Log.i(">>>", "onReporter: "+file.getAbsolutePath());
-            }
-        });
     }
 }

@@ -2,11 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def siteUrl = 'https://github.com/kongzue/BaseFrameworkSettings' //项目在github主页地址
-def gitUrl = 'https://github.com/kongzue/BaseFrameworkSettings.git'   //Git仓库的地址
+def siteUrl = 'https://github.com/kongzue/BaseFramework' //项目在github主页地址
+def gitUrl = 'https://github.com/kongzue/BaseFramework.git'   //Git仓库的地址
 
 group = "com.kongzue.baseframework"//发布aar前缀根节点
-version = "6.5.7"//发布aar的库版本
+version = "6.5.7.1"//发布aar的库版本
 
 android {
     compileSdkVersion 27
@@ -14,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 88
-        versionName "6.5.7"
+        versionCode 89
+        versionName "6.5.7.1"
     }
     buildTypes {
         release {
@@ -79,7 +79,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "maven"
-        name = "BaseFrameworkSettings" //项目在JCenter的名字
+        name = "BaseFramework" //项目在JCenter的名字
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]

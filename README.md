@@ -103,7 +103,7 @@ implementation 'com.kongzue.baseframework:baseframework:6.5.8'
 ## <a name="1">BaseActivity功能</a>
 
 
-#### <a name="1-1">带自定义参数的跳转</a>
+### <a name="1-1">带自定义参数的跳转</a>
 Android 默认的 Intent无法支持自定义类型参数的跳转，BaseActivity 通过自有的数据通道允许传输自定义类型的数据给要跳转到的另一个 BaseActivity：
 
 跳转代码范例：
@@ -123,7 +123,7 @@ Bitmap parameter2 = (Bitmap) getParameter().get("参数2");
 if (parameter2 != null) imgP2.setImageBitmap(parameter2);
 ```
 
-#### <a name="1-2">更简单的跳转后返回数据</a>
+### <a name="1-2">更简单的跳转后返回数据</a>
 以往我们需要通过重写实现 onActivityResult 来实现回传数据，但在 BaseActivity 中，你只需要一个监听器：
 
 跳转代码范例：
@@ -169,7 +169,7 @@ if ((boolean) getParameter().get("needResponse") == true) {
 }
 ```
 
-#### <a name="1-3">权限申请</a>
+### <a name="1-3">权限申请</a>
 要进行权限申请也变得更加简单，只需要实现相应的回调 OnPermissionResponseListener 即可：
 ```
 requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
@@ -184,7 +184,7 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 });
 ```
 
-#### <a name="1-4">BaseActivity提供的小工具</a>
+### <a name="1-4">BaseActivity提供的小工具</a>
 //简易吐司：
 
 toast(Obj);
@@ -230,7 +230,7 @@ openApp(String packageName)
 isInstallApp(String packageName)
 
 
-#### <a name="1-5">BaseActivity的生命周期</a>
+### <a name="1-5">BaseActivity的生命周期</a>
 
 通常的，您可以通过重写 onCreate()、 onResume()、 onPause()、 onDestroy() 四个方法来监控 Activity 的生命周期，但因为每个方法为独立的方法函数，可能在较多代码时不容易寻找他们的存在。
 
@@ -280,7 +280,7 @@ BaseActivity.setGlobalLifeCircleListener(new GlobalLifeCircleListener() {
 ```
 注意此方法为静态的，要使用它建议在 Application 中对它进行管理。
 
-#### <a name="1-6">侧滑返回</a>
+### <a name="1-6">侧滑返回</a>
 
 从 6.5.8 版本起，您可以对 BaseActivity 进行注解，来实现侧滑返回：
 ```
@@ -374,7 +374,7 @@ runDelayed(new Runnable(){
 
 但再重写过程中实际上是有很多重复性的代码，导致我们的项目臃肿不堪，从 v6.4.8 版本起，新增了 BaseAdapter 来实现各种自定义布局适配器的需求：
 
-#### <a name="6-1">JavaBean 适配方式</a>
+### <a name="6-1">JavaBean 适配方式</a>
 
 使用此方式需要先创建继承自 BaseAdapter.BaseDataBean 的 JavaBean 数据集合来封装数据，例如在我们 Demo 中的：
 ```
@@ -428,7 +428,7 @@ list.setAdapter(baseAdapter);
 SimpleAdapterSettings 是一个适配器控制器的回调接口，在其中重写 setViewHolder 和 setData方法，其中 setViewHolder 需要您在此处根据父布局 convertView 创建布局管理组件 ViewHolder，并回传您的 ViewHolder。接下来会在 setData 中将 ViewHolder 和 相对应的数据 dataBean给出，请在此方法中对组件进行赋值和事件绑定。
 注意在此方法中您可以将 dataBean 强转为您的 JavaBean 类，viewHolder 也可以强转为您的 ViewHolder。
 
-#### <a name="6-2">Map 适配方式</a>
+### <a name="6-2">Map 适配方式</a>
 
 应对复杂多变的数据我们可能会选择使用 Map 来存储我们的需要展现的数据，BaseAdapter 亦支持此方式的数据，与上述方法类似，您可以轻松完成数据的绑定和组件的展现：
 ```
@@ -459,7 +459,7 @@ baseAdapter = new BaseAdapter(me, datas, R.layout.item_list_layout1, new SimpleM
 list.setAdapter(baseAdapter);
 ```
 
-#### <a name="6-3">多种布局的绑定方式</a>
+### <a name="6-3">多种布局的绑定方式</a>
 
 根据实际业务需求，我们可能需要在一个组件中展现多种布局，此时您首先需要对您的布局进行编号，从0开始，依次往后，并将他们添加为一个 Map 集合，其中键值对：id对应布局资源id（LayoutResId）：
 ```
@@ -527,7 +527,7 @@ list.setAdapter(baseAdapter);
 
 以上就是关于 BaseAdapter 的简单介绍了。您还可以通过文档前半部分的二维码下载 Demo ，其中会为您展现关于 BaseAdapter 全部的绑定方式。
 
-#### <a name="6-4">数据刷新方法</a>
+### <a name="6-4">数据刷新方法</a>
 
 从 v6.5.4 版本起，我们添加了 refreshDataChanged(...) 用于代替 notifyDataSetChanged() 刷新数据，该方法主要目的为解决 notifyDataSetChanged() 对于某些内容变化不敏感的问题。
 
@@ -578,7 +578,7 @@ D/>>>: MainActivity:onDestroy
 
 您可以前往此处查看<a href="BUGREPORT.md">日志文件内容样例</a>
 
-#### 开启功能
+### 开启功能
 
 开启所有日志保存功能，包含 Activity 基本生命周期、使用 log(...) 语句输出的、使用 toast(...) 输出的信息：
 ```
@@ -600,7 +600,7 @@ BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportLis
 
 注：获取的日志文件为 .bfl 格式的文本文件，可通过任意文本编辑器打开。
 
-#### 建议
+### 建议
 建议在 OnBugReportListener 中接收到日志文件后，显示对话框提示用户是否愿意帮助改进App，并在用户同意后上传文件到您的服务器。
 
 

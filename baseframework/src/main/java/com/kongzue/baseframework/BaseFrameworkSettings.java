@@ -1,6 +1,7 @@
 package com.kongzue.baseframework;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.util.DebugLogG;
@@ -16,6 +17,8 @@ import java.io.File;
  * CreateTime: 2018/9/30 03:22
  */
 public class BaseFrameworkSettings {
+    
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     
     private static OnBugReportListener onBugReportListener;
     
@@ -38,8 +41,18 @@ public class BaseFrameworkSettings {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 DebugLogG.catchException(context, t, e);
+                showInfo(e);
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
         });
+    }
+    
+    private static void showInfo(Throwable e) {
+        if (!DEBUGMODE) return;
+        String errorInfo = DebugLogG.getExceptionInfo(e);
+        String[] lines = errorInfo.split(LINE_SEPARATOR);
+        for (String line : lines) {
+            Log.e(">>>>>>", line);
+        }
     }
 }

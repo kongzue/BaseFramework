@@ -67,7 +67,7 @@ public class DebugLogG {
         LogG(context, "\nError>>>\n" + getExceptionInfo(e));
     }
     
-    private static String getExceptionInfo(Throwable e) {
+    public static String getExceptionInfo(Throwable e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw, true);
         e.printStackTrace(pw);

@@ -11,9 +11,11 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
 
 @Layout(R.layout.activity_jump)
+@SwipeBack(true)
 public class JumpActivity extends BaseActivity {
 
     private TextView txtP1;

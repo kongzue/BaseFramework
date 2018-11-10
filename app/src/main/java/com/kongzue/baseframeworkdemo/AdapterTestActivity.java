@@ -14,6 +14,7 @@ import com.kongzue.baseframework.interfaces.MultipleAdapterSettings;
 import com.kongzue.baseframework.interfaces.MultipleMapAdapterSettings;
 import com.kongzue.baseframework.interfaces.SimpleAdapterSettings;
 import com.kongzue.baseframework.interfaces.SimpleMapAdapterSettings;
+import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 @Layout(R.layout.activity_adapter_test)
+@SwipeBack(true)
 public class AdapterTestActivity extends BaseActivity {
     
     private TextView txtTitle;

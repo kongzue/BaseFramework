@@ -3,12 +3,16 @@ package com.kongzue.baseframework;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -40,12 +44,15 @@ import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
+import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.DebugLogG;
+import com.kongzue.baseframework.util.JsonFormat;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
+import com.kongzue.baseframework.util.swipeback.SwipeBackActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,7 +78,7 @@ import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends SwipeBackActivity {
     
     private LifeCircleListener lifeCircleListener;                          //快速管理生命周期
     private static GlobalLifeCircleListener globalLifeCircleListener;       //全局生命周期
@@ -95,7 +102,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState, int layoutResId) {
         super.onCreate(savedInstanceState);
         
-        logG("\n" + me.getClass().getSimpleName() , "onCreate");
+        logG("\n" + me.getClass().getSimpleName(), "onCreate");
+        info(2, me.getClass().getSimpleName() + ":onCreate");
         
         initAttributes();
         
@@ -125,8 +133,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Deprecated
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    
-        logG("\n" + me.getClass().getSimpleName() , "onCreate");
+        
+        logG("\n" + me.getClass().getSimpleName(), "onCreate");
+        info(2, me.getClass().getSimpleName() + ":onCreate");
         
         isAlive = true;
         
@@ -163,12 +172,18 @@ public abstract class BaseActivity extends AppCompatActivity {
     private void initAttributes() {
         try {
             FullScreen fullScreen = getClass().getAnnotation(FullScreen.class);
+            SwipeBack swipeBack = getClass().getAnnotation(SwipeBack.class);
             Layout layout = getClass().getAnnotation(Layout.class);
             DarkNavigationBarTheme darkNavigationBarTheme = getClass().getAnnotation(DarkNavigationBarTheme.class);
             DarkStatusBarTheme darkStatusBarTheme = getClass().getAnnotation(DarkStatusBarTheme.class);
             NavigationBarBackgroundColor navigationBarBackgroundColor = getClass().getAnnotation(NavigationBarBackgroundColor.class);
             if (fullScreen != null) {
                 isFullScreen = fullScreen.value();
+            }
+            if (swipeBack != null) {
+                setSwipeBackEnable(swipeBack.value());
+            } else {
+                setSwipeBackEnable(false);
             }
             if (layout != null) {
                 if (layout.value() != -1) layoutResId = layout.value();
@@ -475,11 +490,30 @@ public abstract class BaseActivity extends AppCompatActivity {
                     bigLog(msg);
                 } else {
                     logG("log", msg);
-                    Log.i("log", msg);
+                    if (!JsonFormat.formatJson(msg)) {
+                        Log.v(">>>>>>", msg);
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    private void info(int level, String msg) {
+        switch (level) {
+            case 0:
+                Log.v(">>>", msg);
+                break;
+            case 1:
+                Log.i(">>>", msg);
+                break;
+            case 2:
+                Log.d(">>>", msg);
+                break;
+            case 3:
+                Log.e(">>>", msg);
+                break;
         }
     }
     
@@ -719,8 +753,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
     
     //网络传输文本判空规则
-    public boolean isNull(String s) {
-        if (s == null || s.trim().isEmpty() || s.equals("null")) {
+    public static boolean isNull(String s) {
+        if (s == null || s.trim().isEmpty() || s.equals("null") || s.equals("(null)")) {
             return true;
         }
         return false;
@@ -888,7 +922,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         isActive = true;
-        logG("\n" + me.getClass().getSimpleName() , "onResume");
+        logG("\n" + me.getClass().getSimpleName(), "onResume");
         if (onResponseListener != null) {
             onResponseListener.OnResponse(ParameterCache.getInstance().getResponse(me.getClass().getName()));
             onResponseListener = null;
@@ -902,7 +936,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         isActive = false;
-        logG("\n" + me.getClass().getSimpleName() , "onPause");
+        logG("\n" + me.getClass().getSimpleName(), "onPause");
         if (lifeCircleListener != null) lifeCircleListener.onPause();
         if (globalLifeCircleListener != null)
             globalLifeCircleListener.onPause(me, me.getClass().getName());
@@ -912,7 +946,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         isAlive = false;
-        logG("\n" + me.getClass().getSimpleName() , "onDestroy");
+        logG("\n" + me.getClass().getSimpleName(), "onDestroy");
+        info(2, me.getClass().getSimpleName() + ":onDestroy");
         if (getParameter() != null) getParameter().cleanAll();
         AppManager.getInstance().deleteActivity(me);
         if (lifeCircleListener != null) lifeCircleListener.onDestroy();
@@ -923,7 +958,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     
     //大型打印使用，Log默认是有字数限制的，如有需要打印更长的文本可以使用此方法
     public void bigLog(String msg) {
-        Log.i("bigLog", "BIGLOG.start=================================");
+        Log.i(">>>bigLog", "BIGLOG.start=================================");
         if (isNull(msg)) return;
         logG("log", msg);
         int strLength = msg.length();
@@ -932,15 +967,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         for (int i = 0; i < 100; i++) {
             //剩下的文本还是大于规定长度则继续重复截取并输出
             if (strLength > end) {
-                Log.i("", msg.substring(start, end));
+                Log.v(">>>", msg.substring(start, end));
                 start = end;
                 end = end + 2000;
             } else {
-                Log.i("", msg.substring(start, strLength));
+                Log.v(">>>", msg.substring(start, strLength));
                 break;
             }
         }
-        Log.i("bigLog", "BIGLOG.end=================================");
+        Log.i(">>>bigLog", "BIGLOG.end=================================");
     }
     
     public static GlobalLifeCircleListener getGlobalLifeCircleListener() {
@@ -959,5 +994,46 @@ public abstract class BaseActivity extends AppCompatActivity {
         if (BETA_PLAN) {
             DebugLogG.LogG(me, tag + ">>>" + o.toString());
         }
+    }
+    
+    //使用默认浏览器打开链接
+    public boolean openUrl(String url) {
+        try {
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+            return true;
+        } catch (Exception e) {
+            if (DEBUGMODE) e.printStackTrace();
+            return false;
+        }
+    }
+    
+    //打开指定App
+    public boolean openApp(String packageName) {
+        PackageManager packageManager = getPackageManager();
+        if (isInstallApp(packageName)) {
+            try {
+                Intent intent = packageManager.getLaunchIntentForPackage(packageName);
+                startActivity(intent);
+                return true;
+            } catch (Exception e) {
+                if (DEBUGMODE) e.printStackTrace();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    
+    //检测App是否已安装
+    public boolean isInstallApp(String packageName) {
+        PackageInfo packageInfo = null;
+        try {
+            packageInfo = getPackageManager().getPackageInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return packageInfo != null;
     }
 }

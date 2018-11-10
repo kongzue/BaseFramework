@@ -2,6 +2,10 @@ package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -17,6 +21,8 @@ import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
+
+import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
 /**
  * @Version: 6.5.5
@@ -243,6 +249,29 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroy() {
         if (lifeCircleListener != null) lifeCircleListener.onDestroy();
         super.onDestroy();
+    }
+    
+    //使用默认浏览器打开链接
+    public boolean openUrl(String url) {
+        try {
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+            return true;
+        } catch (Exception e) {
+            if (DEBUGMODE) e.printStackTrace();
+            return false;
+        }
+    }
+    
+    //打开指定App
+    public boolean openApp(String packageName) {
+        return me.openApp(packageName);
+    }
+    
+    //检测App是否已安装
+    public boolean isInstallApp(String packageName) {
+        return me.isInstallApp(packageName);
     }
 }
 

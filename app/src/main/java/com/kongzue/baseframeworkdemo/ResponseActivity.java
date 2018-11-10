@@ -6,9 +6,11 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
 
 @Layout(R.layout.activity_response)
+@SwipeBack(true)
 public class ResponseActivity extends BaseActivity {
 
     private TextView txtTitle;

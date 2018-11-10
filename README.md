@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.5.7.1-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.5.8-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.7.1/link">
-<img src="https://img.shields.io/badge/Maven-6.5.7.1-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.5.8/link">
+<img src="https://img.shields.io/badge/Maven-6.5.8-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.5.7.1</version>
+  <version>6.5.8</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.5.7.1'
+implementation 'com.kongzue.baseframework:baseframework:6.5.8'
 ```
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
@@ -76,6 +76,8 @@ implementation 'com.kongzue.baseframework:baseframework:6.5.7.1'
 
 ···· <a href="#1-5">BaseActivity的生命周期</a>
 
+···· <a href="#1-6">侧滑返回</a>
+
 · <a href="#2">BaseFragment功能</a>
 
 · <a href="#3">BaseActivity提供的小工具</a>
@@ -93,6 +95,8 @@ implementation 'com.kongzue.baseframework:baseframework:6.5.7.1'
 ···· <a href="#6-3">多种布局的绑定方式</a>
 
 ···· <a href="#6-4">数据刷新方法</a>
+
+· <a href="#8">增强型日志</a>
 
 · <a href="#7">行为与日志监听</a>
 
@@ -210,7 +214,21 @@ moveAnimation(Object obj, String perference, float aimValue, long time, long del
 isNull(String);
 
 //跳转动画（参数为您的动画资源id）：
+
 jumpAnim(int enterAnim, int exitAnim)
+
+//使用默认浏览器打开链接
+
+openUrl(String url)
+
+//打开指定App
+
+openApp(String packageName)
+
+//检测App是否已安装
+
+isInstallApp(String packageName)
+
 
 #### <a name="1-5">BaseActivity的生命周期</a>
 
@@ -261,6 +279,20 @@ BaseActivity.setGlobalLifeCircleListener(new GlobalLifeCircleListener() {
 });
 ```
 注意此方法为静态的，要使用它建议在 Application 中对它进行管理。
+
+#### <a name="1-6">侧滑返回</a>
+
+从 6.5.8 版本起，您可以对 BaseActivity 进行注解，来实现侧滑返回：
+```
+@SwipeBack(true)
+public class YourActivity extends BaseActivity {
+//...
+```
+
+效果如下：
+![SwipeBack](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/baseframework_swipeback.png)
+
+此效果使用到的框架来源于开源的 @ikew0ng 的 SwipeBackLayout(https://github.com/ikew0ng/SwipeBackLayout) 开源协议为 Apache License2.0
 
 ## <a name="2">BaseFragment功能</a>
 BaseFragment 与普通的 Fragment 有什么区别？
@@ -505,6 +537,30 @@ baseAdapter.refreshDataChanged(List<Map<String, Object>> newDatas);
 baseAdapter.refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas);
 ```
 
+## <a name="8">增强型日志</a>
+
+![Kongzue's log](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/baseframework_newlog.png)
+
+从 6.5.8 版本起使用 log(...) 方法输出的日志已升级为增强型日志。
+
+在您使用 BaseFramework 时可以在 Logcat 的筛选中使用字符 “>>>” 对日志进行筛选（Logcat日志界面上方右侧的搜索输入框）。
+
+1.在 Activity 启动和关闭时会有自动的提示：
+
+```
+D/>>>: MainActivity:onCreate
+...
+D/>>>: MainActivity:onDestroy
+```
+您可以在 Android Studio 的 File -> Settings 的 Editor -> Color Scheme -> Android Logcat 中调整各类型的 log 颜色，我们推荐如下图方式设置颜色：
+
+![Kongzue's log settings](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/baseframework_logsettings.png)
+
+2.对json进行自动格式化
+
+使用 log(...) 方法输出日志内容时，若内容是 json 字符串，会自动格式化输出，方便查看。
+
+
 ## <a name="7">行为与日志监听</a>
 
 ![Kongzue's Beta Plan](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/betaplan_baseframework.jpg)
@@ -533,7 +589,7 @@ BaseFrameworkSettings.BETA_PLAN = true;
 BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportListener() {
     @Override
     public void onReporter(File file) {
-        Log.i(">>>", "onReporter: "+file.getAbsolutePath());
+        Log.v(">>>", "onReporter: "+file.getAbsolutePath());
     }
 });
 ```
@@ -565,6 +621,17 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.5.8:
+- BaseActivity、BaseFramework 新增 openUrl(...) 可直接打开使用默认浏览器打开 url 地址；
+- BaseActivity、BaseFramework 新增 openApp(...) 可直接打开指定包名的 App；
+- BaseActivity、BaseFramework 新增 isInstallApp(...) 可直接判断指定包名的 App 是否已安装；
+- log(...) 方法增强，全新的日志表现形式；
+- log(...) 输出 json 时会自动格式化 json 语法；
+- BaseActivity 新增注解 @SwipeBack(true) 可标记当前 Activity 支持侧滑返回；
+
+v6.5.7.2:
+- 新增判空规则，支持iOS可能传递的“(null)”文本；
+
 v6.5.7.1:
 - 修复无法引用的bug；
 

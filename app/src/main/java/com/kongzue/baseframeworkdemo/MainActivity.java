@@ -47,6 +47,7 @@ public class MainActivity extends BaseActivity {
     private Button btnTransition;
     private Button btnPermission;
     private Button btnError;
+    private Button btnPrintJsonLog;
     private TextView linkBokhttp;
     private TextView linkBvolley;
     private TextView linkUpdate;
@@ -65,6 +66,7 @@ public class MainActivity extends BaseActivity {
         btnTransition = findViewById(R.id.btn_transition);
         btnPermission = findViewById(R.id.btn_permission);
         btnError = findViewById(R.id.btn_error);
+        btnPrintJsonLog = findViewById(R.id.btn_printJsonLog);
         linkBokhttp = findViewById(R.id.link_bokhttp);
         linkBvolley = findViewById(R.id.link_bvolley);
         linkUpdate = findViewById(R.id.link_update);
@@ -74,7 +76,6 @@ public class MainActivity extends BaseActivity {
     
     @Override
     public void initDatas(JumpParameter parameter) {
-        
         BaseFrameworkSettings.turnOnReadErrorInfoPermissions(this, new OnBugReportListener() {
             @Override
             public void onReporter(final File file) {
@@ -87,13 +88,13 @@ public class MainActivity extends BaseActivity {
                         builder.setPositiveButton("愿意", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                toast("请对file进行处理："+file.getAbsolutePath());
+                                toast("请对file进行处理：" + file.getAbsolutePath());
                             }
                         });
                         builder.setNegativeButton("不了", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-        
+                            
                             }
                         });
                         AlertDialog dialog = builder.create();
@@ -142,7 +143,14 @@ public class MainActivity extends BaseActivity {
     @Override
     public void setEvents() {
         //此处为组件绑定事件
-    
+        
+        btnPrintJsonLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                log("{\"employees\": [{ \"firstName\":\"Bill\" , \"lastName\":\"Gates\" },{ \"firstName\":\"George\" , \"lastName\":\"Bush\" },{ \"firstName\":\"Thomas\" , \"lastName\":\"Carter\" }]}");
+            }
+        });
+        
         btnError.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

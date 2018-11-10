@@ -284,12 +284,13 @@ BaseActivity.setGlobalLifeCircleListener(new GlobalLifeCircleListener() {
 
 从 6.5.8 版本起，您可以对 BaseActivity 进行注解，来实现侧滑返回：
 ```
-@SwipeBack(true)
+@SwipeBack(true)        //开启侧滑返回
 public class YourActivity extends BaseActivity {
 //...
 ```
 
 效果如下：
+
 ![SwipeBack](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/baseframework_swipeback.png)
 
 此效果使用到的框架来源于开源的 @ikew0ng 的 SwipeBackLayout(https://github.com/ikew0ng/SwipeBackLayout) 开源协议为 Apache License2.0

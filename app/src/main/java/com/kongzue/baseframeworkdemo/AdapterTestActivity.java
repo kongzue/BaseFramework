@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseAdapter;
+import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.MultipleAdapterSettings;
 import com.kongzue.baseframework.interfaces.MultipleMapAdapterSettings;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 @Layout(R.layout.activity_adapter_test)
 @SwipeBack(true)
+@FullScreen(true)
 public class AdapterTestActivity extends BaseActivity {
     
     private TextView txtTitle;

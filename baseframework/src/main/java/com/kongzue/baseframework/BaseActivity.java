@@ -52,7 +52,10 @@ import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
-import com.kongzue.baseframework.util.swipeback.SwipeBackActivity;
+import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityBase;
+import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityHelper;
+import com.kongzue.baseframework.util.swipeback.util.SwipeBackLayout;
+import com.kongzue.baseframework.util.swipeback.util.SwipeBackUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,7 +81,7 @@ import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
 
-public abstract class BaseActivity extends SwipeBackActivity {
+public abstract class BaseActivity extends AppCompatActivity implements SwipeBackActivityBase {
     
     private LifeCircleListener lifeCircleListener;                          //快速管理生命周期
     private static GlobalLifeCircleListener globalLifeCircleListener;       //全局生命周期
@@ -97,17 +100,20 @@ public abstract class BaseActivity extends SwipeBackActivity {
     private int navigationBarBackgroundColorValue = Color.BLACK;
     private int layoutResId = android.R.layout.list_content;
     
+    private Bundle savedInstanceState;
+    private SwipeBackActivityHelper mHelper;
+    
     //不再推荐重写onCreate创建Activity，新版本推荐直接在Activity上注解：@Layout(你的layout资源id)
     @Deprecated
     protected void onCreate(Bundle savedInstanceState, int layoutResId) {
         super.onCreate(savedInstanceState);
+        this.savedInstanceState = savedInstanceState;
         
         logG("\n" + me.getClass().getSimpleName(), "onCreate");
         info(2, me.getClass().getSimpleName() + ":onCreate");
         
         initAttributes();
         
-        if (isFullScreen) requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(layoutResId);
         if (isFullScreen) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -133,6 +139,8 @@ public abstract class BaseActivity extends SwipeBackActivity {
     @Deprecated
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mHelper = new SwipeBackActivityHelper(this);
+        this.savedInstanceState = savedInstanceState;
         
         logG("\n" + me.getClass().getSimpleName(), "onCreate");
         info(2, me.getClass().getSimpleName() + ":onCreate");
@@ -145,7 +153,6 @@ public abstract class BaseActivity extends SwipeBackActivity {
             return;
         }
         
-        if (isFullScreen) requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(layoutResId);
         if (isFullScreen) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -179,7 +186,9 @@ public abstract class BaseActivity extends SwipeBackActivity {
             NavigationBarBackgroundColor navigationBarBackgroundColor = getClass().getAnnotation(NavigationBarBackgroundColor.class);
             if (fullScreen != null) {
                 isFullScreen = fullScreen.value();
+                if (isFullScreen) requestWindowFeature(Window.FEATURE_NO_TITLE);
             }
+            mHelper.onActivityCreate();
             if (swipeBack != null) {
                 setSwipeBackEnable(swipeBack.value());
             } else {
@@ -433,7 +442,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
     protected final static String NULL = "";
     private Toast toast;
     
-    protected void runOnMain(Runnable runnable) {
+    public void runOnMain(Runnable runnable) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -444,7 +453,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         });
     }
     
-    protected void runOnMainDelayed(Runnable runnable, long time) {
+    public void runOnMainDelayed(Runnable runnable, long time) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -453,7 +462,7 @@ public abstract class BaseActivity extends SwipeBackActivity {
         }, time);
     }
     
-    protected void runDelayed(Runnable runnable, long time) {
+    public void runDelayed(Runnable runnable, long time) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1035,5 +1044,31 @@ public abstract class BaseActivity extends SwipeBackActivity {
             e.printStackTrace();
         }
         return packageInfo != null;
+    }
+    
+    public Bundle getSavedInstanceState() {
+        return savedInstanceState;
+    }
+    
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mHelper.onPostCreate();
+    }
+    
+    @Override
+    public SwipeBackLayout getSwipeBackLayout() {
+        return mHelper.getSwipeBackLayout();
+    }
+    
+    @Override
+    public void setSwipeBackEnable(boolean enable) {
+        getSwipeBackLayout().setEnableGesture(enable);
+    }
+    
+    @Override
+    public void scrollToFinishActivity() {
+        SwipeBackUtil.convertActivityToTranslucent(this);
+        getSwipeBackLayout().scrollToFinishActivity();
     }
 }

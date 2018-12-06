@@ -38,6 +38,8 @@ public abstract class BaseFragment extends Fragment {
     
     private LifeCircleListener lifeCircleListener;          //快速管理生命周期
     
+    private Bundle savedInstanceState;
+    
     public BaseActivity me;                                                 //绑定的BaseActivity
     
     public void setActivity(BaseActivity activity) {
@@ -54,6 +56,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         me = (BaseActivity) getActivity();
+        this.savedInstanceState = savedInstanceState;
         try {
             Layout layout = getClass().getAnnotation(Layout.class);
             if (layout == null) {
@@ -211,15 +214,15 @@ public abstract class BaseFragment extends Fragment {
         me.requestPermission(permissions, onPermissionResponseListener);
     }
     
-    protected void runOnMain(Runnable runnable) {
+    public void runOnMain(Runnable runnable) {
         me.runOnMain(runnable);
     }
     
-    protected void runOnMainDelayed(Runnable runnable, long time) {
+    public void runOnMainDelayed(Runnable runnable, long time) {
         me.runOnMainDelayed(runnable, time);
     }
     
-    protected void runDelayed(Runnable runnable, long time) {
+    public void runDelayed(Runnable runnable, long time) {
         me.runDelayed(runnable, time);
     }
     
@@ -272,6 +275,10 @@ public abstract class BaseFragment extends Fragment {
     //检测App是否已安装
     public boolean isInstallApp(String packageName) {
         return me.isInstallApp(packageName);
+    }
+    
+    public Bundle getSavedInstanceState() {
+        return savedInstanceState;
     }
 }
 

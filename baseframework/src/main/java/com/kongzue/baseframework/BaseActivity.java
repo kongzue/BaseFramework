@@ -1,6 +1,7 @@
 package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.ActivityNotFoundException;
@@ -27,6 +28,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -62,6 +65,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -72,6 +77,7 @@ import java.util.Set;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
 
 /**
  * @Version: 6.5.6
@@ -350,20 +356,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private static final String KEY_MIUI_VERSION_NAME = "ro.miui.ui.version.name";
     private static final String KEY_MIUI_INTERNAL_STORAGE = "ro.miui.internal.storage";
     
-    //获取状态栏的高度
-    public int getStatusBarHeight() {
-        try {
-            Class<?> c = Class.forName("com.android.internal.R$dimen");
-            Object obj = c.newInstance();
-            Field field = c.getField("status_bar_height");
-            int x = Integer.parseInt(field.get(obj).toString());
-            return getResources().getDimensionPixelSize(x);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-    
     //MIUI判断
     public static boolean isMIUI() {
         try {
@@ -607,6 +599,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return true;
     }
     
+    //单权限检查
+    public boolean checkPermissions(String permission) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (ContextCompat.checkSelfPermission(this, permission) !=
+                PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
+    }
+    
     /**
      * 获取权限集中需要申请权限的列表
      *
@@ -689,6 +693,20 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         startActivity(intent);
     }
     
+    //获取状态栏的高度
+    public int getStatusBarHeight() {
+        try {
+            Class<?> c = Class.forName("com.android.internal.R$dimen");
+            Object obj = c.newInstance();
+            Field field = c.getField("status_bar_height");
+            int x = Integer.parseInt(field.get(obj).toString());
+            return getResources().getDimensionPixelSize(x);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
     //获取屏幕宽度
     public int getDisplayWidth() {
         Display disp = getWindowManager().getDefaultDisplay();
@@ -707,6 +725,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     //获取底栏高度
     public int getNavbarHeight() {
+        if (setNavigationBarHeightZero) return 0;
         int rootHeight = getRootHeight();
         int navbarHeight = rootHeight - getWindowManager().getDefaultDisplay().getHeight();
         if (navbarHeight < 0) navbarHeight = 0;
@@ -1050,6 +1069,84 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return savedInstanceState;
     }
     
+    //获取IMEI (请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.READ_PHONE_STATE"/>)
+    @SuppressLint({"WrongConstant", "MissingPermission"})
+    public String getIMEI() {
+        String result = null;
+        try {
+            if (checkPermissions(new String[]{"android.permission.READ_PHONE_STATE"})) {
+                TelephonyManager telephonyManager = (TelephonyManager) getSystemService("phone");
+                if (telephonyManager != null) {
+                    if (Build.VERSION.SDK_INT >= 26) {
+                        try {
+                            Method method = telephonyManager.getClass().getMethod("getImei", new Class[0]);
+                            method.setAccessible(true);
+                            result = (String) method.invoke(telephonyManager, new Object[0]);
+                        } catch (Exception e) {
+                        }
+                        if (isNull(result)) {
+                            result = telephonyManager.getDeviceId();
+                        }
+                    } else {
+                        result = telephonyManager.getDeviceId();
+                    }
+                }
+            } else {
+                requestPermission(new String[]{"android.permission.READ_PHONE_STATE"}, new OnPermissionResponseListener() {
+                    @Override
+                    public void onSuccess(String[] permissions) {
+                        getIMEI();
+                    }
+                    
+                    @Override
+                    public void onFail() {
+                        if (BaseFrameworkSettings.DEBUGMODE)
+                            Log.e(">>>", "getIMEI(): 失败，用户拒绝授权READ_PHONE_STATE");
+                    }
+                });
+            }
+        } catch (Exception e) {
+            if (BaseFrameworkSettings.DEBUGMODE) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+    
+    public String getAndroidId() {
+        String androidID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        return androidID;
+    }
+    
+    //获取Mac地址 (请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>)
+    public String getMacAddress(){
+        String macAddress = null;
+        StringBuffer buf = new StringBuffer();
+        NetworkInterface networkInterface = null;
+        try {
+            networkInterface = NetworkInterface.getByName("eth1");
+            if (networkInterface == null) {
+                networkInterface = NetworkInterface.getByName("wlan0");
+            }
+            if (networkInterface == null) {
+                return "02:00:00:00:00:02";
+            }
+            byte[] addr = networkInterface.getHardwareAddress();
+            for (byte b : addr) {
+                buf.append(String.format("%02X:", b));
+            }
+            if (buf.length() > 0) {
+                buf.deleteCharAt(buf.length() - 1);
+            }
+            macAddress = buf.toString();
+        } catch (SocketException e) {
+            e.printStackTrace();
+            return "02:00:00:00:00:02";
+        }
+        return macAddress;
+    }
+    
+    //以下不用管系列————
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -1071,4 +1168,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         SwipeBackUtil.convertActivityToTranslucent(this);
         getSwipeBackLayout().scrollToFinishActivity();
     }
+    
+    
 }

@@ -5,11 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +31,12 @@ import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.List;
+
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
 
 /**
  * @Version: 6.5.5
@@ -214,6 +228,16 @@ public abstract class BaseFragment extends Fragment {
         me.requestPermission(permissions, onPermissionResponseListener);
     }
     
+    //多权限检查
+    public boolean checkPermissions(String[] permissions) {
+        return me.checkPermissions(permissions);
+    }
+    
+    //单权限检查
+    public boolean checkPermissions(String permission) {
+        return me.checkPermissions(permission);
+    }
+    
     public void runOnMain(Runnable runnable) {
         me.runOnMain(runnable);
     }
@@ -279,6 +303,42 @@ public abstract class BaseFragment extends Fragment {
     
     public Bundle getSavedInstanceState() {
         return savedInstanceState;
+    }
+    
+    public int getStatusBarHeight() {
+        return me.getStatusBarHeight();
+    }
+    
+    //获取屏幕宽度
+    public int getDisplayWidth() {
+        return me.getDisplayWidth();
+    }
+    
+    //获取屏幕可用部分高度（屏幕高度-状态栏高度-屏幕底栏高度）
+    public int getDisplayHeight() {
+        return me.getDisplayHeight();
+    }
+    
+    //获取底栏高度
+    public int getNavbarHeight() {
+        return me.getNavbarHeight();
+    }
+    
+    //获取真实的屏幕高度，注意判断非0
+    public int getRootHeight() {
+        return me.getRootHeight();
+    }
+    
+    public String getIMEI() {
+        return me.getIMEI();
+    }
+    
+    public String getAndroidId() {
+        return me.getAndroidId();
+    }
+    
+    public String getMacAddress(){
+        return me.getMacAddress();
     }
 }
 

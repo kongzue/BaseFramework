@@ -55,4 +55,6 @@ public class BaseFrameworkSettings {
             Log.e(">>>>>>", line);
         }
     }
+    
+    public static boolean setNavigationBarHeightZero = false;
 }

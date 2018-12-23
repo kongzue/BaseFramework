@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.6.0-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.6.1-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.0/link">
-<img src="https://img.shields.io/badge/Maven-6.6.0-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.1/link">
+<img src="https://img.shields.io/badge/Maven-6.6.1-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.0</version>
+  <version>6.6.1</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.0'
+implementation 'com.kongzue.baseframework:baseframework:6.6.1'
 ```
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
@@ -185,50 +185,63 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 ```
 
 ### <a name="1-4">BaseActivity提供的小工具</a>
-//简易吐司：
-
+>简易吐司：
+```
 toast(Obj);
-
-//简易Log打印日志（BaseFrameworkSettings.DEBUGMODE = false关闭，注意此开关是同时影响 BaseActivity 和 BaseFragment的）：
-
+```
+>简易Log打印日志（BaseFrameworkSettings.DEBUGMODE = false关闭，注意此开关是同时影响 BaseActivity 和 BaseFragment的）：
+```
 log(Obj);
-
-//软键盘开关：
-
+```
+>软键盘开关：
+```
 setIMMStatus(boolean show, EditText editText);
-
-//dip与像素px转换：
-
+```
+>dip与像素px转换：
+```
 dip2px(float dpValue);
-
-//像素px与dip转换：
-
+```
+>像素px与dip转换：
+```
 dip2px(float dpValue);
-
-//属性动画：
-
+```
+>属性动画：
+```
 moveAnimation(Object obj, String perference, float aimValue, long time, long delay);
-
-//数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：
-
+```
+>数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：
+```
 isNull(String);
-
-//跳转动画（参数为您的动画资源id）：
-
+```
+>跳转动画（参数为您的动画资源id）：
+```
 jumpAnim(int enterAnim, int exitAnim)
-
-//使用默认浏览器打开链接
-
+```
+>使用默认浏览器打开链接
+```
 openUrl(String url)
-
-//打开指定App
-
+```
+>打开指定App
+```
 openApp(String packageName)
-
-//检测App是否已安装
-
+```
+>检测App是否已安装
+```
 isInstallApp(String packageName)
-
+```
+>获取IMEI
+```
+//请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+getIMEI()
+```
+>获取AndroidID
+```
+getAndroidId()
+```
+>获取Mac地址
+```
+getMacAddress()
+```
 
 ### <a name="1-5">BaseActivity的生命周期</a>
 
@@ -622,6 +635,10 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.6.1:
+- BaseActivity 新增方法：获取设备IMEI：getIMEI()、获取设备AndroidID：getAndroidId()、获取Mac地址：getMacAddress()；
+- BaseFragment 新增方法 getStatusBarHeight()、getDisplayWidth()、getDisplayHeight()、getNavbarHeight()、getRootHeight()、getIMEI()、getAndroidId()、getMacAddress()；
+
 v6.6.0:
 - 组件升级至兼容 API-28；
 

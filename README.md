@@ -240,6 +240,7 @@ getAndroidId()
 ```
 >获取Mac地址
 ```
+//请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 getMacAddress()
 ```
 

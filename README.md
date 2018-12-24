@@ -616,6 +616,9 @@ BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportLis
 
 注：获取的日志文件为 .bfl 格式的文本文件，可通过任意文本编辑器打开。
 
+### 建议
+建议在 OnBugReportListener 中接收到日志文件后，显示对话框提示用户是否愿意帮助改进App，并在用户同意后上传文件到您的服务器。
+
 ## <a name="9">语言变更工具</a>
 
 从 6.6.2 版本起新增了语言变更工具，如果需要多语言支持，您可以先在 string.xml 中配置多国语言，然后使用如下方法进行语言变更：
@@ -635,10 +638,6 @@ BaseFrameworkSettings.selectLocale = Locale.TRADITIONAL_CHINESE;    //强制变�
 //注意先保存所有数据，然后使用如下语句重启当前Activity：
 restartMe();
 ```
-
-### 建议
-建议在 OnBugReportListener 中接收到日志文件后，显示对话框提示用户是否愿意帮助改进App，并在用户同意后上传文件到您的服务器。
-
 
 ## 开源协议
 ```

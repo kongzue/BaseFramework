@@ -594,26 +594,6 @@ D/>>>: MainActivity:onDestroy
 
 您可以前往此处查看<a href="BUGREPORT.md">日志文件内容样例</a>
 
-## <a name="9">语言变更工具</a>
-
-从 6.6.2 版本起新增了语言变更工具，如果需要多语言支持，您可以先在 string.xml 中配置多国语言，然后使用如下方法进行语言变更：
-
-```
-BaseFrameworkSettings.selectLocale = Locale.ENGLISH;                //强制变成为英语
-BaseFrameworkSettings.selectLocale = Locale.CHINA;                  //强制变成为汉语
-BaseFrameworkSettings.selectLocale = Locale.SIMPLIFIED_CHINESE;     //强制变成为简体中文
-BaseFrameworkSettings.selectLocale = Locale.TRADITIONAL_CHINESE;    //强制变成为繁体中文
-```
-
-建议您在 Application 启动时设置此属性。
-
-需注意的是，修改此属性后并不会立即生效，需要重启您的 Activity 才可以生效，您也可以选择设置后重启当前 Activity 使其生效：
-
-```
-//注意先保存所有数据，然后使用如下语句重启当前Activity：
-restartMe();
-```
-
 ### 开启功能
 
 开启所有日志保存功能，包含 Activity 基本生命周期、使用 log(...) 语句输出的、使用 toast(...) 输出的信息：
@@ -635,6 +615,26 @@ BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportLis
 崩溃日志监控功能可以在不开启 BETA_PLAN 的情况下单独使用。
 
 注：获取的日志文件为 .bfl 格式的文本文件，可通过任意文本编辑器打开。
+
+## <a name="9">语言变更工具</a>
+
+从 6.6.2 版本起新增了语言变更工具，如果需要多语言支持，您可以先在 string.xml 中配置多国语言，然后使用如下方法进行语言变更：
+
+```
+BaseFrameworkSettings.selectLocale = Locale.ENGLISH;                //强制变成为英语
+BaseFrameworkSettings.selectLocale = Locale.CHINA;                  //强制变成为汉语
+BaseFrameworkSettings.selectLocale = Locale.SIMPLIFIED_CHINESE;     //强制变成为简体中文
+BaseFrameworkSettings.selectLocale = Locale.TRADITIONAL_CHINESE;    //强制变成为繁体中文
+```
+
+建议您在 Application 启动时设置此属性。
+
+需注意的是，修改此属性后并不会立即生效，需要重启您的 Activity 才可以生效，您也可以选择设置后重启当前 Activity 使其生效：
+
+```
+//注意先保存所有数据，然后使用如下语句重启当前Activity：
+restartMe();
+```
 
 ### 建议
 建议在 OnBugReportListener 中接收到日志文件后，显示对话框提示用户是否愿意帮助改进App，并在用户同意后上传文件到您的服务器。

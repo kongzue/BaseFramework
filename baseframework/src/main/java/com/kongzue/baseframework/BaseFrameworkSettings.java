@@ -8,6 +8,7 @@ import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.Preferences;
 
 import java.io.File;
+import java.util.Locale;
 
 /**
  * Author: @Kongzue
@@ -27,6 +28,9 @@ public class BaseFrameworkSettings {
     
     //是否开启beta计划，详情请参阅 https://github.com/kongzue/BaseFramework
     public static boolean BETA_PLAN = false;
+    
+    //语言设置
+    public static Locale selectLocale;
     
     //设置开启崩溃监听
     public static void turnOnReadErrorInfoPermissions(Context context, OnBugReportListener listener) {

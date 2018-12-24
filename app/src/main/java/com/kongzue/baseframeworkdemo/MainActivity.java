@@ -29,6 +29,7 @@ import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.JumpParameter;
 
 import java.io.File;
+import java.util.Locale;
 
 @Layout(R.layout.activity_main)
 @DarkStatusBarTheme(false)
@@ -48,6 +49,8 @@ public class MainActivity extends BaseActivity {
     private Button btnPermission;
     private Button btnError;
     private Button btnPrintJsonLog;
+    private Button btnGetImei;
+    private Button btnChangeLng;
     private TextView linkBokhttp;
     private TextView linkBvolley;
     private TextView linkUpdate;
@@ -67,6 +70,8 @@ public class MainActivity extends BaseActivity {
         btnPermission = findViewById(R.id.btn_permission);
         btnError = findViewById(R.id.btn_error);
         btnPrintJsonLog = findViewById(R.id.btn_printJsonLog);
+        btnGetImei = findViewById(R.id.btn_getImei);
+        btnChangeLng = findViewById(R.id.btn_changeLng);
         linkBokhttp = findViewById(R.id.link_bokhttp);
         linkBvolley = findViewById(R.id.link_bvolley);
         linkUpdate = findViewById(R.id.link_update);
@@ -137,12 +142,29 @@ public class MainActivity extends BaseActivity {
             
             }
         });
-        
     }
     
     @Override
     public void setEvents() {
         //此处为组件绑定事件
+        btnChangeLng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (BaseFrameworkSettings.selectLocale == Locale.ENGLISH){
+                    BaseFrameworkSettings.selectLocale = Locale.CHINA;
+                }else{
+                    BaseFrameworkSettings.selectLocale = Locale.ENGLISH;
+                }
+                restartMe();
+            }
+        });
+        
+        btnGetImei.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toast(getIMEI());
+            }
+        });
         
         btnPrintJsonLog.setOnClickListener(new View.OnClickListener() {
             @Override

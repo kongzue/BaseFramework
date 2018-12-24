@@ -52,6 +52,7 @@ import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.JsonFormat;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframework.util.LanguageUtil;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
@@ -1146,6 +1147,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return macAddress;
     }
     
+    public void restartMe(){
+        finish();
+        jump(me.getClass());
+        jumpAnim(R.anim.fade,R.anim.hold);
+    }
+    
     //以下不用管系列————
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
@@ -1169,5 +1176,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         getSwipeBackLayout().scrollToFinishActivity();
     }
     
-    
+    @Override
+    protected void attachBaseContext(Context c) {
+        super.attachBaseContext(LanguageUtil.wrap(c));
+    }
 }

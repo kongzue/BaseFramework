@@ -46,7 +46,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="BaseFramework"
+                    android:text="@string/app_name"
                     android:textColor="#ffffff"
                     android:textSize="20sp" />
             </LinearLayout>
@@ -143,6 +143,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="打印json数据（请使用Logcat查看）" />
+
+                    <Button
+                        android:id="@+id/btn_getImei"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="获取IMEI" />
+
+                    <Button
+                        android:id="@+id/btn_changeLng"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/btn_change_lng" />
 
                     <TextView
                         android:layout_width="wrap_content"

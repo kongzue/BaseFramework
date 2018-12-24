@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.6.1-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.6.2-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.1/link">
-<img src="https://img.shields.io/badge/Maven-6.6.1-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.2/link">
+<img src="https://img.shields.io/badge/Maven-6.6.2-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,14 +50,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.1</version>
+  <version>6.6.2</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.1'
+implementation 'com.kongzue.baseframework:baseframework:6.6.2'
 ```
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
@@ -99,6 +99,8 @@ implementation 'com.kongzue.baseframework:baseframework:6.6.1'
 · <a href="#8">增强型日志</a>
 
 · <a href="#7">行为与日志监听</a>
+
+· <a href="#8">语言变更工具</a>
 
 ## <a name="1">BaseActivity功能</a>
 
@@ -592,6 +594,26 @@ D/>>>: MainActivity:onDestroy
 
 您可以前往此处查看<a href="BUGREPORT.md">日志文件内容样例</a>
 
+## <a name="8">语言变更工具</a>
+
+从 6.6.2 版本起新增了语言变更工具，如果需要多语言支持，您可以先在 string.xml 中配置多国语言，然后使用如下方法进行语言变更：
+
+```
+BaseFrameworkSettings.selectLocale = Locale.ENGLISH;                //强制变成为英语
+BaseFrameworkSettings.selectLocale = Locale.CHINA;                  //强制变成为汉语
+BaseFrameworkSettings.selectLocale = Locale.SIMPLIFIED_CHINESE;     //强制变成为简体中文
+BaseFrameworkSettings.selectLocale = Locale.TRADITIONAL_CHINESE;    //强制变成为繁体中文
+```
+
+建议您在 Application 启动时设置此属性。
+
+需注意的是，修改此属性后并不会立即生效，需要重启您的 Activity 才可以生效，您也可以选择设置后重启当前 Activity 使其生效：
+
+```
+//注意先保存所有数据，然后使用如下语句重启当前Activity：
+restartMe();
+```
+
 ### 开启功能
 
 开启所有日志保存功能，包含 Activity 基本生命周期、使用 log(...) 语句输出的、使用 toast(...) 输出的信息：
@@ -636,6 +658,9 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.6.2:
+- 新增语言变更工具，具体请参照<a href="#8">语言变更工具</a>；
+
 v6.6.1:
 - BaseActivity 新增方法：获取设备IMEI：getIMEI()、获取设备AndroidID：getAndroidId()、获取Mac地址：getMacAddress()；
 - BaseFragment 新增方法 getStatusBarHeight()、getDisplayWidth()、getDisplayHeight()、getNavbarHeight()、getRootHeight()、getIMEI()、getAndroidId()、getMacAddress()；

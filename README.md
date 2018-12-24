@@ -100,7 +100,7 @@ implementation 'com.kongzue.baseframework:baseframework:6.6.2'
 
 · <a href="#7">行为与日志监听</a>
 
-· <a href="#8">语言变更工具</a>
+· <a href="#9">语言变更工具</a>
 
 ## <a name="1">BaseActivity功能</a>
 
@@ -594,7 +594,7 @@ D/>>>: MainActivity:onDestroy
 
 您可以前往此处查看<a href="BUGREPORT.md">日志文件内容样例</a>
 
-## <a name="8">语言变更工具</a>
+## <a name="9">语言变更工具</a>
 
 从 6.6.2 版本起新增了语言变更工具，如果需要多语言支持，您可以先在 string.xml 中配置多国语言，然后使用如下方法进行语言变更：
 
@@ -659,7 +659,7 @@ limitations under the License.
 
 ## <a name="about">更新日志</a>：
 v6.6.2:
-- 新增语言变更工具，具体请参照<a href="#8">语言变更工具</a>；
+- 新增语言变更工具，具体请参照<a href="#9">语言变更工具</a>；
 
 v6.6.1:
 - BaseActivity 新增方法：获取设备IMEI：getIMEI()、获取设备AndroidID：getAndroidId()、获取Mac地址：getMacAddress()；

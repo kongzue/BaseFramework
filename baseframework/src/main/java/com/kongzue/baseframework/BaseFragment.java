@@ -128,20 +128,27 @@ public abstract class BaseFragment extends Fragment {
         me.log(obj);
     }
     
+    private ObjectAnimator objectAnimator;
+    
     //位移动画
-    public void moveAnimation(Object obj, String perference, float aimValue, long time, long delay) {
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
+    public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue, long time, long delay) {
+        if (objectAnimator!=null)objectAnimator.cancel();
+        objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
         objectAnimator.setDuration(time);
         objectAnimator.setStartDelay(delay);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            objectAnimator.setAutoCancel(true);
+        }
         objectAnimator.start();
+        return objectAnimator;
     }
     
-    public void moveAnimation(Object obj, String perference, float aimValue, long time) {
-        moveAnimation(obj, perference, aimValue, time, 0);
+    public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue, long time) {
+        return moveAnimation(obj, perference, aimValue, time, 0);
     }
     
-    public void moveAnimation(Object obj, String perference, float aimValue) {
-        moveAnimation(obj, perference, aimValue, 300, 0);
+    public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue) {
+        return moveAnimation(obj, perference, aimValue, 300, 0);
     }
     
     //用于进行dip和px转换

@@ -94,9 +94,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private static GlobalLifeCircleListener globalLifeCircleListener;       //全局生命周期
     
     public boolean isActive = false;                                        //当前Activity是否处于前台
-    public boolean isAlive = false;                                         //当前Activity是否处于前台
+    public boolean isAlive = false;                                         //当前Activity是否处于存活状态
     
-    public OnJumpResponseListener onResponseListener;                          //jump跳转回调
+    public OnJumpResponseListener onResponseListener;                       //jump跳转回调
     private OnPermissionResponseListener onPermissionResponseListener;      //权限申请回调
     
     public BaseActivity me = this;
@@ -727,10 +727,14 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     //获取底栏高度
     public int getNavbarHeight() {
         if (setNavigationBarHeightZero) return 0;
-        int rootHeight = getRootHeight();
-        int navbarHeight = rootHeight - getWindowManager().getDefaultDisplay().getHeight();
-        if (navbarHeight < 0) navbarHeight = 0;
-        return navbarHeight;
+        int result = 0;
+        int resourceId = 0;
+        int rid = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
+        if (rid != 0) {
+            resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+            return getResources().getDimensionPixelSize(resourceId);
+        } else
+            return 0;
     }
     
     //获取真实的屏幕高度，注意判断非0
@@ -749,9 +753,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return diaplayHeight;
     }
     
+    private ObjectAnimator objectAnimator;
+    
     //位移动画
     public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue, long time, long delay) {
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
+        if (objectAnimator!=null)objectAnimator.cancel();
+        objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
         objectAnimator.setDuration(time);
         objectAnimator.setStartDelay(delay);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -1120,7 +1127,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
     
     //获取Mac地址 (请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>)
-    public String getMacAddress(){
+    public String getMacAddress() {
         String macAddress = null;
         StringBuffer buf = new StringBuffer();
         NetworkInterface networkInterface = null;
@@ -1147,10 +1154,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return macAddress;
     }
     
-    public void restartMe(){
+    public void restartMe() {
         finish();
         jump(me.getClass());
-        jumpAnim(R.anim.fade,R.anim.hold);
+        jumpAnim(R.anim.fade, R.anim.hold);
     }
     
     //以下不用管系列————

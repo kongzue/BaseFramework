@@ -7,5 +7,5 @@ import com.kongzue.baseframework.BaseAdapter;
 public interface SimpleAdapterSettings<E> {
     E setViewHolder(View convertView);
     
-    void setData(E viewHolder, BaseAdapter.BaseDataBean dataBean);
+    void setData(E viewHolder, BaseAdapter.BaseDataBean dataBean,int index);
 }

@@ -9,5 +9,5 @@ import java.util.Map;
 public interface MultipleMapAdapterSettings {
     Object setViewHolder(int type, View convertView);
     
-    void setData(int type, Object vh, Map<String, Object> data);
+    void setData(int type, Object vh, Map<String, Object> data,int index);
 }

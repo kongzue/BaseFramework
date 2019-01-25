@@ -657,7 +657,7 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
-beta 6.6.3.4:
+beta 6.6.3.5:
 - 修复了属性动画存在的bug；
 - BaseAdapter 新增泛型功能；
 

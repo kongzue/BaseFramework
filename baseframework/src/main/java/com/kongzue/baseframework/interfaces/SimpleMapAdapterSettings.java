@@ -6,8 +6,8 @@ import com.kongzue.baseframework.BaseAdapter;
 
 import java.util.Map;
 
-public interface SimpleMapAdapterSettings {
-    Object setViewHolder(View convertView);
+public interface SimpleMapAdapterSettings<E> {
+    E setViewHolder(View convertView);
     
-    void setData(Object viewHolder, Map<String, Object> data);
+    void setData(E vh, Map<String, Object> data);
 }

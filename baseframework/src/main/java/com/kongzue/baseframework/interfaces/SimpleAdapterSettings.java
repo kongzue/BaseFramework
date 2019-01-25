@@ -4,8 +4,8 @@ import android.view.View;
 
 import com.kongzue.baseframework.BaseAdapter;
 
-public interface SimpleAdapterSettings {
-    Object setViewHolder(View convertView);
+public interface SimpleAdapterSettings<E> {
+    E setViewHolder(View convertView);
     
-    void setData(Object viewHolder, BaseAdapter.BaseDataBean dataBean);
+    void setData(E vh, BaseAdapter.BaseDataBean dataBean);
 }

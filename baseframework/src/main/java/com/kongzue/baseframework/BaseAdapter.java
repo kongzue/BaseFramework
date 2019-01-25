@@ -221,5 +221,5 @@ public class BaseAdapter extends android.widget.BaseAdapter {
             notifyDataSetChanged();
         }
     }
-    
+
 }

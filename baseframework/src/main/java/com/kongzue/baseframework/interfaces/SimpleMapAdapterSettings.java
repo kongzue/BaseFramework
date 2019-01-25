@@ -9,5 +9,5 @@ import java.util.Map;
 public interface SimpleMapAdapterSettings<E> {
     E setViewHolder(View convertView);
     
-    void setData(E vh, Map<String, Object> data);
+    void setData(E viewHolder, Map<String, Object> data);
 }

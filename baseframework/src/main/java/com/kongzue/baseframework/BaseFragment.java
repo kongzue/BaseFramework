@@ -128,12 +128,9 @@ public abstract class BaseFragment extends Fragment {
         me.log(obj);
     }
     
-    private ObjectAnimator objectAnimator;
-    
     //位移动画
     public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue, long time, long delay) {
-        if (objectAnimator!=null)objectAnimator.cancel();
-        objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
         objectAnimator.setDuration(time);
         objectAnimator.setStartDelay(delay);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {

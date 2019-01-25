@@ -32,6 +32,7 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
@@ -503,6 +504,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
     
     private void info(int level, String msg) {
+        if (!DEBUGMODE) {
+            return;
+        }
         switch (level) {
             case 0:
                 Log.v(">>>", msg);
@@ -753,12 +757,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return diaplayHeight;
     }
     
-    private ObjectAnimator objectAnimator;
-    
     //位移动画
     public ObjectAnimator moveAnimation(Object obj, String perference, float aimValue, long time, long delay) {
-        if (objectAnimator!=null)objectAnimator.cancel();
-        objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(obj, perference, aimValue);
         objectAnimator.setDuration(time);
         objectAnimator.setStartDelay(delay);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -867,6 +868,37 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return true;
     }
     
+    public boolean jump(Class<?> cls, View... transitionViews) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                me.setExitSharedElementCallback(new SharedElementCallback() {
+                    @Override
+                    public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                        super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
+                        for (View view : sharedElements) {
+                            view.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+                
+                Pair<View, String>[] pairs = new Pair[transitionViews.length];
+                int i = 0;
+                for (View tv : transitionViews) {
+                    Pair<View, String> pair = new Pair<>(tv, tv.getTransitionName());
+                    pairs[i] = pair;
+                    i++;
+                }
+                startActivity(new Intent(me, cls), ActivityOptions.makeSceneTransitionAnimation(me, pairs).toBundle());
+            } else {
+                startActivity(new Intent(me, cls));
+            }
+        } catch (Exception e) {
+            if (DEBUGMODE) e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
     //可使用共享元素的带参数跳转方式
     public boolean jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
         try {
@@ -883,6 +915,40 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                     }
                 });
                 startActivity(new Intent(me, cls), ActivityOptions.makeSceneTransitionAnimation(me, transitionView, transitionView.getTransitionName()).toBundle());
+            } else {
+                startActivity(new Intent(me, cls));
+            }
+        } catch (Exception e) {
+            if (DEBUGMODE) e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, View... transitionViews) {
+        try {
+            if (jumpParameter != null)
+                ParameterCache.getInstance().set(cls.getName(), jumpParameter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                me.setExitSharedElementCallback(new SharedElementCallback() {
+                    @Override
+                    public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
+                        super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
+                        for (View view : sharedElements) {
+                            view.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+    
+                Pair<View, String>[] pairs = new Pair[transitionViews.length];
+                int i = 0;
+                for (View tv : transitionViews) {
+                    Pair<View, String> pair = new Pair<>(tv, tv.getTransitionName());
+                    pairs[i] = pair;
+                    i++;
+                }
+                
+                startActivity(new Intent(me, cls), ActivityOptions.makeSceneTransitionAnimation(me, pairs).toBundle());
             } else {
                 startActivity(new Intent(me, cls));
             }

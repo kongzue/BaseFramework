@@ -15,17 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class BaseAdapter extends android.widget.BaseAdapter {
+public class BaseAdapter<V,D> extends android.widget.BaseAdapter {
+
+    public static final int TYPE_SIMPLE_DATA = 1;
+    public static final int TYPE_MULTIPLE_DATA = 2;
+    public static final int TYPE_MAP_DATA = 3;
 
     private LayoutInflater mInflater;
-    private List<? extends BaseDataBean> datas;
+    private List<D> simpleDatas;
+    private List<? extends BaseDataBean> multipleDatas;
     private List<Map<String, Object>> mapDatas;
     private Context context;
-    private SimpleAdapterSettings simpleAdapterSettings;
+    private SimpleAdapterSettings<V,D> simpleAdapterSettings;
     private SimpleMapAdapterSettings simpleMapAdapterSettings;
     private MultipleAdapterSettings multipleAdapterSettings;
     private MultipleMapAdapterSettings multipleMapAdapterSettings;
-    private boolean isMapDatas = false;
+    private int dataType = 0;
 
     private int layoutResId = -1;
     private Map<Integer, Integer> layoutResIdMap;
@@ -33,13 +38,14 @@ public class BaseAdapter extends android.widget.BaseAdapter {
     private int typeCount = 1;
 
     public BaseAdapter(Context context, List<? extends BaseDataBean> datas, Map<Integer, Integer> layoutResId, MultipleAdapterSettings multipleAdapterSettings) {
-        this.datas = datas;
+        this.multipleDatas = datas;
         this.mapDatas = null;
+        this.simpleDatas = null;
         this.context = context;
         this.layoutResIdMap = layoutResId;
         this.layoutResId = -1;
         this.multipleAdapterSettings = multipleAdapterSettings;
-        isMapDatas = false;
+        dataType = TYPE_MULTIPLE_DATA;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         typeCount = layoutResIdMap.size();
@@ -47,24 +53,27 @@ public class BaseAdapter extends android.widget.BaseAdapter {
 
     public BaseAdapter(Context context, List<Map<String, Object>> datas, Map<Integer, Integer> layoutResId, MultipleMapAdapterSettings multipleMapAdapterSettings) {
         this.mapDatas = datas;
-        this.datas = null;
+        this.simpleDatas = null;
+        this.multipleDatas = null;
         this.context = context;
         this.layoutResIdMap = layoutResId;
         this.layoutResId = -1;
         this.multipleMapAdapterSettings = multipleMapAdapterSettings;
-        isMapDatas = true;
+        dataType = TYPE_MAP_DATA;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         typeCount = layoutResIdMap.size();
     }
 
-    public BaseAdapter(Context context, List<? extends BaseDataBean> datas, @LayoutRes int layoutResId, SimpleAdapterSettings simpleAdapterSettings) {
-        this.datas = datas;
+    public BaseAdapter(Context context, List<D> datas, @LayoutRes int layoutResId, SimpleAdapterSettings<V,D> simpleAdapterSettings) {
+        this.simpleDatas = datas;
+        this.mapDatas = null;
+        this.multipleDatas = null;
         this.context = context;
         this.layoutResIdMap = null;
         this.layoutResId = layoutResId;
         this.simpleAdapterSettings = simpleAdapterSettings;
-        isMapDatas = false;
+        dataType = TYPE_SIMPLE_DATA;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         typeCount = 1;
@@ -72,11 +81,13 @@ public class BaseAdapter extends android.widget.BaseAdapter {
 
     public BaseAdapter(Context context, List<Map<String, Object>> datas, @LayoutRes int layoutResId, SimpleMapAdapterSettings simpleMapAdapterSettings) {
         this.mapDatas = datas;
+        this.simpleDatas = null;
+        this.multipleDatas = null;
         this.context = context;
         this.layoutResIdMap = null;
         this.layoutResId = layoutResId;
         this.simpleMapAdapterSettings = simpleMapAdapterSettings;
-        isMapDatas = true;
+        dataType = TYPE_MAP_DATA;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         typeCount = 1;
@@ -89,30 +100,45 @@ public class BaseAdapter extends android.widget.BaseAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (datas == null) {
-            Object type = mapDatas.get(position).get("type");
-            if (type == null) type = 0;
-            return (int) type;
-        } else {
-            return datas.get(position).getType();
+        switch (dataType) {
+            case TYPE_MULTIPLE_DATA:
+                return multipleDatas.get(position).getType();
+            case TYPE_SIMPLE_DATA:
+                return 1;
+            case TYPE_MAP_DATA:
+                Object type = mapDatas.get(position).get("type");
+                if (type == null) type = 0;
+                return (int) type;
+            default:
+                return 1;
         }
     }
 
     @Override
     public int getCount() {
-        if (datas == null) {
-            return mapDatas.size();
-        } else {
-            return datas.size();
+        switch (dataType) {
+            case TYPE_MULTIPLE_DATA:
+                return multipleDatas.size();
+            case TYPE_SIMPLE_DATA:
+                return simpleDatas.size();
+            case TYPE_MAP_DATA:
+                return mapDatas.size();
+            default:
+                return 0;
         }
     }
 
     @Override
     public Object getItem(int i) {
-        if (datas == null) {
-            return mapDatas.get(i);
-        } else {
-            return datas.get(i);
+        switch (dataType) {
+            case TYPE_MULTIPLE_DATA:
+                return multipleDatas.get(i);
+            case TYPE_SIMPLE_DATA:
+                return simpleDatas.get(i);
+            case TYPE_MAP_DATA:
+                return mapDatas.get(i);
+            default:
+                return null;
         }
     }
 
@@ -128,68 +154,72 @@ public class BaseAdapter extends android.widget.BaseAdapter {
 
     @Override
     public View getView(final int i, View convertView, ViewGroup viewGroup) {
-        if (isMapDatas) {
-            Map<String, Object> obj = mapDatas.get(i);
+        switch (dataType) {
+            case TYPE_MULTIPLE_DATA:
+                BaseDataBean multipleData = multipleDatas.get(i);
 
-            if (layoutResIdMap == null) {
+                Object multipleViewHolder = null;
+                int layoutId = layoutResIdMap.get(multipleData.getType());
+                if (convertView == null) {
+                    convertView = mInflater.inflate(layoutId, null);
+                    multipleViewHolder = multipleAdapterSettings.setViewHolder(multipleData.getType(), convertView);
+                    convertView.setTag(multipleViewHolder);
+                } else {
+                    multipleViewHolder = convertView.getTag();
+                }
+                multipleAdapterSettings.setData(multipleData.getType(), multipleViewHolder, multipleData, i);
+                return convertView;
+            case TYPE_SIMPLE_DATA:
+                D simpleData = simpleDatas.get(i);
+
                 if (layoutResId == -1) {
-                    new Exception("请设置layoutResId或layoutResIdMap，至少设置其一");
+                    new Exception("请设置layoutResId");
                     return null;
                 } else {
-                    Object viewHolder;
+                    V simpleViewHolder;
                     if (convertView == null) {
                         convertView = mInflater.inflate(layoutResId, null);
-                        viewHolder = simpleMapAdapterSettings.setViewHolder(convertView);
+                        simpleViewHolder = simpleAdapterSettings.setViewHolder(convertView);
+                        convertView.setTag(simpleViewHolder);
+                    } else {
+                        simpleViewHolder = (V) convertView.getTag();
+                    }
+                    simpleAdapterSettings.setData(simpleViewHolder, simpleData, i);
+                }
+                return convertView;
+            case TYPE_MAP_DATA:
+                Map<String, Object> mapData = mapDatas.get(i);
+
+                if (layoutResIdMap == null) {
+                    if (layoutResId == -1) {
+                        new Exception("请设置layoutResId或layoutResIdMap，至少设置其一");
+                        return null;
+                    } else {
+                        Object viewHolder;
+                        if (convertView == null) {
+                            convertView = mInflater.inflate(layoutResId, null);
+                            viewHolder = simpleMapAdapterSettings.setViewHolder(convertView);
+                            convertView.setTag(viewHolder);
+                        } else {
+                            viewHolder = convertView.getTag();
+                        }
+                        simpleMapAdapterSettings.setData(viewHolder, mapData, i);
+                    }
+                } else {
+                    Object viewHolder = null;
+                    int mapLayoutId = layoutResIdMap.get((Integer) mapData.get("type"));
+                    if (convertView == null) {
+                        convertView = mInflater.inflate(mapLayoutId, null);
+                        viewHolder = multipleMapAdapterSettings.setViewHolder((Integer) mapData.get("type"), convertView);
                         convertView.setTag(viewHolder);
                     } else {
                         viewHolder = convertView.getTag();
                     }
-                    simpleMapAdapterSettings.setData(viewHolder, obj, i);
+                    multipleMapAdapterSettings.setData((Integer) mapData.get("type"), viewHolder, mapData, i);
                 }
-            } else {
-                Object viewHolder = null;
-                int layoutId = layoutResIdMap.get((Integer) obj.get("type"));
-                if (convertView == null) {
-                    convertView = mInflater.inflate(layoutId, null);
-                    viewHolder = multipleMapAdapterSettings.setViewHolder((Integer) obj.get("type"), convertView);
-                    convertView.setTag(viewHolder);
-                } else {
-                    viewHolder = convertView.getTag();
-                }
-                multipleMapAdapterSettings.setData((Integer) obj.get("type"), viewHolder, obj, i);
-            }
-            return convertView;
-        } else {
-            BaseDataBean obj = datas.get(i);
-
-            if (layoutResIdMap == null) {
-                if (layoutResId == -1) {
-                    new Exception("请设置layoutResId或layoutResIdMap，至少设置其一");
-                    return null;
-                } else {
-                    Object viewHolder;
-                    if (convertView == null) {
-                        convertView = mInflater.inflate(layoutResId, null);
-                        viewHolder = simpleAdapterSettings.setViewHolder(convertView);
-                        convertView.setTag(viewHolder);
-                    } else {
-                        viewHolder = convertView.getTag();
-                    }
-                    simpleAdapterSettings.setData(viewHolder, obj, i);
-                }
-            } else {
-                Object viewHolder = null;
-                int layoutId = layoutResIdMap.get(obj.getType());
-                if (convertView == null) {
-                    convertView = mInflater.inflate(layoutId, null);
-                    viewHolder = multipleAdapterSettings.setViewHolder(obj.getType(), convertView);
-                    convertView.setTag(viewHolder);
-                } else {
-                    viewHolder = convertView.getTag();
-                }
-                multipleAdapterSettings.setData(obj.getType(), viewHolder, obj, i);
-            }
-            return convertView;
+                return convertView;
+            default:
+                return null;
         }
     }
 
@@ -206,7 +236,15 @@ public class BaseAdapter extends android.widget.BaseAdapter {
         }
     }
 
-    public void refreshDataChanged(List<Map<String, Object>> newDatas) {
+    public void refreshSimpleDataChanged(List<D> newDatas) {
+        if (simpleDatas != null) {
+            simpleDatas = new ArrayList<>();
+            simpleDatas.addAll(newDatas);
+            notifyDataSetChanged();
+        }
+    }
+
+    public void refreshMapDataChanged(List<Map<String, Object>> newDatas) {
         if (mapDatas != null) {
             mapDatas = new ArrayList<>();
             mapDatas.addAll(newDatas);
@@ -214,10 +252,10 @@ public class BaseAdapter extends android.widget.BaseAdapter {
         }
     }
 
-    public void refreshDataChanged(ArrayList<? extends BaseDataBean> newDatas) {
-        if (datas != null) {
-            datas = new ArrayList<>();
-            datas = newDatas;
+    public void refreshMultipleDataChanged(ArrayList<? extends BaseDataBean> newDatas) {
+        if (multipleDatas != null) {
+            multipleDatas = new ArrayList<>();
+            multipleDatas = newDatas;
             notifyDataSetChanged();
         }
     }

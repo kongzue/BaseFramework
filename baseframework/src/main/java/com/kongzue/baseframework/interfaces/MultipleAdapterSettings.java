@@ -7,8 +7,8 @@ import com.kongzue.baseframework.BaseAdapter;
 import java.util.List;
 import java.util.Map;
 
-public interface MultipleAdapterSettings {
+public interface MultipleAdapterSettings<D> {
     Object setViewHolder(int type, View convertView);
     
-    void setData(int type, Object vh, BaseAdapter.BaseDataBean dataBean,int index);
+    void setData(int type, Object vh, D data,int index);
 }

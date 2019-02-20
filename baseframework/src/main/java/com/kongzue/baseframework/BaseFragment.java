@@ -85,7 +85,9 @@ public abstract class BaseFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+        if (rootView == null) {
+            rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+        }
         
         if (lifeCircleListener != null) lifeCircleListener.onCreate();
         
@@ -341,7 +343,7 @@ public abstract class BaseFragment extends Fragment {
         return me.getAndroidId();
     }
     
-    public String getMacAddress(){
+    public String getMacAddress() {
         return me.getMacAddress();
     }
 }

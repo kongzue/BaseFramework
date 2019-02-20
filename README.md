@@ -322,6 +322,46 @@ BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以�
 
 BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment 中通过 setLifeCircleListener(LifeCircleListener LifeCircleListener) 监控 BaseFragment 的生命周期。
 
+### FragmentChangeUtil
+6.6.4 版本起新增 FragmentChangeUtil 工具便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换，使用方法如下：
+
+1) 初始化
+```
+//参数 BaseActivity 为要绑定到的 BaseActivity，参数 frameLayoutResId 为在该 Activity 中显示 Fragment 的容器，一般使用 FrameLayout 即可
+FragmentChangeUtil util = new FragmentChangeUtil(BaseActivity me, int frameLayoutResId);
+```
+
+2) 添加 Fragment 到管理工具
+```
+util.addFragment(new HomeFragment());
+util.addFragment(new MessageFragment());
+util.addFragment(new MeFragment());
+```
+
+3) 切换到指定 Fragment
+```
+//使用对象
+util.show(fragment);
+
+//或使用索引：
+util.show(int index);
+```
+* 索引即已添加的 Fragment 的编号。
+
+4) 额外方法：
+```
+//获取目前有几个已添加的 Fragment
+util.getCount();    
+
+//获取当前正在显示的 Fragment 对象
+util.getFocusFragment();
+
+//获取当前正在显示的 Fragment 对象的索引编号
+util.getFocusFragmentIndex();
+```
+
+备注：使用 FragmentChangeUtil 切换到 Fragment 后会自动执行该 Fragment 的 onResume() 方法，如有需要刷新界面的操作可以重写 onResume() 方法执行。
+
 ## <a name="3">Preferences</a>
 Preferences是SharedPreferences的简易封装。
 
@@ -657,9 +697,11 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
-beta 6.6.3.7:
+6.6.4:
 - 修复了属性动画存在的bug；
 - BaseAdapter 新增泛型功能；
+- 修复了 BaseFragment 重复加载导致组件指针绑定问题；
+- 新增 FragmentChangeUtil 管理工具，以便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换；
 
 v6.6.3:
 - 修复了获取导航栏高度值错误的问题；

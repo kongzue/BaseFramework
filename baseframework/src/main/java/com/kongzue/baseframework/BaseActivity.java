@@ -23,6 +23,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.SharedElementCallback;
@@ -1252,5 +1253,14 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     @Override
     protected void attachBaseContext(Context c) {
         super.attachBaseContext(LanguageUtil.wrap(c));
+    }
+    
+    //支持最低SDK的getColor方法
+    public int getColorS(@ColorRes int id) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return getResources().getColor(id, getTheme());
+        }else{
+            return getResources().getColor(id);
+        }
     }
 }

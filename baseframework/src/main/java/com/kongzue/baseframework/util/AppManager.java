@@ -6,7 +6,9 @@ import android.content.Context;
 
 import com.kongzue.baseframework.BaseActivity;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -119,6 +121,25 @@ public class AppManager {
     public void deleteActivity(BaseActivity activity) {
         if (activity != null) {
             activityStack.remove(activity);
+        }
+    }
+    
+    /**
+     * 关闭所有 {@link Activity},排除指定的 {@link Activity}
+     * @param cls activity
+     */
+    public void killOtherActivityExclude(Class<?>... cls) {
+        List<Class<?>> excludeList = Arrays.asList(cls);
+        if (activityStack != null) {
+            Iterator<BaseActivity> iterator = activityStack.iterator();
+            while (iterator.hasNext()) {
+                Activity activity = iterator.next();
+                if (excludeList.contains(activity.getClass())) {
+                    continue;
+                }
+                iterator.remove();
+                activity.finish();
+            }
         }
     }
 }

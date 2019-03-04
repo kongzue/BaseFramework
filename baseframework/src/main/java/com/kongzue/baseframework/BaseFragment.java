@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -345,6 +346,15 @@ public abstract class BaseFragment extends Fragment {
     
     public String getMacAddress() {
         return me.getMacAddress();
+    }
+    
+    //支持最低SDK的getColor方法
+    public int getColorS(@ColorRes int id) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return getResources().getColor(id, me.getTheme());
+        }else{
+            return getResources().getColor(id);
+        }
     }
 }
 

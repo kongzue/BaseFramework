@@ -24,21 +24,10 @@ Demo预览图如下：
 ![Kongzue's BaseFramework](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseframework.png)
 
 ## 使用前的约定与须知
+
 - 更轻松！在 BaseActivity 中，约定关键词me代替Activity.this，因此您在编写代码时，在异步线程中可以轻松使用me关键字直接引用当前的父Activity。
 
 - 请忘掉重写你的 onCreate 吧！在新版本的 BaseFramework 中，您可以直接在 class 上使用注解 @Layout(R.layout.xxx) ，剩下的事情我们会自动帮您完成！
-
-- 在 BaseActivity 中，您还可以使用以下注解对沉浸式进行控制：
-```
-@DarkStatusBarTheme(true)           //开启顶部状态栏图标、文字暗色模式
-@DarkNavigationBarTheme(true)       //开启底部导航栏按钮暗色模式
-@NavigationBarBackgroundColor(a = 255,r = 255,g = 255,b = 255)      //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
-
-//也可从代码中进行控制：
-setDarkStatusBarTheme(true);            //开启顶部状态栏图标、文字暗色模式
-setDarkNavigationBarTheme(true);        //开启底部导航栏按钮暗色模式
-setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
-```
 
 - 规范化！无论是在 BaseActivity 还是 BaseFragment ，默认都有 initViews()、initDatas()、setEvents() 三个方法，他们分别代表加载组件、初始化数据、组件绑定事件三个步骤，因其执行顺序是固定的，且为了代码规范化，这三个方法必须重写，也建议将相关业务逻辑写在对应方法中，以方便维护和管理。
 
@@ -68,17 +57,19 @@ implementation 'com.kongzue.baseframework:baseframework:6.6.5'
 
 · <a href="#1">BaseActivity功能</a>
 
-···· <a href="#1-1">带自定义参数的跳转</a>
+···· <a href="#1-1">沉浸式</a>
 
-···· <a href="#1-2">更简单的跳转后返回数据</a>
+···· <a href="#1-2">带自定义参数的跳转</a>
 
-···· <a href="#1-3">权限申请</a>
+···· <a href="#1-3">更简单的跳转后返回数据</a>
 
-···· <a href="#1-4">BaseActivity提供的小工具</a>
+···· <a href="#1-4">权限申请</a>
 
-···· <a href="#1-5">BaseActivity的生命周期</a>
+···· <a href="#1-5">BaseActivity提供的小工具</a>
 
-···· <a href="#1-6">侧滑返回</a>
+···· <a href="#1-6">BaseActivity的生命周期</a>
+
+···· <a href="#1-7">侧滑返回</a>
 
 · <a href="#2">BaseFragment功能</a>
 
@@ -106,8 +97,21 @@ implementation 'com.kongzue.baseframework:baseframework:6.6.5'
 
 ## <a name="1">BaseActivity功能</a>
 
+### <a name="1-1">沉浸式</a>
 
-### <a name="1-1">带自定义参数的跳转</a>
+- 在 BaseActivity 中，您还可以使用以下注解对沉浸式进行控制：
+```
+@DarkStatusBarTheme(true)           //开启顶部状态栏图标、文字暗色模式
+@DarkNavigationBarTheme(true)       //开启底部导航栏按钮暗色模式
+@NavigationBarBackgroundColor(a = 255,r = 255,g = 255,b = 255)      //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
+
+//也可从代码中进行控制：
+setDarkStatusBarTheme(true);            //开启顶部状态栏图标、文字暗色模式
+setDarkNavigationBarTheme(true);        //开启底部导航栏按钮暗色模式
+setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
+```
+
+### <a name="1-2">带自定义参数的跳转</a>
 Android 默认的 Intent无法支持自定义类型参数的跳转，BaseActivity 通过自有的数据通道允许传输自定义类型的数据给要跳转到的另一个 BaseActivity：
 
 跳转代码范例：
@@ -127,7 +131,7 @@ Bitmap parameter2 = (Bitmap) getParameter().get("参数2");
 if (parameter2 != null) imgP2.setImageBitmap(parameter2);
 ```
 
-### <a name="1-2">更简单的跳转后返回数据</a>
+### <a name="1-3">更简单的跳转后返回数据</a>
 以往我们需要通过重写实现 onActivityResult 来实现回传数据，但在 BaseActivity 中，你只需要一个监听器：
 
 跳转代码范例：
@@ -173,7 +177,7 @@ if ((boolean) getParameter().get("needResponse") == true) {
 }
 ```
 
-### <a name="1-3">权限申请</a>
+### <a name="1-4">权限申请</a>
 要进行权限申请也变得更加简单，只需要实现相应的回调 OnPermissionResponseListener 即可：
 ```
 requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
@@ -188,7 +192,7 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 });
 ```
 
-### <a name="1-4">BaseActivity提供的小工具</a>
+### <a name="1-5">BaseActivity提供的小工具</a>
 >简易吐司：
 ```
 toast(Obj);
@@ -248,7 +252,7 @@ getAndroidId()
 getMacAddress()
 ```
 
-### <a name="1-5">BaseActivity的生命周期</a>
+### <a name="1-6">BaseActivity的生命周期</a>
 
 通常的，您可以通过重写 onCreate()、 onResume()、 onPause()、 onDestroy() 四个方法来监控 Activity 的生命周期，但因为每个方法为独立的方法函数，可能在较多代码时不容易寻找他们的存在。
 
@@ -298,7 +302,7 @@ BaseActivity.setGlobalLifeCircleListener(new GlobalLifeCircleListener() {
 ```
 注意此方法为静态的，要使用它建议在 Application 中对它进行管理。
 
-### <a name="1-6">侧滑返回</a>
+### <a name="1-7">侧滑返回</a>
 
 从 6.5.8 版本起，您可以对 BaseActivity 进行注解，来实现侧滑返回：
 ```

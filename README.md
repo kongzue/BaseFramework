@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.6.6-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.6.5-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.6/link">
-<img src="https://img.shields.io/badge/Maven-6.6.6-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.5/link">
+<img src="https://img.shields.io/badge/Maven-6.6.5-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -50,15 +50,17 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.6</version>
+  <version>6.6.5</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.6'
+implementation 'com.kongzue.baseframework:baseframework:6.6.5'
 ```
+
+⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
 
@@ -697,6 +699,9 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.6.5.2(beta):
+- 尝试性的提供了 Toast 的兼容模式，兼容解决部分设备因关闭“悬浮窗权限”导致 Toast 无法正常使用的问题，请使用 toastS(Object) 来调用此功能，或者使用 Toaster 类相关方法提供更多功能和可玩性。
+
 v6.6.5:
 - AppManager 新增排除结束方法 killOtherActivityExclude(class) 可排除指定 Activity 并结束之外的所有 Activity；
 - BaseActivity 以及 BaseFragment 新增 getColorS(resId) 以替代系统提供且不让修改的半残方法 getColor(resId)；

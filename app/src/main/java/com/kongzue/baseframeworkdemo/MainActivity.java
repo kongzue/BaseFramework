@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFrameworkSettings;
@@ -27,6 +28,7 @@ import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframework.util.toast.Toaster;
 
 import java.io.File;
 import java.util.Locale;
@@ -51,6 +53,7 @@ public class MainActivity extends BaseActivity {
     private Button btnPrintJsonLog;
     private Button btnGetImei;
     private Button btnChangeLng;
+    private Button btnToast;
     private TextView linkBokhttp;
     private TextView linkBvolley;
     private TextView linkUpdate;
@@ -72,6 +75,7 @@ public class MainActivity extends BaseActivity {
         btnPrintJsonLog = findViewById(R.id.btn_printJsonLog);
         btnGetImei = findViewById(R.id.btn_getImei);
         btnChangeLng = findViewById(R.id.btn_changeLng);
+        btnToast = findViewById(R.id.btn_toast);
         linkBokhttp = findViewById(R.id.link_bokhttp);
         linkBvolley = findViewById(R.id.link_bvolley);
         linkUpdate = findViewById(R.id.link_update);
@@ -147,6 +151,13 @@ public class MainActivity extends BaseActivity {
     @Override
     public void setEvents() {
         //此处为组件绑定事件
+        btnToast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toastS("test!");
+            }
+        });
+        
         btnChangeLng.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

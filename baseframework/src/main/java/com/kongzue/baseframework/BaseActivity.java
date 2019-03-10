@@ -62,6 +62,7 @@ import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityBase;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityHelper;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackLayout;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackUtil;
+import com.kongzue.baseframework.util.toast.Toaster;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -482,6 +483,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public void toastS(final Object obj) {
+        Toaster.build(me).show(obj.toString());
     }
     
     //简易Log
@@ -1038,6 +1043,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     @Override
     protected void onPause() {
+        if (Toaster.isSupportToast){
+            Toaster.cancel();
+        }
         isActive = false;
         logG("\n" + me.getClass().getSimpleName(), "onPause");
         if (lifeCircleListener != null) lifeCircleListener.onPause();

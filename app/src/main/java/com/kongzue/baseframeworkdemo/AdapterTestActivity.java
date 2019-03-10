@@ -113,10 +113,11 @@ public class AdapterTestActivity extends BaseActivity {
             }
             
             @Override
-            public void setData(Object viewHolder, Map<String, Object> data) {
+            public void setData(Object viewHolder, Map data, int index) {
                 ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
                 viewHolder1.txtTitle.setText(data.get("title") + "");
             }
+            
         });
         
         list.setAdapter(baseAdapter);
@@ -137,8 +138,8 @@ public class AdapterTestActivity extends BaseActivity {
             }
             
             @Override
-            public void setData(Object viewHolder, BaseAdapter.BaseDataBean dataBean) {
-                CustomDatas data = (CustomDatas) dataBean;
+            public void setData(Object viewHolder, Object d, int index) {
+                CustomDatas data = (CustomDatas) d;
                 ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
                 viewHolder1.txtTitle.setText(data.getTitle());
             }
@@ -189,18 +190,18 @@ public class AdapterTestActivity extends BaseActivity {
             }
             
             @Override
-            public void setData(int type, Object viewHolder, Map<String, Object> data) {
+            public void setData(int type, Object vh, Map<String, Object> data, int index) {
                 switch (type) {
                     case 0:
-                        ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
+                        ViewHolder1 viewHolder1 = (ViewHolder1) vh;
                         viewHolder1.txtTitle.setText((String) data.get("title"));
                         break;
                     case 1:
-                        ViewHolder2 viewHolder2 = (ViewHolder2) viewHolder;
+                        ViewHolder2 viewHolder2 = (ViewHolder2) vh;
                         viewHolder2.txtTitle.setText((String) data.get("title"));
                         break;
                     case 2:
-                        ViewHolder3 viewHolder3 = (ViewHolder3) viewHolder;
+                        ViewHolder3 viewHolder3 = (ViewHolder3) vh;
                         viewHolder3.txtTitle.setText((String) data.get("title"));
                         break;
                 }
@@ -244,19 +245,19 @@ public class AdapterTestActivity extends BaseActivity {
             }
             
             @Override
-            public void setData(int type, Object viewHolder, BaseAdapter.BaseDataBean dataBean) {
-                CustomDatas data = (CustomDatas) dataBean;
+            public void setData(int type, Object vh, Object d, int index) {
+                CustomDatas data = (CustomDatas) d;
                 switch (type) {
                     case 0:
-                        ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
+                        ViewHolder1 viewHolder1 = (ViewHolder1) vh;
                         viewHolder1.txtTitle.setText(data.getTitle());
                         break;
                     case 1:
-                        ViewHolder2 viewHolder2 = (ViewHolder2) viewHolder;
+                        ViewHolder2 viewHolder2 = (ViewHolder2) vh;
                         viewHolder2.txtTitle.setText(data.getTitle());
                         break;
                     case 2:
-                        ViewHolder3 viewHolder3 = (ViewHolder3) viewHolder;
+                        ViewHolder3 viewHolder3 = (ViewHolder3) vh;
                         viewHolder3.txtTitle.setText(data.getTitle());
                         break;
                 }

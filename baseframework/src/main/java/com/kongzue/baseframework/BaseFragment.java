@@ -31,6 +31,7 @@ import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
+import com.kongzue.baseframework.util.toast.Toaster;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -125,6 +126,10 @@ public abstract class BaseFragment extends Fragment {
     //简易吐司
     public void toast(final Object obj) {
         me.toast(obj);
+    }
+    
+    public void toastS(final Object obj) {
+        Toaster.build(me).show(obj.toString());
     }
     
     public void log(final Object obj) {

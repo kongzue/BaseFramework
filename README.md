@@ -699,7 +699,7 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
-v6.6.5.2(beta):
+(beta) v6.6.5.2:
 - 尝试性的提供了 Toast 的兼容模式，兼容解决部分设备因关闭“悬浮窗权限”导致 Toast 无法正常使用的问题，请使用 toastS(Object) 来调用此功能，或者使用 Toaster 类相关方法提供更多功能和可玩性。
 
 v6.6.5:

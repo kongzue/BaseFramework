@@ -66,7 +66,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="简介"
+                        android:text="@string/introduction"
                         android:textSize="20dp" />
 
                     <TextView
@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="访问BaseFramework官方Github"
+                        android:text="@string/viewOnGithub"
                         android:textColor="#4472c4"
                         android:textSize="12dp" />
 
@@ -82,7 +82,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:text="BaseFramework框架是我对之前编程开发的一些总结，目的是以最快的方式完成项目开发，因此将一些常用的小工具，例如简易吐司、简易log等放在了基础类中，只需要将您项目中的Activity或Fragment继承本框架中的BaseActivity以及BaseFragment，即可使用。\n除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。\n本界面就是基于BaseActivity实现的Demo。"
+                        android:text="@string/introduction_tip"
                         android:textSize="12dp" />
 
                     <Button
@@ -103,7 +103,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="其他功能"
+                        android:text="@string/other"
                         android:textSize="20dp" />
 
                     <Button

@@ -14,7 +14,7 @@ import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.JumpParameter;
 
 @Layout(R.layout.fragment_demo)
-public class FragmentDemo extends BaseFragment {
+public class FragmentDemo extends BaseFragment<MainActivity> {
 
     private TextView info;
     private Button btnHide;
@@ -29,7 +29,7 @@ public class FragmentDemo extends BaseFragment {
     @Override
     public void initDatas() {
         //此处编写初始化代码
-
+        
     }
 
     @Override
@@ -38,7 +38,7 @@ public class FragmentDemo extends BaseFragment {
         btnHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)me).hideFragment();
+                me.hideFragment();
             }
         });
     }

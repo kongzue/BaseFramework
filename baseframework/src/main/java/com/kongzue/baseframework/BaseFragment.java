@@ -48,7 +48,7 @@ import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHe
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public int layoutResId = -1;
     
@@ -56,9 +56,9 @@ public abstract class BaseFragment extends Fragment {
     
     private Bundle savedInstanceState;
     
-    public BaseActivity me;                                                 //绑定的BaseActivity
+    public ME me;                                                 //绑定的BaseActivity
     
-    public void setActivity(BaseActivity activity) {
+    public void setActivity(ME activity) {
         this.me = activity;
     }
     
@@ -71,7 +71,7 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        me = (BaseActivity) getActivity();
+        me = (ME) getActivity();
         this.savedInstanceState = savedInstanceState;
         try {
             Layout layout = getClass().getAnnotation(Layout.class);
@@ -357,8 +357,14 @@ public abstract class BaseFragment extends Fragment {
     public int getColorS(@ColorRes int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return getResources().getColor(id, me.getTheme());
-        }else{
+        } else {
             return getResources().getColor(id);
+        }
+    }
+    
+    public void callResume() {
+        if (rootView != null) {
+            onResume();
         }
     }
 }

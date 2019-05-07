@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.6.5-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.6.6-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.5/link">
-<img src="https://img.shields.io/badge/Maven-6.6.5-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.6/link">
+<img src="https://img.shields.io/badge/Maven-6.6.6-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -39,14 +39,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.5</version>
+  <version>6.6.6</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.5'
+implementation 'com.kongzue.baseframework:baseframework:6.6.6'
 ```
 
 ⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
@@ -73,11 +73,11 @@ implementation 'com.kongzue.baseframework:baseframework:6.6.5'
 
 · <a href="#2">BaseFragment功能</a>
 
-· <a href="#3">BaseActivity提供的小工具</a>
+· <a href="#3">Preferences</a>
 
-· <a href="#4">Preferences</a>
+· <a href="#4">AppManager</a>
 
-· <a href="#5">AppManager</a>
+· <a href="#5">异步或同步</a>
 
 · <a href="#6">BaseAdapter</a>
 
@@ -251,6 +251,10 @@ getAndroidId()
 //请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 getMacAddress()
 ```
+>获取根布局
+```
+getRootView()
+```
 
 ### <a name="1-6">BaseActivity的生命周期</a>
 
@@ -327,6 +331,28 @@ BaseFragment 与普通的 Fragment 有什么区别？
 BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以轻松使用它们。
 
 BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment 中通过 setLifeCircleListener(LifeCircleListener LifeCircleListener) 监控 BaseFragment 的生命周期。
+
+BaseFragment 在编写时建议约定泛型“ME”为要绑定的父 Activity，使用此功能可以在 BaseFragment 中直接使用父 Activity 中的 public 方法和元素，以下是返利：
+```
+@Layout(R.layout.fragment_demo)
+public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约定泛型
+    private Button btnHide;
+    
+    //已省略绑定组件和初始化等方法
+   
+    @Override
+    public void setEvents() {
+        //此处为组件绑定事件
+        btnHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                me.hideFragment();                                  //可使用 me 关键字直接调用父 Activity 中的方法
+            }
+        });
+    }
+}
+```
+若不想约定，可将泛型设置为 BaseActivity。
 
 ### FragmentChangeUtil
 6.6.4 版本起新增 FragmentChangeUtil 工具便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换，使用方法如下：
@@ -703,8 +729,11 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
-(beta) v6.6.5.2:
+v6.6.6:
+- BaseFragment 现已可使用泛型，来直接访问父 Activity 中的 public 方法和元素； 
 - 尝试性的提供了 Toast 的兼容模式，兼容解决部分设备因关闭“悬浮窗权限”导致 Toast 无法正常使用的问题，请使用 toastS(Object) 来调用此功能，或者使用 Toaster 类相关方法提供更多功能和可玩性。
+- BaseActivity 新增 getRootView() 方法可直接获取根布局；
+- 修复了 FragmentChangeUtil 在切换时错误调用未初始化状态的子 Fragment.onResume() 的问题；
 
 v6.6.5:
 - AppManager 新增排除结束方法 killOtherActivityExclude(class) 可排除指定 Activity 并结束之外的所有 Activity；

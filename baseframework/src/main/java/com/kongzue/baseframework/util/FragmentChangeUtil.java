@@ -21,8 +21,8 @@ import java.util.List;
 public class FragmentChangeUtil {
     
     private BaseActivity me;
-    private List<Fragment> fragmentList;
-    private Fragment focusFragment;
+    private List<BaseFragment> fragmentList;
+    private BaseFragment focusFragment;
     
     private int frameLayoutResId;
     
@@ -39,7 +39,7 @@ public class FragmentChangeUtil {
         return this;
     }
     
-    public FragmentChangeUtil addFragment(Fragment fragment) {
+    public FragmentChangeUtil addFragment(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             me.log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
             return null;
@@ -50,7 +50,7 @@ public class FragmentChangeUtil {
         return this;
     }
     
-    public FragmentChangeUtil show(Fragment fragment) {
+    public FragmentChangeUtil show(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
@@ -63,7 +63,7 @@ public class FragmentChangeUtil {
         if (focusFragment != null) transaction.hide(focusFragment);
         transaction.show(fragment);
         transaction.commit();
-        fragment.onResume();
+        fragment.callResume();
         focusFragment = fragment;
         return this;
     }
@@ -77,7 +77,7 @@ public class FragmentChangeUtil {
         if (focusFragment != null) transaction.hide(focusFragment);
         transaction.show(fragmentList.get(index));
         transaction.commit();
-        fragmentList.get(index).onResume();
+        fragmentList.get(index).callResume();
         focusFragment = fragmentList.get(index);
         return this;
     }

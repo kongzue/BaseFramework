@@ -1271,4 +1271,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             return getResources().getColor(id);
         }
     }
+    
+    public View getRootView() {
+        return getWindow().getDecorView().findViewById(android.R.id.content);
+    }
 }

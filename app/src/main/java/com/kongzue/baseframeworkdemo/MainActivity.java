@@ -25,6 +25,7 @@ import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.interfaces.OnBugReportListener;
+import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.JumpParameter;
@@ -39,7 +40,8 @@ import java.util.Locale;
 @DarkNavigationBarTheme(true)
 public class MainActivity extends BaseActivity {
     
-    private FragmentDemo fragmentDemo;
+    private FragmentDemo fragmentDemo = new FragmentDemo();
+    private FragmentChangeUtil fragmentChangeUtil;
     
     private TextView txtTitle;
     private TextView linkHome;
@@ -120,6 +122,9 @@ public class MainActivity extends BaseActivity {
         linkBvolley.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         linkUpdate.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         linkDialog.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+    
+        fragmentChangeUtil = new FragmentChangeUtil(me,R.id.frame);
+        fragmentChangeUtil.addFragment(fragmentDemo);
 
 //        setDarkStatusBarTheme(true);
 //        setDarkNavigationBarThemeValue(true);
@@ -296,16 +301,7 @@ public class MainActivity extends BaseActivity {
         intentToFragment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                if (fragmentDemo != null) {
-                    transaction.hide(fragmentDemo);
-                } else {
-                    fragmentDemo = new FragmentDemo();
-                    transaction.add(R.id.frame, fragmentDemo);
-                }
-                transaction.show(fragmentDemo);
-                transaction.commit();
+                fragmentChangeUtil.show(0);
             }
         });
         
@@ -347,12 +343,7 @@ public class MainActivity extends BaseActivity {
     }
     
     public void hideFragment() {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        if (fragmentDemo != null) {
-            transaction.hide(fragmentDemo);
-        }
-        transaction.commit();
+        fragmentChangeUtil.hide(0);
     }
     
     private void doTestError() throws NullPointerException {

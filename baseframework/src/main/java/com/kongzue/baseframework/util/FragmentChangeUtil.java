@@ -82,6 +82,28 @@ public class FragmentChangeUtil {
         return this;
     }
     
+    public FragmentChangeUtil hide(int index) {
+        if (me == null || frameLayoutResId == 0 || fragmentList == null) {
+            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            return null;
+        }
+        FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        transaction.hide(fragmentList.get(index));
+        transaction.commit();
+        return this;
+    }
+    
+    public FragmentChangeUtil hide(BaseFragment fragment) {
+        if (me == null || frameLayoutResId == 0 || fragmentList == null) {
+            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            return null;
+        }
+        FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        transaction.hide(fragment);
+        transaction.commit();
+        return this;
+    }
+    
     public int getCount() {
         if (fragmentList == null) {
             me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");

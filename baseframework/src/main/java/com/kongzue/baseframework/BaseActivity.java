@@ -495,12 +495,31 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (DEBUGMODE) {
                 String msg = obj.toString();
                 if (isNull(msg)) return;
-                if (obj.toString().length() > 4000) {
+                if (obj.toString().length() > 2048) {
                     bigLog(msg);
                 } else {
                     logG("log", msg);
                     if (!JsonFormat.formatJson(msg)) {
                         Log.v(">>>>>>", msg);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void error(final Object obj) {
+        try {
+            if (DEBUGMODE) {
+                String msg = obj.toString();
+                if (isNull(msg)) return;
+                if (obj.toString().length() > 2048) {
+                    bigLog(msg);
+                } else {
+                    logG("log", msg);
+                    if (!JsonFormat.formatJson(msg)) {
+                        Log.e(">>>>>>", msg);
                     }
                 }
             }

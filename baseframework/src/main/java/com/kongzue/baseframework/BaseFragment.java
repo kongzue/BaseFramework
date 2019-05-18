@@ -1,25 +1,14 @@
 package com.kongzue.baseframework;
 
 import android.animation.ObjectAnimator;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,12 +22,7 @@ import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.toast.Toaster;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.List;
-
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
-import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
 
 /**
  * @Version: 6.5.5
@@ -89,6 +73,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         if (rootView == null) {
             rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+            rootView.setClickable(true);        //防止点击穿透
         }
         
         if (lifeCircleListener != null) lifeCircleListener.onCreate();
@@ -115,6 +100,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public abstract void setEvents();
     
+    public abstract void onLoad();
+    
     public final <T extends View> T findViewById(@IdRes int id) {
         return rootView.findViewById(id);
     }
@@ -134,6 +121,10 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public void log(final Object obj) {
         me.log(obj);
+    }
+    
+    public void error(final Object obj) {
+        me.error(obj);
     }
     
     //位移动画
@@ -362,9 +353,15 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
     }
     
+    private boolean isFirstResume = false;
+    
     public void callResume() {
         if (rootView != null) {
             onResume();
+            if (!isFirstResume) {
+                onLoad();
+                isFirstResume = true;
+            }
         }
     }
 }

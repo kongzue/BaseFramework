@@ -22,6 +22,7 @@ public class FragmentDemo extends BaseFragment<MainActivity> {
     @Override
     public void initViews() {
         //此处加载组件
+        log("initViews");
         info = findViewById(R.id.info);
         btnHide = findViewById(R.id.btn_hide);
     }
@@ -29,18 +30,25 @@ public class FragmentDemo extends BaseFragment<MainActivity> {
     @Override
     public void initDatas() {
         //此处编写初始化代码
-        
+        log("initDatas");
     }
 
     @Override
     public void setEvents() {
         //此处为组件绑定事件
+        log("setEvents");
         btnHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 me.hideFragment();
             }
         });
+    }
+    
+    @Override
+    public void onLoad() {
+        //首次显示时执行
+        log("onLoad");
     }
     
 }

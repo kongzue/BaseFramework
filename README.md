@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.6.6-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.6.7-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.6/link">
-<img src="https://img.shields.io/badge/Maven-6.6.6-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.7/link">
+<img src="https://img.shields.io/badge/Maven-6.6.7-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -37,14 +37,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.6</version>
+  <version>6.6.7</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.6'
+implementation 'com.kongzue.baseframework:baseframework:6.6.7'
 ```
 
 ⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
@@ -352,6 +352,8 @@ public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约�
 ```
 若不想约定，可将泛型设置为 BaseActivity。
 
+6.6.7 版本起新增方法 onLoad，该方法会在首次进入 BaseFragment 时执行。
+
 ### FragmentChangeUtil
 6.6.4 版本起新增 FragmentChangeUtil 工具便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换，使用方法如下：
 
@@ -388,6 +390,9 @@ util.getFocusFragment();
 
 //获取当前正在显示的 Fragment 对象的索引编号
 util.getFocusFragmentIndex();
+
+//隐藏某个 Fragment
+util.hide(index/fragment);
 ```
 
 备注：使用 FragmentChangeUtil 切换到 Fragment 后会自动执行该 Fragment 的 onResume() 方法，如有需要刷新界面的操作可以重写 onResume() 方法执行。
@@ -727,6 +732,11 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.6.7:
+- 新增 error(...) 以代替快速调用 Log.e(...) ;
+- BaseFragment 新增方法 onLoad 以处理只在首次显示时执行的事务。
+- FragmentChangeUtil 新增 hide(...) 方法用于隐藏显示的 Fragment；
+
 v6.6.6:
 - BaseFragment 现已可使用泛型，来直接访问父 Activity 中的 public 方法和元素； 
 - 尝试性的提供了 Toast 的兼容模式，兼容解决部分设备因关闭“悬浮窗权限”导致 Toast 无法正常使用的问题，请使用 toastS(Object) 来调用此功能，或者使用 Toaster 类相关方法提供更多功能和可玩性。

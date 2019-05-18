@@ -7,6 +7,7 @@ import android.content.Context;
 import com.kongzue.baseframework.BaseActivity;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -126,6 +127,7 @@ public class AppManager {
     
     /**
      * 关闭所有 {@link Activity},排除指定的 {@link Activity}
+     *
      * @param cls activity
      */
     public void killOtherActivityExclude(Class<?>... cls) {
@@ -141,5 +143,30 @@ public class AppManager {
                 activity.finish();
             }
         }
+    }
+    
+    /**
+     * 根据类名获取堆栈中最后一个 activity 实例
+     *
+     * @param cls activity
+     */
+    public BaseActivity getActivityInstance(Class<?> cls) {
+        if (!activityStack.empty()) {
+            Stack<BaseActivity> reverseList = new Stack<BaseActivity>();
+            reverseList.addAll(activityStack);
+            Collections.reverse(reverseList);
+            Iterator<BaseActivity> iterator = reverseList.iterator();
+            BaseActivity temp = null;
+            while (iterator.hasNext()) {
+                BaseActivity activity = iterator.next();
+                if (activity.getClass().equals(cls)) {
+                    temp = activity;
+                }
+            }
+            if (temp != null) {
+                return temp;
+            }
+        }
+        return null;
     }
 }

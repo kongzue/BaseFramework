@@ -8,14 +8,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
-import android.util.Log;
+
+import androidx.appcompat.app.AlertDialog;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFrameworkSettings;
@@ -29,7 +28,6 @@ import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.JumpParameter;
-import com.kongzue.baseframework.util.toast.Toaster;
 
 import java.io.File;
 import java.util.Locale;

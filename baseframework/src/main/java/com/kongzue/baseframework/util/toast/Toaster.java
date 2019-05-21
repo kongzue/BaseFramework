@@ -3,7 +3,7 @@ package com.kongzue.baseframework.util.toast;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.core.app.NotificationManagerCompat;
 import android.widget.Toast;
 
 import static com.kongzue.baseframework.BaseActivity.isMIUI;

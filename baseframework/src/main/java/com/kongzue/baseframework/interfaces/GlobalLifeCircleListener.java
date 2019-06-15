@@ -9,14 +9,17 @@ import com.kongzue.baseframework.BaseActivity;
  * Mail: myzcxhh@live.cn
  * CreateTime: 2018/9/1 15:44
  */
-public interface GlobalLifeCircleListener {
+public abstract class GlobalLifeCircleListener {
     
-    void onCreate(BaseActivity me, String className);
+    public abstract void onCreate(BaseActivity me, String className);
     
-    void onResume(BaseActivity me, String className);
+    public abstract void onResume(BaseActivity me, String className);
     
-    void onPause(BaseActivity me, String className);
+    public abstract void onPause(BaseActivity me, String className);
     
-    void onDestroy(BaseActivity me, String className);
+    public abstract void onDestroy(BaseActivity me, String className);
     
+    public void WindowFocus(BaseActivity me, String className, boolean hasFocus) {
+    
+    }
 }

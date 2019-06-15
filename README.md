@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.6.7-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.6.8-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.7/link">
-<img src="https://img.shields.io/badge/Maven-6.6.7-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.8/link">
+<img src="https://img.shields.io/badge/Maven-6.6.8-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -37,14 +37,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.7</version>
+  <version>6.6.8</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.7'
+implementation 'com.kongzue.baseframework:baseframework:6.6.8'
 ```
 
 ⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
@@ -352,7 +352,9 @@ public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约�
 ```
 若不想约定，可将泛型设置为 BaseActivity。
 
-6.6.7 版本起新增方法 onLoad，该方法会在首次进入 BaseFragment 时执行。
+6.6.8 版本起，BaseFragment 新增一个可重写方法 onShow，之前的 onLoad 会在首次显示该 Fragment 时触发，而 onShow 是用来替代 onResume 的，但不会在预加载时触发。
+
+另外，onShow 的参数 isSwitchFragment(boolean) 用于判断是否是从其他 Fragment 切换到此界面。
 
 ### FragmentChangeUtil
 6.6.4 版本起新增 FragmentChangeUtil 工具便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换，使用方法如下：
@@ -365,9 +367,15 @@ FragmentChangeUtil util = new FragmentChangeUtil(BaseActivity me, int frameLayou
 
 2) 添加 Fragment 到管理工具
 ```
+//普通添加方式：
 util.addFragment(new HomeFragment());
 util.addFragment(new MessageFragment());
 util.addFragment(new MeFragment());
+
+//预加载添加方式（initViews、initDatas、setEvents、onResume 都会被触发）
+util.addFragment(new HomeFragment(), true);
+util.addFragment(new MessageFragment(), true);
+util.addFragment(new MeFragment(), true);
 ```
 
 3) 切换到指定 Fragment
@@ -391,11 +399,23 @@ util.getFocusFragment();
 //获取当前正在显示的 Fragment 对象的索引编号
 util.getFocusFragmentIndex();
 
-//隐藏某个 Fragment
-util.hide(index/fragment);
+//删除对象
+util.remove(fragment);
+
+//隐藏当前 Fragment
+util.hideNow();
+
+//隐藏指定索引的 Fragment
+util.hide(int index);
+
+//隐藏指定 Fragment
+util.hide(fragment);
 ```
 
-备注：使用 FragmentChangeUtil 切换到 Fragment 后会自动执行该 Fragment 的 onResume() 方法，如有需要刷新界面的操作可以重写 onResume() 方法执行。
+FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addFragment(BaseFragment fragment)，不再执行预加载，也就是说，执行后，仅添加了 Fragment 而不会执行任何事件。
+
+另一种 addFragment(BaseFragment fragment,boolean isPreload)，第二个参数为 true 时会预加载，initViews、initDatas、setEvents、onResume 都会被触发，这个和之前是一样的。
+
 
 ## <a name="3">Preferences</a>
 Preferences是SharedPreferences的简易封装。
@@ -732,6 +752,11 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.6.8:
+- FragmentChangeUtil 新增 hideNow() 方法与 remove(fragment) 方法；
+- FragmentChangeUtil 提供普通添加方式和预加载方式；
+- BaseFragment 提供可重写方法 onShow 用于取代 onResume；
+
 v6.6.7:
 - 新增 error(...) 以代替快速调用 Log.e(...) ;
 - BaseFragment 新增方法 onLoad 以处理只在首次显示时执行的事务。

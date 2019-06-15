@@ -9,6 +9,7 @@ import android.support.annotation.ColorRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,7 +101,13 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public abstract void setEvents();
     
-    public abstract void onLoad();
+    public void onLoad() {
+    
+    }
+    
+    public void onShow(boolean isSwitchFragment) {
+    
+    }
     
     public final <T extends View> T findViewById(@IdRes int id) {
         return rootView.findViewById(id);
@@ -266,6 +273,18 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (isCallShow) {
+            if (rootView != null) {
+                if (!isLoaded) {
+                    isLoaded = true;
+                    onLoad();
+                }
+            }
+        }
+        if (isLoaded) {
+            onShow(isCallShow);
+        }
+        isCallShow = false;
         if (lifeCircleListener != null) lifeCircleListener.onResume();
     }
     
@@ -353,16 +372,24 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
     }
     
-    private boolean isFirstResume = false;
+    private boolean isLoaded = false;
+    private boolean isCallShow = false;
     
-    public void callResume() {
-        if (rootView != null) {
-            onResume();
-            if (!isFirstResume) {
-                onLoad();
-                isFirstResume = true;
-            }
-        }
+    public void callShow() {
+        isCallShow = true;
+        if (rootView != null) onResume();
+    }
+    
+    private boolean mAdded;
+    
+    public void setAdded(boolean isAdded) {
+        mAdded = isAdded;
+    }
+    
+    //1.isAdded() 根本不靠谱，时而返回 false 搞事情...
+    //2.傻X Google竟然把 isAdded() 给final掉了，无奈改个名字吧
+    public boolean isAddedCompat() {
+        return mAdded;
     }
 }
 

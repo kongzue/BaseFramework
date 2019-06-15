@@ -964,7 +964,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                         }
                     }
                 });
-    
+                
                 Pair<View, String>[] pairs = new Pair[transitionViews.length];
                 int i = 0;
                 for (View tv : transitionViews) {
@@ -1062,7 +1062,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     @Override
     protected void onPause() {
-        if (Toaster.isSupportToast){
+        if (Toaster.isSupportToast) {
             Toaster.cancel();
         }
         isActive = false;
@@ -1286,12 +1286,19 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public int getColorS(@ColorRes int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return getResources().getColor(id, getTheme());
-        }else{
+        } else {
             return getResources().getColor(id);
         }
     }
     
     public View getRootView() {
         return getWindow().getDecorView().findViewById(android.R.id.content);
+    }
+    
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (globalLifeCircleListener != null)
+            globalLifeCircleListener.WindowFocus(me, me.getClass().getName(), hasFocus);
     }
 }

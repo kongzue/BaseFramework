@@ -44,8 +44,20 @@ public class FragmentChangeUtil {
             me.log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
             return null;
         }
-        me.getSupportFragmentManager().beginTransaction().add(frameLayoutResId, fragment).commit();
-        me.getSupportFragmentManager().beginTransaction().hide(fragment).commit();
+        fragmentList.add(fragment);
+        return this;
+    }
+    
+    public FragmentChangeUtil addFragment(BaseFragment fragment,boolean isPreload) {
+        if (me == null || frameLayoutResId == 0 || fragmentList == null) {
+            me.log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
+            return null;
+        }
+        if (isPreload){
+            me.getSupportFragmentManager().beginTransaction().add(frameLayoutResId, fragment).commit();
+            me.getSupportFragmentManager().beginTransaction().hide(fragment).commit();
+            fragment.setAdded(true);
+        }
         fragmentList.add(fragment);
         return this;
     }
@@ -61,9 +73,15 @@ public class FragmentChangeUtil {
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
         if (focusFragment != null) transaction.hide(focusFragment);
-        transaction.show(fragment);
+        
+        if (!fragment.isAddedCompat()){
+            transaction.add(frameLayoutResId, fragment);
+        }else{
+            transaction.show(fragment);
+        }
+        
         transaction.commit();
-        fragment.callResume();
+        fragment.callShow();
         focusFragment = fragment;
         return this;
     }
@@ -75,9 +93,15 @@ public class FragmentChangeUtil {
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
         if (focusFragment != null) transaction.hide(focusFragment);
-        transaction.show(fragmentList.get(index));
+        
+        if (!fragmentList.get(index).isAddedCompat()){
+            transaction.add(frameLayoutResId, fragmentList.get(index));
+        }else{
+            transaction.show(fragmentList.get(index));
+        }
+        
         transaction.commit();
-        fragmentList.get(index).callResume();
+        fragmentList.get(index).callShow();
         focusFragment = fragmentList.get(index);
         return this;
     }
@@ -88,7 +112,25 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        
+        if (!fragmentList.get(index).isAddedCompat()){
+            transaction.add(frameLayoutResId, fragmentList.get(index));
+        }
         transaction.hide(fragmentList.get(index));
+        
+        transaction.commit();
+        return this;
+    }
+    
+    public FragmentChangeUtil hideNow() {
+        if (me == null || frameLayoutResId == 0 || fragmentList == null) {
+            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            return null;
+        }
+        FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        
+        transaction.hide(focusFragment);
+        
         transaction.commit();
         return this;
     }
@@ -99,7 +141,30 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        
+        
+        if (!fragment.isAddedCompat()){
+            transaction.add(frameLayoutResId, fragment);
+        }
         transaction.hide(fragment);
+        
+        transaction.commit();
+        return this;
+    }
+    
+    public FragmentChangeUtil remove(BaseFragment fragment) {
+        if (me == null || frameLayoutResId == 0 || fragmentList == null) {
+            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            return null;
+        }
+        FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        
+        if (fragment.isAddedCompat()){
+            transaction.remove(fragment);
+        }
+        fragment.setAdded(false);
+        fragmentList.remove(fragment);
+        
         transaction.commit();
         return this;
     }

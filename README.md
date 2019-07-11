@@ -304,6 +304,24 @@ BaseActivity.setGlobalLifeCircleListener(new GlobalLifeCircleListener() {
 ```
 注意此方法为静态的，要使用它建议在 Application 中对它进行管理。
 
+从 6.6.9 版本起新增了 setOnActivityStatusChangeListener(...) 用于监听 Activity 的创建、关闭以及全部 Activity 退出的状态：
+```
+AppManager.setOnActivityStatusChangeListener(new AppManager.OnActivityStatusChangeListener() {
+    @Override
+    public void onActivityCreate(BaseActivity activity) {
+    
+    }
+    @Override
+    public void onActivityDestroy(BaseActivity activity) {
+    
+    }
+    @Override
+    public void onAllActivityClose() {
+        Log.e(">>>", "所有Activity已经关闭");
+    }
+});
+```
+
 ### <a name="1-7">侧滑返回</a>
 
 从 6.5.8 版本起，您可以对 BaseActivity 进行注解，来实现侧滑返回：
@@ -473,24 +491,6 @@ runOnMainDelayed(new Runnable(){
 runDelayed(new Runnable(){
     //此处可进行延迟操作（可能在异步线程）
 }, time);       //time 即延迟时间，毫秒单位
-```
-
-从 6.6.9 版本起新增了 setOnActivityStatusChangeListener(...) 用于监听 Activity 的创建、关闭以及全部 Activity 退出的状态：
-```
-AppManager.setOnActivityStatusChangeListener(new AppManager.OnActivityStatusChangeListener() {
-    @Override
-    public void onActivityCreate(BaseActivity activity) {
-    
-    }
-    @Override
-    public void onActivityDestroy(BaseActivity activity) {
-    
-    }
-    @Override
-    public void onAllActivityClose() {
-        Log.e(">>>", "所有Activity已经关闭");
-    }
-});
 ```
 
 ## <a name="6">BaseAdapter</a>

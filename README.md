@@ -1,4 +1,4 @@
-# BaseFramework
+# BaseFramework(AndroidX)
 BaseFramework框架是我对之前编程开发的一些总结，目的是以最快的方式完成项目开发，因此将一些常用的小工具，例如简易吐司、简易log等放在了基础类中，只需要将您项目中的Activity或Fragment继承本框架中的BaseActivity以及BaseFragment，即可使用。
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
@@ -35,7 +35,7 @@ Demo预览图如下：
 Maven仓库：
 ```
 <dependency>
-  <groupId>com.kongzue.baseframework</groupId>
+  <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
   <version>6.6.9</version>
   <type>pom</type>
@@ -44,7 +44,7 @@ Maven仓库：
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.9'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
 ```
 
 ⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
@@ -770,147 +770,4 @@ limitations under the License.
 
 ## <a name="about">更新日志</a>：
 v6.6.9:
-- 提升代码规范化；
-- AppManager 新增 setOnActivityStatusChangeListener(...) 用于监听 Activity 的创建、关闭以及全部 Activity 退出的状态；
-
-v6.6.8:
-- FragmentChangeUtil 新增 hideNow() 方法与 remove(fragment) 方法；
-- FragmentChangeUtil 提供普通添加方式和预加载方式；
-- BaseFragment 提供可重写方法 onShow 用于取代 onResume；
-
-v6.6.7:
-- 新增 error(...) 以代替快速调用 Log.e(...) ;
-- BaseFragment 新增方法 onLoad 以处理只在首次显示时执行的事务。
-- FragmentChangeUtil 新增 hide(...) 方法用于隐藏显示的 Fragment；
-
-v6.6.6:
-- BaseFragment 现已可使用泛型，来直接访问父 Activity 中的 public 方法和元素； 
-- 尝试性的提供了 Toast 的兼容模式，兼容解决部分设备因关闭“悬浮窗权限”导致 Toast 无法正常使用的问题，请使用 toastS(Object) 来调用此功能，或者使用 Toaster 类相关方法提供更多功能和可玩性。
-- BaseActivity 新增 getRootView() 方法可直接获取根布局；
-- 修复了 FragmentChangeUtil 在切换时错误调用未初始化状态的子 Fragment.onResume() 的问题；
-
-v6.6.5:
-- AppManager 新增排除结束方法 killOtherActivityExclude(class) 可排除指定 Activity 并结束之外的所有 Activity；
-- BaseActivity 以及 BaseFragment 新增 getColorS(resId) 以替代系统提供且不让修改的半残方法 getColor(resId)；
-
-v6.6.4:
-- 修复了属性动画存在的bug；
-- BaseAdapter 新增泛型功能；
-- 修复了 BaseFragment 重复加载导致组件指针绑定问题；
-- 新增 FragmentChangeUtil 管理工具，以便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换；
-
-v6.6.3:
-- 修复了获取导航栏高度值错误的问题；
-- BaseFragment 中属性动画方法更新；
-
-v6.6.2:
-- 新增语言变更工具，具体请参照<a href="#9">语言变更工具</a>；
-
-v6.6.1:
-- BaseActivity 新增方法：获取设备IMEI：getIMEI()、获取设备AndroidID：getAndroidId()、获取Mac地址：getMacAddress()；
-- BaseFragment 新增方法 getStatusBarHeight()、getDisplayWidth()、getDisplayHeight()、getNavbarHeight()、getRootHeight()、getIMEI()、getAndroidId()、getMacAddress()；
-
-v6.6.0:
-- 组件升级至兼容 API-28；
-
-v6.5.9:
-- 修复了全屏注解 @FullScreen(true) 和侧滑返回可能存在冲突的问题；
-- BaseActivity 和 BaseFragment 新增成员变量 savedInstanceState 即 onCreate 发生时传递的 Bundle；
-
-v6.5.8:
-- BaseActivity、BaseFramework 新增 openUrl(...) 可直接打开使用默认浏览器打开 url 地址；
-- BaseActivity、BaseFramework 新增 openApp(...) 可直接打开指定包名的 App；
-- BaseActivity、BaseFramework 新增 isInstallApp(...) 可直接判断指定包名的 App 是否已安装；
-- log(...) 方法增强，全新的日志表现形式；
-- log(...) 输出 json 时会自动格式化 json 语法；
-- BaseActivity 新增注解 @SwipeBack(true) 可标记当前 Activity 支持侧滑返回；
-
-v6.5.7.2:
-- 新增判空规则，支持iOS可能传递的“(null)”文本；
-
-v6.5.7.1:
-- 修复无法引用的bug；
-
-v6.5.7:
-- 修复了 AppManager 中 killActivity(Class) 可能引发崩溃的bug；
-- 修改，将 BaseActivity.DEBUGMODE 移动到了 BaseFrameworkSettings.DEBUGMODE，原 BaseActivity.DEBUGMODE 不再使用；
-- 新增<a href="#7">行为与日志监听</a>功能；
-
-v6.5.6.1:
-- 修复 JumpParameter 空指针问题；
-
-v6.5.6:
-- BaseActivity 新增全局生命周期管理 GlobalLifeCircleListener；
-- 回传数据方法 setResponse(...) 现新增更符合直觉的 returnParameter(...)；
-- JumpParameter 可直接解析更多数据类型，例如 double、float、long、short 等；
-- initDatas(JumpParameter parameter) 中的参数 parameter 不再需要非空校验了；
-
-v6.5.5.3:
-- 修复遗留问题，BaseFragment的dip2px和px2dip将无需context参数；
-- 修复遗留问题，getDisplayWidth()函数名已被修改正确；
-
-v6.5.5.2:
-- 修复 lifeCircleListener.onCreate() 无效的问题；
-
-v6.5.5.1:
-- 警告：因命名冲突，6.5.5版本起，跳转回调参数 OnResponseListener 改名为 OnJumpResponseListener；
-- 可以使用bigLog(...)打印更长的日志了；
-- dip2px和px2dip不再需要context参数；
-- 显示/关闭键盘的方法setIMMStatus(...)将被更名为showIME(...)，目前新旧方法都可以使用；
-- 更新getNavbarHeight()方法，可以获取到更为准确的底栏高度；
-- 新增getRootHeight()方法，可以获取准确真正的屏幕高度（含底栏和状态栏）；
-- 新增BaseActivity注解 @FullScreen(true)可以直接使Activity全屏；
-- 修正了 @NavigationBarBackgroundColor(a,r,g,b)的默认值；
-- jump支持了共享元素，只需要在原参数末尾增加共享元素view，例如jump(Class<?> cls, View transitionView)；
-
-详细的更新说明请阅读：《BaseFramework 6.5.5.1版本更新报告》：<https://www.jianshu.com/p/9c2e0039aca1>
-
-v6.5.4:
-- 增加 BaseActivity 与 BaseFragment 一键管理生命周期监听器，可在 BaseActivity 的子类中使用 setLifeCircleListener(LifeCircleListener);
-- BaseAdapter 增加了 refreshDataChanged(...) 用于代替 notifyDataSetChanged() 刷新数据，新方法对于内容的变化也很敏感；
-
-v6.5.3:
-- 可以使用 runOnMain(Runnable) 来执行需要在主线程执行的事务，该方法与 runOnUiThread() 的不同点在于会自动判断当前 BaseActivity 是否处于存活状态，无须担心因此出现的空指针问题；
-- 可以使用 runOnMainDelayed(Runnable, time) 来执行需要在主线程延迟执行的事务；
-- 可以使用 runDelayed(Runnable, time) 来替代 new Handler().postDelayed(Runnable, time) 执行延迟事务；
-
-v6.5.2:
-- 修复 setIMMStatus(boolean, Edittext) 开关输入法方法中，Edittext 可能为 NULL 导致空指针的问题；
-- 跳转到应用设置方法 startAppSettings() 不再是私有的，他现在可以公开调用；
-
-v6.5.1:
-- 修复 bug；
-
-v6.5.0:
-- 修复 BaseFragment 中日志 log 打印不受 BaseActivity.DEBUGMODE 控制的问题；
-
-v6.5.0:
-- 跳转参数 JumpParameter 新增 getBoolean、getInt 和 getString 三个基础方法，从此方法获取数据不需要判断是否为空（null）以及进行强转类型；
-
-v6.4.9:
-- 为避免与 BaseOkHttp 框架冲突修改 com.kongzue.baseframework.util.Parameter 类名为 com.kongzue.baseframework.util.JumpParameter;
-- initDatas() 现已改为携带参数的 initDatas(JumpParameter paramer); 可以直接获取使用jump方法跳转时所携带的跳转参数，请注意非空判断；
-
-v6.4.8:
-- 新增BaseAdapter；
-
-v6.4.7:
-- 修复一些bug；
-
-v6.4.6:
-- 新增AppManager管理器；
-- 新增DarkNavigationBarTheme、DarkStatusBarTheme、NavigationBarBackgroundColor注解；
-
-v6.4.0:
-- 集成Preferences（SharedPreferences的封装，仅使用简单的get、set方法即可）
-
-v6.3.0:
-- 直接使用注解的方式绑定布局资源（@Layout）
-- 为BaseFragment增添支持新的jump(...)跳转方法；
-
-v6.2.0:
-- 支持新的jump(...)跳转方法；
-- 更新BaseFragment；
-
-v6.1.0:
-- 合并 BaseActivity 与 BaseFragment 为 BaseFramework 总框架；
+- 迁移至 AndroidX；

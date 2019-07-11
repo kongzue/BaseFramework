@@ -83,6 +83,27 @@ public class Preferences {
         editor.putInt(preferencesName, value);
         editor.apply();
     }
+    
+    public void commit(Context context, String path, String preferencesName,String value){
+        SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(preferencesName, value);
+        editor.commit();
+    }
+    
+    public void commit(Context context, String path, String preferencesName,boolean value){
+        SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(preferencesName, value);
+        editor.commit();
+    }
+    
+    public void commit(Context context, String path, String preferencesName,int value){
+        SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(preferencesName, value);
+        editor.commit();
+    }
 
     //清除（清空）所有属性的方法
     public void cleanAll(Context context, String path){

@@ -1,9 +1,8 @@
 package com.kongzue.baseframework.util.swipeback;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityBase;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityHelper;

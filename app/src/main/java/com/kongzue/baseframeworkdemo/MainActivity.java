@@ -43,7 +43,7 @@ public class MainActivity extends BaseActivity {
     private FragmentDemo fragmentDemo = new FragmentDemo(1);
     private FragmentDemo fragmentDemo2 = new FragmentDemo(2);
     private FragmentDemo fragmentDemo3 = new FragmentDemo(3);
-    private FragmentChangeUtil fragmentChangeUtil;
+    public FragmentChangeUtil fragmentChangeUtil;
     
     private TextView txtTitle;
     private TextView linkHome;

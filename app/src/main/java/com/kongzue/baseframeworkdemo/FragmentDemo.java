@@ -54,7 +54,10 @@ public class FragmentDemo extends BaseFragment<MainActivity> {
         btnHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                me.hideFragment();
+                int changeTo = index;
+                if (changeTo > 2) changeTo = 0;
+                log("fragment " + index + " : 切换到：" + (changeTo + 1));
+                me.fragmentChangeUtil.show(changeTo);
             }
         });
     }

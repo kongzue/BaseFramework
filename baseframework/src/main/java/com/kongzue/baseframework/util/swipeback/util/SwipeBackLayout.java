@@ -145,8 +145,9 @@ public class SwipeBackLayout extends FrameLayout {
                                                       R.style.SwipeBackLayout);
         
         int edgeSize = a.getDimensionPixelSize(R.styleable.SwipeBackLayout_edge_size, -1);
-        if (edgeSize > 0)
+        if (edgeSize > 0) {
             setEdgeSize(edgeSize);
+        }
         int mode = EDGE_FLAGS[a.getInt(R.styleable.SwipeBackLayout_edge_flag, 0)];
         setEdgeTrackingEnabled(mode);
         
@@ -394,10 +395,11 @@ public class SwipeBackLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         mInLayout = true;
-        if (mContentView != null)
+        if (mContentView != null) {
             mContentView.layout(mContentLeft, mContentTop,
                                 mContentLeft + mContentView.getMeasuredWidth(),
                                 mContentTop + mContentView.getMeasuredHeight());
+        }
         mInLayout = false;
     }
     

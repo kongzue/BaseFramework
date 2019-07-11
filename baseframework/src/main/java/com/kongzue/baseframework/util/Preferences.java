@@ -30,21 +30,34 @@ public class Preferences {
 
     //读取属性为String类型
     //参数：context上下文索引，path路径，preferencesName属性名
+    
     public String getString(Context context, String path, String preferencesName){
-        SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
-        String value = preferences.getString(preferencesName, "");
-        return value;
+        return getString(context,path,preferencesName,"");
     }
-
+    
     public boolean getBoolean(Context context, String path, String preferencesName){
+        return getBoolean(context,path,preferencesName,false);
+    }
+    
+    public int getInt(Context context, String path, String preferencesName){
+        return getInt(context,path,preferencesName,0);
+    }
+    
+    public String getString(Context context, String path, String preferencesName,String defaultValue){
         SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
-        boolean value = preferences.getBoolean(preferencesName, false);
+        String value = preferences.getString(preferencesName, defaultValue);
         return value;
     }
 
-    public int getInt(Context context, String path, String preferencesName){
+    public boolean getBoolean(Context context, String path, String preferencesName,boolean defaultValue){
         SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
-        int value = preferences.getInt(preferencesName, 0);
+        boolean value = preferences.getBoolean(preferencesName, defaultValue);
+        return value;
+    }
+
+    public int getInt(Context context, String path, String preferencesName,int defaultValue){
+        SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
+        int value = preferences.getInt(preferencesName, defaultValue);
         return value;
     }
 
@@ -54,28 +67,28 @@ public class Preferences {
         SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(preferencesName, value);
-        editor.commit();
+        editor.apply();
     }
 
     public void set(Context context, String path, String preferencesName,boolean value){
         SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(preferencesName, value);
-        editor.commit();
+        editor.apply();
     }
 
     public void set(Context context, String path, String preferencesName,int value){
         SharedPreferences preferences = context.getSharedPreferences(path, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putInt(preferencesName, value);
-        editor.commit();
+        editor.apply();
     }
 
     //清除（清空）所有属性的方法
     public void cleanAll(Context context, String path){
         SharedPreferences sp=context.getSharedPreferences(path,Context.MODE_PRIVATE);
         if(sp!=null) {
-            sp.edit().clear().commit();
+            sp.edit().clear().apply();
         }
     }
 

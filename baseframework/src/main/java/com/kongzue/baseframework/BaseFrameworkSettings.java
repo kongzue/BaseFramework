@@ -52,7 +52,9 @@ public class BaseFrameworkSettings {
     }
     
     private static void showInfo(Throwable e) {
-        if (!DEBUGMODE) return;
+        if (!DEBUGMODE) {
+            return;
+        }
         String errorInfo = DebugLogG.getExceptionInfo(e);
         String[] lines = errorInfo.split(LINE_SEPARATOR);
         for (String line : lines) {

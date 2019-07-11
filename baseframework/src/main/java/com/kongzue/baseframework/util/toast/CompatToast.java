@@ -113,7 +113,9 @@ public class CompatToast extends BaseToast {
     @Override
     public BaseToast cancel() {
         Log.i(".>>", "cancel: ");
-        if (popupWindow != null) popupWindow.dismiss();
+        if (popupWindow != null) {
+            popupWindow.dismiss();
+        }
         return this;
     }
     

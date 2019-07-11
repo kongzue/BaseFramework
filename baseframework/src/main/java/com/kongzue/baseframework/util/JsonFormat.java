@@ -20,7 +20,9 @@ public class JsonFormat {
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
     
     public static boolean formatJson(String msg) {
-        if (!DEBUGMODE) return false;
+        if (!DEBUGMODE) {
+            return false;
+        }
         String message;
         try {
             if (msg.startsWith("{")) {

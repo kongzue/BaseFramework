@@ -140,9 +140,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         initDatas(getParameter());
         setEvents();
         
-        if (lifeCircleListener != null) lifeCircleListener.onCreate();
-        if (globalLifeCircleListener != null)
-            globalLifeCircleListener.onCreate(me, me.getClass().getName());
+        if (lifeCircleListener != null){ lifeCircleListener.onCreate();}
+        if (globalLifeCircleListener != null){
+            globalLifeCircleListener.onCreate(me, me.getClass().getName());}
     }
     
     @Override
@@ -176,9 +176,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         initDatas(getParameter());
         setEvents();
         
-        if (lifeCircleListener != null) lifeCircleListener.onCreate();
-        if (globalLifeCircleListener != null)
-            globalLifeCircleListener.onCreate(me, me.getClass().getName());
+        if (lifeCircleListener != null) {lifeCircleListener.onCreate();}
+        if (globalLifeCircleListener != null){
+            globalLifeCircleListener.onCreate(me, me.getClass().getName());}
     }
     
     public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
@@ -196,7 +196,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             NavigationBarBackgroundColor navigationBarBackgroundColor = getClass().getAnnotation(NavigationBarBackgroundColor.class);
             if (fullScreen != null) {
                 isFullScreen = fullScreen.value();
-                if (isFullScreen) requestWindowFeature(Window.FEATURE_NO_TITLE);
+                if (isFullScreen) {requestWindowFeature(Window.FEATURE_NO_TITLE);}
             }
             mHelper.onActivityCreate();
             if (swipeBack != null) {
@@ -205,11 +205,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 setSwipeBackEnable(false);
             }
             if (layout != null) {
-                if (layout.value() != -1) layoutResId = layout.value();
+                if (layout.value() != -1){ layoutResId = layout.value();}
             }
-            if (darkStatusBarTheme != null) darkStatusBarThemeValue = darkStatusBarTheme.value();
-            if (darkNavigationBarTheme != null)
-                darkNavigationBarThemeValue = darkNavigationBarTheme.value();
+            if (darkStatusBarTheme != null) {darkStatusBarThemeValue = darkStatusBarTheme.value();}
+            if (darkNavigationBarTheme != null){
+                darkNavigationBarThemeValue = darkNavigationBarTheme.value();}
             if (navigationBarBackgroundColor != null) {
                 if (navigationBarBackgroundColor.a() != -1 && navigationBarBackgroundColor.r() != -1 && navigationBarBackgroundColor.g() != -1 && navigationBarBackgroundColor.b() != -1) {
                     navigationBarBackgroundColorValue = Color.argb(navigationBarBackgroundColor.a(), navigationBarBackgroundColor.r(), navigationBarBackgroundColor.g(), navigationBarBackgroundColor.b());
@@ -262,39 +262,43 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     //状态栏主题
     protected void setTranslucentStatus(boolean on) {
-        if (isMIUI()) setStatusBarDarkModeInMIUI(darkStatusBarThemeValue, this);
-        if (isFlyme()) setStatusBarDarkIconInFlyme(getWindow(), darkStatusBarThemeValue);
+        if (isMIUI()) {
+            setStatusBarDarkModeInMIUI(darkStatusBarThemeValue, this);
+        }
+        if (isFlyme()) {
+            setStatusBarDarkIconInFlyme(getWindow(), darkStatusBarThemeValue);
+        }
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                                      | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
             
             if (darkStatusBarThemeValue) {
                 if (darkNavigationBarThemeValue) {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                                                        | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                                                        | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                            | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                     );
                 } else {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                                                        | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     );
                 }
             } else {
                 if (darkNavigationBarThemeValue) {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                                                                        | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                     );
                 } else {
                     window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                                                                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     );
                 }
             }
@@ -474,8 +478,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 @Override
                 public void run() {
                     logG("toast", obj.toString());
-                    if (toast == null)
+                    if (toast == null) {
                         toast = Toast.makeText(BaseActivity.this, NULL, Toast.LENGTH_SHORT);
+                    }
                     toast.setText(obj.toString());
                     toast.show();
                 }
@@ -494,7 +499,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         try {
             if (DEBUGMODE) {
                 String msg = obj.toString();
-                if (isNull(msg)) return;
+                if (isNull(msg)) {
+                    return;
+                }
                 if (obj.toString().length() > 2048) {
                     bigLog(msg);
                 } else {
@@ -513,7 +520,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         try {
             if (DEBUGMODE) {
                 String msg = obj.toString();
-                if (isNull(msg)) return;
+                if (isNull(msg)) {
+                    return;
+                }
                 if (obj.toString().length() > 2048) {
                     bigLog(msg);
                 } else {
@@ -601,8 +610,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void requestPermission(String[] permissions, OnPermissionResponseListener onPermissionResponseListener) {
         this.onPermissionResponseListener = onPermissionResponseListener;
         if (checkPermissions(permissions)) {
-            if (onPermissionResponseListener != null)
+            if (onPermissionResponseListener != null) {
                 onPermissionResponseListener.onSuccess(permissions);
+            }
         } else {
             List<String> needPermissions = getDeniedPermissions(permissions);
             ActivityCompat.requestPermissions(this, needPermissions.toArray(new String[needPermissions.size()]), REQUEST_CODE_PERMISSION);
@@ -672,10 +682,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (verifyPermissions(grantResults)) {
-                if (onPermissionResponseListener != null)
-                    onPermissionResponseListener.onSuccess(permissions);
+                if (onPermissionResponseListener != null){
+                    onPermissionResponseListener.onSuccess(permissions);}
             } else {
-                if (onPermissionResponseListener != null) onPermissionResponseListener.onFail();
+                if (onPermissionResponseListener != null) {
+                    onPermissionResponseListener.onFail();
+                }
                 showTipsDialog();
             }
         }
@@ -755,15 +767,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     //获取底栏高度
     public int getNavbarHeight() {
-        if (setNavigationBarHeightZero) return 0;
+        if (setNavigationBarHeightZero) {
+            return 0;
+        }
         int result = 0;
         int resourceId = 0;
         int rid = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
         if (rid != 0) {
             resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
             return getResources().getDimensionPixelSize(resourceId);
-        } else
+        } else {
             return 0;
+        }
     }
     
     //获取真实的屏幕高度，注意判断非0
@@ -816,7 +831,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     //网络传输文本判空规则
     public static boolean isNull(String s) {
-        if (s == null || s.trim().isEmpty() || s.equals("null") || s.equals("(null)")) {
+        if (s == null || s.trim().isEmpty() || "null".equals(s) || "(null)".equals(s)) {
             return true;
         }
         return false;
@@ -827,7 +842,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         try {
             startActivity(new Intent(me, cls));
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
@@ -836,11 +853,14 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     //可以传任何类型参数的跳转方式
     public boolean jump(Class<?> cls, JumpParameter jumpParameter) {
         try {
-            if (jumpParameter != null)
+            if (jumpParameter != null) {
                 ParameterCache.getInstance().set(cls.getName(), jumpParameter);
+            }
             startActivity(new Intent(me, cls));
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
@@ -856,14 +876,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         try {
             startActivity(new Intent(me, cls));
             ParameterCache.getInstance().cleanResponse(me.getClass().getName());
-            if (jumpParameter == null) jumpParameter = new JumpParameter();
+            if (jumpParameter == null) {
+                jumpParameter = new JumpParameter();
+            }
             ParameterCache.getInstance().set(cls.getName(), jumpParameter
                     .put("needResponse", true)
                     .put("responseClassName", me.getClass().getName())
             );
             this.onResponseListener = onResponseListener;
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
@@ -887,7 +911,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 startActivity(new Intent(me, cls));
             }
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
@@ -918,7 +944,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 startActivity(new Intent(me, cls));
             }
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
@@ -927,8 +955,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     //可使用共享元素的带参数跳转方式
     public boolean jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
         try {
-            if (jumpParameter != null)
+            if (jumpParameter != null) {
                 ParameterCache.getInstance().set(cls.getName(), jumpParameter);
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 me.setExitSharedElementCallback(new SharedElementCallback() {
                     @Override
@@ -944,7 +973,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 startActivity(new Intent(me, cls));
             }
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
@@ -952,8 +983,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     public boolean jump(Class<?> cls, JumpParameter jumpParameter, View... transitionViews) {
         try {
-            if (jumpParameter != null)
+            if (jumpParameter != null) {
                 ParameterCache.getInstance().set(cls.getName(), jumpParameter);
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 me.setExitSharedElementCallback(new SharedElementCallback() {
                     @Override
@@ -978,7 +1010,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 startActivity(new Intent(me, cls));
             }
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
@@ -993,7 +1027,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener, View transitionView) {
         try {
             ParameterCache.getInstance().cleanResponse(me.getClass().getName());
-            if (jumpParameter == null) jumpParameter = new JumpParameter();
+            if (jumpParameter == null) {
+                jumpParameter = new JumpParameter();
+            }
             ParameterCache.getInstance().set(cls.getName(), jumpParameter
                     .put("needResponse", true)
                     .put("responseClassName", me.getClass().getName())
@@ -1016,14 +1052,16 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 
             }
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
         return true;
     }
     
     public void jumpAnim(int enterAnim, int exitAnim) {
-        int version = Integer.valueOf(android.os.Build.VERSION.SDK);
+        int version = Integer.valueOf(Build.VERSION.SDK_INT);
         if (version > 5) {
             overridePendingTransition(enterAnim, exitAnim);
         }
@@ -1042,7 +1080,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     //获取跳转参数
     public JumpParameter getParameter() {
         JumpParameter jumpParameter = ParameterCache.getInstance().get(me.getClass().getName());
-        if (jumpParameter == null) jumpParameter = new JumpParameter();
+        if (jumpParameter == null) {
+            jumpParameter = new JumpParameter();
+        }
         return jumpParameter;
     }
     
@@ -1055,9 +1095,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             onResponseListener = null;
         }
         super.onResume();
-        if (lifeCircleListener != null) lifeCircleListener.onResume();
-        if (globalLifeCircleListener != null)
+        if (lifeCircleListener != null) {
+            lifeCircleListener.onResume();
+        }
+        if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onResume(me, me.getClass().getName());
+        }
     }
     
     @Override
@@ -1067,9 +1110,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
         isActive = false;
         logG("\n" + me.getClass().getSimpleName(), "onPause");
-        if (lifeCircleListener != null) lifeCircleListener.onPause();
-        if (globalLifeCircleListener != null)
+        if (lifeCircleListener != null) {
+            lifeCircleListener.onPause();
+        }
+        if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onPause(me, me.getClass().getName());
+        }
         super.onPause();
     }
     
@@ -1078,18 +1124,25 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         isAlive = false;
         logG("\n" + me.getClass().getSimpleName(), "onDestroy");
         info(2, me.getClass().getSimpleName() + ":onDestroy");
-        if (getParameter() != null) getParameter().cleanAll();
+        if (getParameter() != null) {
+            getParameter().cleanAll();
+        }
         AppManager.getInstance().deleteActivity(me);
-        if (lifeCircleListener != null) lifeCircleListener.onDestroy();
-        if (globalLifeCircleListener != null)
+        if (lifeCircleListener != null) {
+            lifeCircleListener.onDestroy();
+        }
+        if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onDestroy(me, me.getClass().getName());
+        }
         super.onDestroy();
     }
     
     //大型打印使用，Log默认是有字数限制的，如有需要打印更长的文本可以使用此方法
     public void bigLog(String msg) {
         Log.i(">>>bigLog", "BIGLOG.start=================================");
-        if (isNull(msg)) return;
+        if (isNull(msg)) {
+            return;
+        }
         logG("log", msg);
         int strLength = msg.length();
         int start = 0;
@@ -1134,7 +1187,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             startActivity(intent);
             return true;
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -1148,7 +1203,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 startActivity(intent);
                 return true;
             } catch (Exception e) {
-                if (DEBUGMODE) e.printStackTrace();
+                if (DEBUGMODE) {
+                    e.printStackTrace();
+                }
                 return false;
             }
         } else {
@@ -1202,8 +1259,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                     
                     @Override
                     public void onFail() {
-                        if (BaseFrameworkSettings.DEBUGMODE)
+                        if (BaseFrameworkSettings.DEBUGMODE) {
                             Log.e(">>>", "getIMEI(): 失败，用户拒绝授权READ_PHONE_STATE");
+                        }
                     }
                 });
             }
@@ -1298,7 +1356,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (globalLifeCircleListener != null)
+        if (globalLifeCircleListener != null) {
             globalLifeCircleListener.WindowFocus(me, me.getClass().getName(), hasFocus);
+        }
     }
 }

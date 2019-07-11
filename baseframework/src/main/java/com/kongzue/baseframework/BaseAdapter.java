@@ -107,7 +107,9 @@ public class BaseAdapter<V,D> extends android.widget.BaseAdapter {
                 return 1;
             case TYPE_MAP_DATA:
                 Object type = mapDatas.get(position).get("type");
-                if (type == null) type = 0;
+                if (type == null) {
+                    type = 0;
+                }
                 return (int) type;
             default:
                 return 1;

@@ -77,7 +77,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
             rootView.setClickable(true);        //防止点击穿透
         }
         
-        if (lifeCircleListener != null) lifeCircleListener.onCreate();
+        if (lifeCircleListener != null) {
+            lifeCircleListener.onCreate();
+        }
         
         initViews();
         initDatas();
@@ -167,7 +169,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     }
     
     public boolean isNull(String s) {
-        if (s == null || s.trim().isEmpty() || s.equals("null")) {
+        if (s == null || s.trim().isEmpty() || "null".equals(s)) {
             return true;
         }
         return false;
@@ -227,7 +229,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     //跳转动画
     public void jumpAnim(int enterAnim, int exitAnim) {
-        int version = Integer.valueOf(android.os.Build.VERSION.SDK);
+        int version = Integer.valueOf(Build.VERSION.SDK_INT);
         if (version > 5) {
             me.overridePendingTransition(enterAnim, exitAnim);
         }
@@ -285,18 +287,24 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
             onShow(isCallShow);
         }
         isCallShow = false;
-        if (lifeCircleListener != null) lifeCircleListener.onResume();
+        if (lifeCircleListener != null) {
+            lifeCircleListener.onResume();
+        }
     }
     
     @Override
     public void onPause() {
-        if (lifeCircleListener != null) lifeCircleListener.onResume();
+        if (lifeCircleListener != null) {
+            lifeCircleListener.onResume();
+        }
         super.onPause();
     }
     
     @Override
     public void onDestroy() {
-        if (lifeCircleListener != null) lifeCircleListener.onDestroy();
+        if (lifeCircleListener != null) {
+            lifeCircleListener.onDestroy();
+        }
         super.onDestroy();
     }
     
@@ -308,7 +316,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
             startActivity(intent);
             return true;
         } catch (Exception e) {
-            if (DEBUGMODE) e.printStackTrace();
+            if (DEBUGMODE) {
+                e.printStackTrace();
+            }
             return false;
         }
     }
@@ -377,7 +387,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public void callShow() {
         isCallShow = true;
-        if (rootView != null) onResume();
+        if (rootView != null) {
+            onResume();
+        }
     }
     
     private boolean mAdded;

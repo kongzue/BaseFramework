@@ -6,6 +6,7 @@ import android.content.Context;
 
 import com.kongzue.baseframework.BaseActivity;
 
+import java.lang.ref.ReferenceQueue;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -19,6 +20,8 @@ import java.util.Stack;
  * @describe: Activity管理工具类
  */
 public class AppManager {
+    
+    private static OnActivityStatusChangeListener onActivityStatusChangeListener;
     private static Stack<BaseActivity> activityStack;
     private static AppManager instance;
     
@@ -43,6 +46,9 @@ public class AppManager {
             activityStack = new Stack<BaseActivity>();
         }
         activityStack.add(activity);
+        if (onActivityStatusChangeListener != null) {
+            onActivityStatusChangeListener.onActivityCreate(activity);
+        }
     }
     
     /**
@@ -50,8 +56,9 @@ public class AppManager {
      */
     public BaseActivity currentActivity() {
         BaseActivity activity = null;
-        if (!activityStack.empty())
+        if (!activityStack.empty()) {
             activity = activityStack.lastElement();
+        }
         return activity;
     }
     
@@ -108,7 +115,7 @@ public class AppManager {
      * 退出应用程序
      */
     @SuppressLint("MissingPermission")
-    public void AppExit(Context context) {
+    public void exit(Context context) {
         try {
             killAllActivity();
             android.app.ActivityManager activityMgr = (android.app.ActivityManager) context
@@ -119,9 +126,20 @@ public class AppManager {
         }
     }
     
+    @Deprecated
+    public void AppExit(Context context){
+        exit(context);
+    }
+    
     public void deleteActivity(BaseActivity activity) {
         if (activity != null) {
             activityStack.remove(activity);
+            if (onActivityStatusChangeListener != null) {
+                onActivityStatusChangeListener.onActivityDestroy(activity);
+                if (activityStack.isEmpty()) {
+                    onActivityStatusChangeListener.onAllActivityClose();
+                }
+            }
         }
     }
     
@@ -168,5 +186,29 @@ public class AppManager {
             }
         }
         return null;
+    }
+    
+    public void onDestroy() {
+        activityStack = new Stack<>();
+    }
+    
+    public static Stack<BaseActivity> getActivityStack() {
+        return activityStack;
+    }
+    
+    public static OnActivityStatusChangeListener getOnActivityStatusChangeListener() {
+        return onActivityStatusChangeListener;
+    }
+    
+    public static void setOnActivityStatusChangeListener(OnActivityStatusChangeListener onActivityStatusChangeListener) {
+        AppManager.onActivityStatusChangeListener = onActivityStatusChangeListener;
+    }
+    
+    public interface OnActivityStatusChangeListener {
+        void onActivityCreate(BaseActivity activity);
+        
+        void onActivityDestroy(BaseActivity activity);
+        
+        void onAllActivityClose();
     }
 }

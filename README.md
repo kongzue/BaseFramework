@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.6.8-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.6.9-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.8/link">
-<img src="https://img.shields.io/badge/Maven-6.6.8-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.9/link">
+<img src="https://img.shields.io/badge/Maven-6.6.9-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -19,7 +19,7 @@ Demo预览图如下：
 
 ![BaseFramework](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/BaseFramework.png)
 
-试用版和使用方法 Demo 可以前往 https://fir.im/basefw 下载
+试用版和使用方法 Demo 可以前往 <https://fir.im/basefw> 下载
 
 ![Kongzue's BaseFramework](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseframework.png)
 
@@ -37,14 +37,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.8</version>
+  <version>6.6.9</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.8'
+implementation 'com.kongzue.baseframework:baseframework:6.6.9'
 ```
 
 ⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
@@ -317,7 +317,7 @@ public class YourActivity extends BaseActivity {
 
 ![SwipeBack](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/baseframework_swipeback.png)
 
-此效果使用到的框架来源于开源的 @ikew0ng 的 SwipeBackLayout(https://github.com/ikew0ng/SwipeBackLayout) 开源协议为 Apache License2.0
+此效果使用到的框架来源于开源的 @ikew0ng 的 SwipeBackLayout(<https://github.com/ikew0ng/SwipeBackLayout>) 开源协议为 Apache License2.0
 
 ## <a name="2">BaseFragment功能</a>
 BaseFragment 与普通的 Fragment 有什么区别？
@@ -439,7 +439,7 @@ cleanAll();
 ```
 
 ## <a name="4">AppManager</a>
-AppManager 是 BaseActivity 的管理工具类，原工具是由 @xiaohaibin(https://github.com/xiaohaibin) 所开发，经同意集成在 BaseFramework 中，此处略加修改更适合 BaseActivity 的管理工作。
+AppManager 是 BaseActivity 的管理工具类，原工具是由 @xiaohaibin(<https://github.com/xiaohaibin>) 所开发，经同意集成在 BaseFramework 中，此处略加修改更适合 BaseActivity 的管理工作。
 
 提供如下方法：
 ```
@@ -475,6 +475,23 @@ runDelayed(new Runnable(){
 }, time);       //time 即延迟时间，毫秒单位
 ```
 
+从 6.6.9 版本起新增了 setOnActivityStatusChangeListener(...) 用于监听 Activity 的创建、关闭以及全部 Activity 退出的状态：
+```
+AppManager.setOnActivityStatusChangeListener(new AppManager.OnActivityStatusChangeListener() {
+    @Override
+    public void onActivityCreate(BaseActivity activity) {
+    
+    }
+    @Override
+    public void onActivityDestroy(BaseActivity activity) {
+    
+    }
+    @Override
+    public void onAllActivityClose() {
+        Log.e(">>>", "所有Activity已经关闭");
+    }
+});
+```
 
 ## <a name="6">BaseAdapter</a>
 注意，此处的 BaseAdapter 特指 com.kongzue.baseframework.BaseAdapter。
@@ -752,6 +769,10 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.6.9:
+- 提升代码规范化；
+- AppManager 新增 setOnActivityStatusChangeListener(...) 用于监听 Activity 的创建、关闭以及全部 Activity 退出的状态；
+
 v6.6.8:
 - FragmentChangeUtil 新增 hideNow() 方法与 remove(fragment) 方法；
 - FragmentChangeUtil 提供普通添加方式和预加载方式；
@@ -842,7 +863,7 @@ v6.5.5.1:
 - 修正了 @NavigationBarBackgroundColor(a,r,g,b)的默认值；
 - jump支持了共享元素，只需要在原参数末尾增加共享元素view，例如jump(Class<?> cls, View transitionView)；
 
-详细的更新说明请阅读：《BaseFramework 6.5.5.1版本更新报告》：https://www.jianshu.com/p/9c2e0039aca1
+详细的更新说明请阅读：《BaseFramework 6.5.5.1版本更新报告》：<https://www.jianshu.com/p/9c2e0039aca1>
 
 v6.5.4:
 - 增加 BaseActivity 与 BaseFragment 一键管理生命周期监听器，可在 BaseActivity 的子类中使用 setLifeCircleListener(LifeCircleListener);

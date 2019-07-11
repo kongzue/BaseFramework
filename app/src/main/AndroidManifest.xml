@@ -14,17 +14,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".JumpActivity" />
-        <activity android:name=".ResponseActivity" />
-        <activity android:name=".AdapterTestActivity" />
-        <activity android:name=".TransitionActivity"></activity>
+        <activity android:name=".JumpActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity android:name=".ResponseActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity android:name=".AdapterTestActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity android:name=".TransitionActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"></activity>
     </application>
 
 </manifest>

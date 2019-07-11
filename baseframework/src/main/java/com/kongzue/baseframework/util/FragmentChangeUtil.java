@@ -72,7 +72,9 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
-        if (focusFragment != null) transaction.hide(focusFragment);
+        if (focusFragment != null) {
+            transaction.hide(focusFragment);
+        }
         
         if (!fragment.isAddedCompat()){
             transaction.add(frameLayoutResId, fragment);
@@ -92,7 +94,9 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
-        if (focusFragment != null) transaction.hide(focusFragment);
+        if (focusFragment != null) {
+            transaction.hide(focusFragment);
+        }
         
         if (!fragmentList.get(index).isAddedCompat()){
             transaction.add(frameLayoutResId, fragmentList.get(index));

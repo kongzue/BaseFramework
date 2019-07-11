@@ -1,4 +1,4 @@
-# BaseFramework
+# BaseFramework(Support Ver)
 BaseFramework框架是我对之前编程开发的一些总结，目的是以最快的方式完成项目开发，因此将一些常用的小工具，例如简易吐司、简易log等放在了基础类中，只需要将您项目中的Activity或Fragment继承本框架中的BaseActivity以及BaseFragment，即可使用。
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
@@ -50,6 +50,8 @@ implementation 'com.kongzue.baseframework:baseframework:6.6.9'
 ⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
+
+⚡ 另外提供 AndroidX 版本，详见 [分支](https://github.com/kongzue/BaseFramework/tree/androidx)
 
 # 目录
 

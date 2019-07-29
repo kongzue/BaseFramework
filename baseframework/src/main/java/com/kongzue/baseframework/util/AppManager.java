@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
+ * @author xiaohaibin
  * @link https://xiaohaibin.github.io/
  * @email： xhb_199409@163.com
  * @github: https://github.com/xiaohaibin
@@ -75,7 +76,9 @@ public class AppManager {
      */
     public void killActivity(BaseActivity activity) {
         if (activity != null) {
-            activity.finishActivity();
+            if (activity != null) {
+                activity.finishActivity();
+            }
             activityStack.remove(activity);
             activity = null;
         }
@@ -89,7 +92,7 @@ public class AppManager {
         BaseActivity temp = null;
         while (iterator.hasNext()) {
             BaseActivity activity = iterator.next();
-            if (activity.getClass().equals(cls)) {
+            if (activity != null && activity.getClass().equals(cls)) {
                 temp = activity;
             }
         }
@@ -118,8 +121,7 @@ public class AppManager {
     public void exit(Context context) {
         try {
             killAllActivity();
-            android.app.ActivityManager activityMgr = (android.app.ActivityManager) context
-                    .getSystemService(Context.ACTIVITY_SERVICE);
+            android.app.ActivityManager activityMgr = (android.app.ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             activityMgr.killBackgroundProcesses(context.getPackageName());
             System.exit(0);
         } catch (Exception e) {
@@ -127,7 +129,7 @@ public class AppManager {
     }
     
     @Deprecated
-    public void AppExit(Context context){
+    public void AppExit(Context context) {
         exit(context);
     }
     
@@ -153,12 +155,14 @@ public class AppManager {
         if (activityStack != null) {
             Iterator<BaseActivity> iterator = activityStack.iterator();
             while (iterator.hasNext()) {
-                Activity activity = iterator.next();
-                if (excludeList.contains(activity.getClass())) {
+                BaseActivity activity = iterator.next();
+                if (activity != null && excludeList.contains(activity.getClass())) {
                     continue;
                 }
                 iterator.remove();
-                activity.finish();
+                if (activity != null) {
+                    activity.finish();
+                }
             }
         }
     }
@@ -177,7 +181,7 @@ public class AppManager {
             BaseActivity temp = null;
             while (iterator.hasNext()) {
                 BaseActivity activity = iterator.next();
-                if (activity.getClass().equals(cls)) {
+                if (activity != null && activity.getClass().equals(cls)) {
                     temp = activity;
                 }
             }

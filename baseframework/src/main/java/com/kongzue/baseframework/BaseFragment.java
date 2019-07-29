@@ -26,9 +26,9 @@ import com.kongzue.baseframework.util.toast.Toaster;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
 /**
- * @Version: 6.5.5
+ * @Version: 6.7.0
  * @Author: Kongzue
- * @github: https://github.com/kongzue/BaseFrameworkSettings
+ * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
@@ -97,10 +97,19 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         return layoutResId;
     }
     
+    /**
+     * initViews会在启动时首先执行，建议在此方法内进行布局绑定、View初始化等操作
+     */
     public abstract void initViews();
     
+    /**
+     * initDatas会在布局加载后执行，建议在此方法内加载数据和处理布局显示数据
+     */
     public abstract void initDatas();
     
+    /**
+     * setEvents会在数据加载后执行，建议在此方法内绑定设置监听器、设置执行回调事件等操作
+     */
     public abstract void setEvents();
     
     public void onLoad() {
@@ -269,7 +278,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     //软键盘打开与收起
     public void setIMMStatus(boolean show, EditText editText) {
-        me.setIMMStatus(show, editText);
+        me.showIME(show, editText);
     }
     
     @Override

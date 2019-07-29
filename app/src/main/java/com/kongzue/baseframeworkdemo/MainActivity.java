@@ -298,7 +298,7 @@ public class MainActivity extends BaseActivity {
         linkHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse("https://github.com/kongzue/BaseFrameworkSettings");
+                Uri uri = Uri.parse("https://github.com/kongzue/BaseFramework");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
             }

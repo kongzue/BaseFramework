@@ -84,13 +84,12 @@ import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
 
 /**
- * @Version: 6.5.6
+ * @Version: 6.7.0
  * @Author: Kongzue
- * @github: https://github.com/kongzue/BaseFrameworkSettings
+ * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
-
 public abstract class BaseActivity extends AppCompatActivity implements SwipeBackActivityBase {
     
     private LifeCircleListener lifeCircleListener;                          //快速管理生命周期
@@ -230,10 +229,20 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
     
     //可被重写的接口
+    /**
+     * initViews会在启动时首先执行，建议在此方法内进行布局绑定、View初始化等操作
+     */
     public abstract void initViews();
     
-    public abstract void initDatas(JumpParameter paramer);
+    /**
+     * initDatas会在布局加载后执行，建议在此方法内加载数据和处理布局显示数据
+     * @param parameter 从其他界面传入的数据，提供GET、SET方法获取这些数据
+     */
+    public abstract void initDatas(JumpParameter parameter);
     
+    /**
+     * setEvents会在数据加载后执行，建议在此方法内绑定设置监听器、设置执行回调事件等操作
+     */
     public abstract void setEvents();
     
     public void setDarkStatusBarTheme(boolean value) {

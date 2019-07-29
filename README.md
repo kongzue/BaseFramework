@@ -3,10 +3,10 @@ BaseFramework框架是我对之前编程开发的一些总结，目的是以最�
 除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.6.9-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.0-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.6.9/link">
-<img src="https://img.shields.io/badge/Maven-6.6.9-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.0/link">
+<img src="https://img.shields.io/badge/Maven-6.7.0-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -37,14 +37,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.9</version>
+  <version>6.7.0</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.6.9'
+implementation 'com.kongzue.baseframework:baseframework:6.7.0'
 ```
 
 ⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
@@ -771,6 +771,11 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.0:
+- 代码规范化提升；
+- 修复了 AppManager 中可能存在的空指针问题；
+- Preferences 提供 commit 方法与 set 方法并存存储属性值，前者会立即保存，而后者更节省资源；
+
 v6.6.9:
 - 提升代码规范化；
 - AppManager 新增 setOnActivityStatusChangeListener(...) 用于监听 Activity 的创建、关闭以及全部 Activity 退出的状态；

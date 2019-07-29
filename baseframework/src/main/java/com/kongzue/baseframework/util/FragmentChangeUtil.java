@@ -11,6 +11,9 @@ import com.kongzue.baseframework.BaseFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kongzue.baseframework.BaseActivity.isNull;
+import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+
 /**
  * Author: @Kongzue
  * Github: https://github.com/kongzue/
@@ -41,7 +44,7 @@ public class FragmentChangeUtil {
     
     public FragmentChangeUtil addFragment(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            me.log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
+            log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
             return null;
         }
         fragmentList.add(fragment);
@@ -50,7 +53,7 @@ public class FragmentChangeUtil {
     
     public FragmentChangeUtil addFragment(BaseFragment fragment,boolean isPreload) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            me.log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
+            log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
             return null;
         }
         if (isPreload){
@@ -64,11 +67,11 @@ public class FragmentChangeUtil {
     
     public FragmentChangeUtil show(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
         }
         if (!fragmentList.contains(fragment)) {
-            me.log("错误：请先执行 addFragment(fragment) 方法将此 Fragment 添加进 FragmentChangeUtil");
+            log("错误：请先执行 addFragment(fragment) 方法将此 Fragment 添加进 FragmentChangeUtil");
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
@@ -90,7 +93,7 @@ public class FragmentChangeUtil {
     
     public FragmentChangeUtil show(int index) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
@@ -112,7 +115,7 @@ public class FragmentChangeUtil {
     
     public FragmentChangeUtil hide(int index) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
@@ -128,7 +131,7 @@ public class FragmentChangeUtil {
     
     public FragmentChangeUtil hideNow() {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
@@ -141,7 +144,7 @@ public class FragmentChangeUtil {
     
     public FragmentChangeUtil hide(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
@@ -158,7 +161,7 @@ public class FragmentChangeUtil {
     
     public FragmentChangeUtil remove(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
@@ -175,7 +178,7 @@ public class FragmentChangeUtil {
     
     public int getCount() {
         if (fragmentList == null) {
-            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return -1;
         }
         return fragmentList.size();
@@ -187,9 +190,25 @@ public class FragmentChangeUtil {
     
     public int getFocusFragmentIndex() {
         if (fragmentList == null) {
-            me.log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return -1;
         }
         return fragmentList.indexOf(focusFragment);
     }
+    
+    //简易Log
+    public void log(final Object obj) {
+        try {
+            if (DEBUGMODE) {
+                String msg = obj.toString();
+                if (isNull(msg)) {
+                    return;
+                }
+                Log.v(">>>>>>", msg);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
 }

@@ -1,6 +1,7 @@
 # BaseFramework(Support Ver)
-BaseFramework框架是我对之前编程开发的一些总结，目的是以最快的方式完成项目开发，因此将一些常用的小工具，例如简易吐司、简易log等放在了基础类中，只需要将您项目中的Activity或Fragment继承本框架中的BaseActivity以及BaseFragment，即可使用。
-除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。
+
+## BaseFramework 是什么？
+BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
 <img src="https://img.shields.io/badge/BaseFramework-6.7.0-green.svg" alt="Kongzue BaseFramework">
@@ -25,9 +26,9 @@ Demo预览图如下：
 
 ## 使用前的约定与须知
 
-- 更轻松！在 BaseActivity 中，约定关键词me代替Activity.this，因此您在编写代码时，在异步线程中可以轻松使用me关键字直接引用当前的父Activity。
+- 更轻松！在 BaseActivity 中，约定关键词**me**代替**Activity.this**，因此您在编写代码时，在异步线程中可以轻松使用me关键字直接引用当前的父Activity。
 
-- 请忘掉重写你的 onCreate 吧！在新版本的 BaseFramework 中，您可以直接在 class 上使用注解 @Layout(R.layout.xxx) ，剩下的事情我们会自动帮您完成！
+- 请忘掉重写你的 onCreate 吧！在新版本的 BaseFramework 中，请在您的 Activity 的 class 上使用注解 @Layout(R.layout.xxx) ，剩下的事情我们会自动帮您完成！
 
 - 规范化！无论是在 BaseActivity 还是 BaseFragment ，默认都有 initViews()、initDatas()、setEvents() 三个方法，他们分别代表加载组件、初始化数据、组件绑定事件三个步骤，因其执行顺序是固定的，且为了代码规范化，这三个方法必须重写，也建议将相关业务逻辑写在对应方法中，以方便维护和管理。
 

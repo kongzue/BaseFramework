@@ -10,5 +10,5 @@ import java.util.Map;
 public interface MultipleAdapterSettings<D> {
     Object setViewHolder(int type, View convertView);
     
-    void setData(int type, Object vh, D data,int index);
+    void setData(int type, Object vh, D data, List<D> dataList,int index);
 }

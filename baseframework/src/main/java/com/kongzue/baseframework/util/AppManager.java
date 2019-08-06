@@ -153,7 +153,9 @@ public class AppManager {
     public void killOtherActivityExclude(Class<?>... cls) {
         List<Class<?>> excludeList = Arrays.asList(cls);
         if (activityStack != null) {
-            Iterator<BaseActivity> iterator = activityStack.iterator();
+            Stack<BaseActivity> activityStackCache = new Stack<>();
+            activityStackCache.addAll(activityStack);
+            Iterator<BaseActivity> iterator = activityStackCache.iterator();
             while (iterator.hasNext()) {
                 BaseActivity activity = iterator.next();
                 if (activity != null && excludeList.contains(activity.getClass())) {

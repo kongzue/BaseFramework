@@ -78,7 +78,7 @@ implementation 'com.kongzue.baseframework:baseframework:6.7.0'
 
 · <a href="#4">AppManager</a>
 
-· <a href="#5">异步或同步</a>
+· <a href="#5">异步或同步（演示操作）</a>
 
 · <a href="#6">BaseAdapter</a>
 

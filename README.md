@@ -94,7 +94,7 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
 
 ···· <a href="#2-2">FragmentChangeUtil</a>
 
-· <a href="#3">设置存储工具 Preferences</a>
+· <a href="#3">设置、属性值的存储工具 Preferences</a>
 
 · <a href="#4">AppManager</a>
 
@@ -461,7 +461,7 @@ FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addF
 另一种 addFragment(BaseFragment fragment,boolean isPreload)，第二个参数为 true 时会预加载，initViews、initDatas、setEvents、onResume 都会被触发，这个和之前是一样的。
 
 
-## <a name="3">设置存储工具 Preferences</a>
+## <a name="3">设置、属性值的存储工具 Preferences</a>
 Preferences是SharedPreferences的简易封装。
 
 每次手写SharedPreferences过于繁琐，因此封装了一个简易的属性记录读取类。 通过对属性的常见数据类型进行封装，使属性读取写入更方便，同时提供一些属性管理方法。

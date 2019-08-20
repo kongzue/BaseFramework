@@ -1,4 +1,4 @@
-# BaseFramework(Support Ver)
+# BaseFramework
 
 ## BaseFramework 是什么？
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
@@ -33,6 +33,9 @@ Demo预览图如下：
 - 规范化！无论是在 BaseActivity 还是 BaseFragment ，默认都有 initViews()、initDatas()、setEvents() 三个方法，他们分别代表加载组件、初始化数据、组件绑定事件三个步骤，因其执行顺序是固定的，且为了代码规范化，这三个方法必须重写，也建议将相关业务逻辑写在对应方法中，以方便维护和管理。
 
 ## Maven仓库或Gradle的引用方式
+
+### Support 版本
+
 Maven仓库：
 ```
 <dependency>
@@ -52,7 +55,24 @@ implementation 'com.kongzue.baseframework:baseframework:6.7.0'
 
 ⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
 
-⚡ 另外提供 AndroidX 版本，详见 [分支](https://github.com/kongzue/BaseFramework/tree/androidx)
+### AndroidX 版本
+
+⚡ 另外提供 AndroidX 版本，代码详见 [分支](https://github.com/kongzue/BaseFramework/tree/androidx)
+
+Maven仓库：
+```
+<dependency>
+  <groupId>com.kongzue.baseframeworkx</groupId>
+  <artifactId>baseframework</artifactId>
+  <version>6.6.9</version>
+  <type>pom</type>
+</dependency>
+```
+Gradle：
+在dependencies{}中添加引用：
+```
+implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
+```
 
 # 目录
 
@@ -60,7 +80,7 @@ implementation 'com.kongzue.baseframework:baseframework:6.7.0'
 
 ···· <a href="#1-1">沉浸式</a>
 
-···· <a href="#1-2">带自定义参数的跳转</a>
+···· <a href="#1-2">跳转、Activity间通讯</a>
 
 ···· <a href="#1-3">更简单的跳转后返回数据</a>
 
@@ -74,7 +94,11 @@ implementation 'com.kongzue.baseframework:baseframework:6.7.0'
 
 · <a href="#2">BaseFragment功能</a>
 
-· <a href="#3">Preferences</a>
+···· <a href="#2-1">BaseFragment 是什么</a>
+
+···· <a href="#2-2">FragmentChangeUtil</a>
+
+· <a href="#3">设置存储工具 Preferences</a>
 
 · <a href="#4">AppManager</a>
 
@@ -112,7 +136,7 @@ setDarkNavigationBarTheme(true);        //开启底部导航栏按钮暗色模�
 setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
 ```
 
-### <a name="1-2">带自定义参数的跳转</a>
+### <a name="1-2">跳转、Activity间通讯（带自定义参数的跳转）</a>
 Android 默认的 Intent无法支持自定义类型参数的跳转，BaseActivity 通过自有的数据通道允许传输自定义类型的数据给要跳转到的另一个 BaseActivity：
 
 跳转代码范例：
@@ -341,6 +365,8 @@ public class YourActivity extends BaseActivity {
 此效果使用到的框架来源于开源的 @ikew0ng 的 SwipeBackLayout(<https://github.com/ikew0ng/SwipeBackLayout>) 开源协议为 Apache License2.0
 
 ## <a name="2">BaseFragment功能</a>
+
+### <a name="2-1">BaseFragment 是什么</a>
 BaseFragment 与普通的 Fragment 有什么区别？
 
 首先，创建它变得异常的简单，你只需要在class上注解@Layout(你的布局资源文件id，例如R.layout.xxx)即可，剩下的事情BaseFragment会自动帮你完成。
@@ -377,7 +403,8 @@ public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约�
 
 另外，onShow 的参数 isSwitchFragment(boolean) 用于判断是否是从其他 Fragment 切换到此界面。
 
-### FragmentChangeUtil
+### <a name="2-2">FragmentChangeUtil</a>
+
 6.6.4 版本起新增 FragmentChangeUtil 工具便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换，使用方法如下：
 
 1) 初始化
@@ -438,7 +465,7 @@ FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addF
 另一种 addFragment(BaseFragment fragment,boolean isPreload)，第二个参数为 true 时会预加载，initViews、initDatas、setEvents、onResume 都会被触发，这个和之前是一样的。
 
 
-## <a name="3">Preferences</a>
+## <a name="3">设置存储工具 Preferences</a>
 Preferences是SharedPreferences的简易封装。
 
 每次手写SharedPreferences过于繁琐，因此封装了一个简易的属性记录读取类。 通过对属性的常见数据类型进行封装，使属性读取写入更方便，同时提供一些属性管理方法。

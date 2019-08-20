@@ -72,7 +72,7 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
 
 # 目录
 
-· <a href="#1">BaseActivity功能</a>
+· <a href="#1">**BaseActivity功能**</a>
 
 ···· <a href="#1-1">沉浸式</a>
 
@@ -88,19 +88,19 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
 
 ···· <a href="#1-7">侧滑返回</a>
 
-· <a href="#2">BaseFragment功能</a>
+· <a href="#2">**BaseFragment功能**</a>
 
 ···· <a href="#2-1">BaseFragment 是什么</a>
 
 ···· <a href="#2-2">FragmentChangeUtil</a>
 
-· <a href="#3">设置、属性值的存储工具 Preferences</a>
+· <a href="#3">**设置、属性值的存储工具 Preferences**</a>
 
-· <a href="#4">AppManager</a>
+· <a href="#4">**AppManager**</a>
 
-· <a href="#5">异步或同步（演示操作）</a>
+· <a href="#5">**异步或同步（演示操作）**</a>
 
-· <a href="#6">BaseAdapter</a>
+· <a href="#6">**BaseAdapter**</a>
 
 ···· <a href="#6-1">JavaBean 适配方式</a>
 
@@ -110,11 +110,11 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
 
 ···· <a href="#6-4">数据刷新方法</a>
 
-· <a href="#8">增强型日志</a>
+· <a href="#8">**增强型日志**</a>
 
-· <a href="#7">行为与日志监听</a>
+· <a href="#7">**行为与日志监听**</a>
 
-· <a href="#9">语言变更工具</a>
+· <a href="#9">**语言变更工具**</a>
 
 ## <a name="1">BaseActivity功能</a>
 

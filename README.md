@@ -365,35 +365,26 @@ public class YourActivity extends BaseActivity {
 ### <a name="2-1">BaseFragment 是什么</a>
 BaseFragment 与普通的 Fragment 有什么区别？
 
-首先，创建它变得异常的简单，你只需要在class上注解@Layout(你的布局资源文件id，例如R.layout.xxx)即可，剩下的事情BaseFragment会自动帮你完成。
+首先，创建它变得异常的简单，你只需要在class上注解 `@Layout(你的布局资源文件id，例如R.layout.xxx)` 即可，剩下的事情BaseFragment会自动帮你完成。
 
-除此之外，我们还支持了直接使用 findViewById ，而不需要额外的找到根布局 rootView，再 rootView.findViewById(...)，查看代码了解更多
-
-BaseFragment 同样支持 BaseActivity 的一些小工具和组件，您可以轻松使用它们。
-
-BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment 中通过 setLifeCircleListener(LifeCircleListener LifeCircleListener) 监控 BaseFragment 的生命周期。
-
-BaseFragment 在编写时建议约定泛型“ME”为要绑定的父 Activity，使用此功能可以在 BaseFragment 中直接使用父 Activity 中的 public 方法和元素，以下是返利：
+在构建 BaseFragment 时，建议直接使用泛型指定你要绑定的 BaseActivity，然后你就可以使用 `me.` 来调用该 BaseActivity 中 public 的方法和元素了，例如：
 ```
 @Layout(R.layout.fragment_demo)
 public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约定泛型
-    private Button btnHide;
-    
-    //已省略绑定组件和初始化等方法
    
     @Override
     public void setEvents() {
-        //此处为组件绑定事件
-        btnHide.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                me.hideFragment();                                  //可使用 me 关键字直接调用父 Activity 中的方法
-            }
-        });
+        me.changeFragment(settingFragment);             //此处 me 代替已实例化的 MainActivity，且 changeFragment(...) 是 MainActivity 中的方法。
     }
 }
 ```
 若不想约定，可将泛型设置为 BaseActivity。
+
+除此之外，我们还支持了直接使用 `findViewById` ，而不需要额外的找到根布局 rootView，再 rootView.findViewById(...)，查看代码了解更多
+
+BaseFragment 同样支持 BaseActivity 同款小工具和组件，例如便捷的 `toast(...)`、`log(...)`，您可以轻松使用它们。
+
+BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment 中通过 `setLifeCircleListener(LifeCircleListener LifeCircleListener)` 监控 BaseFragment 的生命周期。
 
 6.6.8 版本起，BaseFragment 新增一个可重写方法 onShow，之前的 onLoad 会在首次显示该 Fragment 时触发，而 onShow 是用来替代 onResume 的，但不会在预加载时触发。
 

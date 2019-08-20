@@ -214,66 +214,52 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 ```
 
 ### <a name="1-5">BaseActivity提供的小工具</a>
->简易吐司：
 ```
+//快速调用 Toast：
 toast(Obj);
-```
->简易Log打印日志（BaseFrameworkSettings.DEBUGMODE = false关闭，注意此开关是同时影响 BaseActivity 和 BaseFragment的）：
-```
+
+//简易Log打印日志（BaseFrameworkSettings.DEBUGMODE = false关闭，注意此开关是同时影响 BaseActivity 和 BaseFragment的）：
 log(Obj);
-```
->软键盘开关：
-```
+
+//软键盘开关：
 setIMMStatus(boolean show, EditText editText);
-```
->dip与像素px转换：
-```
+
+//dip与像素px转换：
 dip2px(float dpValue);
-```
->像素px与dip转换：
-```
+
+//像素px与dip转换：
 dip2px(float dpValue);
-```
->属性动画：
-```
+
+//属性动画：
 moveAnimation(Object obj, String perference, float aimValue, long time, long delay);
-```
->数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：
-```
+
+//数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：
 isNull(String);
-```
->跳转动画（参数为您的动画资源id）：
-```
+
+//跳转动画（参数为您的动画资源id）：
 jumpAnim(int enterAnim, int exitAnim)
-```
->使用默认浏览器打开链接
-```
+
+//使用默认浏览器打开链接
 openUrl(String url)
-```
->打开指定App
-```
+
+//打开指定App
 openApp(String packageName)
-```
->检测App是否已安装
-```
+
+//检测App是否已安装
 isInstallApp(String packageName)
-```
->获取IMEI
-```
+
+//获取IMEI
 //请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 getIMEI()
-```
->获取AndroidID
-```
+
+//获取AndroidID
 getAndroidId()
-```
->获取Mac地址
-```
+
+//获取Mac地址
 //请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 getMacAddress()
-```
->获取根布局
-```
+
+//获取根布局
 getRootView()
 ```
 
@@ -382,7 +368,7 @@ public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约�
 
 除此之外，我们还支持了直接使用 `findViewById` ，而不需要额外的找到根布局 rootView，再 rootView.findViewById(...)，查看代码了解更多
 
-BaseFragment 同样支持 BaseActivity 同款小工具和组件，例如便捷的 `toast(...)`、`log(...)`，您可以轻松使用它们。
+BaseFragment 同样支持 BaseActivity 同款 <a href="#1-5">小工具和组件</a>，例如便捷的 `toast(...)`、`log(...)`，您可以轻松使用它们。
 
 BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment 中通过 `setLifeCircleListener(LifeCircleListener LifeCircleListener)` 监控 BaseFragment 的生命周期。
 

@@ -51,10 +51,6 @@ Gradle：
 implementation 'com.kongzue.baseframework:baseframework:6.7.0'
 ```
 
-⚠现有 Beta 版本提供，具体详情请转至 <a href="#about">更新日志</a> 查看。
-
-⚠从6.5.5版本起部分方法有较大变化，如有使用旧版本，请参阅<a href="#about">更新日志</a>
-
 ### AndroidX 版本
 
 ⚡ 另外提供 AndroidX 版本，代码详见 [分支](https://github.com/kongzue/BaseFramework/tree/androidx)

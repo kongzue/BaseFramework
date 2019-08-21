@@ -98,7 +98,7 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
 
 ···· <a href="#2-4">BaseFragment 间的数据传递和回调</a>
 
-· <a href="#3">**设置、属性值的存储工具 Preferences**</a>
+· <a href="#3">**设置、属性值的存储读取工具 Preferences**</a>
 
 · <a href="#4">**AppManager**</a>
 
@@ -579,7 +579,7 @@ jump(functionFragment, new JumpParameter()
 setFragmentResponse(JumpParameter parameter);
 ```
 
-## <a name="3">设置、属性值的存储工具 Preferences</a>
+## <a name="3">设置、属性值的存储读取工具 Preferences</a>
 Preferences是SharedPreferences的简易封装。
 
 每次手写SharedPreferences过于繁琐，因此封装了一个简易的属性记录读取类。 通过对属性的常见数据类型进行封装，使属性读取写入更方便，同时提供一些属性管理方法。

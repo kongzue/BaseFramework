@@ -510,7 +510,7 @@ jump(1, new JumpParameter()
 );
 
 //或
-jump(baseFragment, new JumpParameter()
+jump(functionFragment, new JumpParameter()
                 .put("参数1", "这是一段文字参数")
                 .put("参数2", "这是一段文字参数")
 );
@@ -530,7 +530,7 @@ jump(1, new OnJumpResponseListener() {
 });
 
 //或
-jump(baseFragment, new OnJumpResponseListener() {
+jump(functionFragment, new OnJumpResponseListener() {
     @Override
     public void OnResponse(JumpParameter parameter) {
         if (parameter == null) {
@@ -559,7 +559,7 @@ jump(1, new JumpParameter()
 });
 
 //或
-jump(baseFragment, new JumpParameter()
+jump(functionFragment, new JumpParameter()
                 .put("参数1", "这是一段文字参数")
                 .put("参数2", "这是一段文字参数")
         , new OnJumpResponseListener() {
@@ -572,6 +572,11 @@ jump(baseFragment, new JumpParameter()
         }
     }
 });
+```
+
+回传返回值的方法：
+```
+setFragmentResponse(JumpParameter parameter);
 ```
 
 ## <a name="3">设置、属性值的存储工具 Preferences</a>

@@ -6,7 +6,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context="com.kongzue.baseframeworkdemo.JumpActivity">
+    tools:context="com.kongzue.baseframeworkdemo.activity.JumpActivity">
 
     <!--此部分为非安全区域，在此处可放置会叠加在状态栏、导航栏下的背景图等内容-->
 
@@ -20,7 +20,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
@@ -46,7 +46,8 @@
 
             <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -137,6 +138,14 @@
                 </LinearLayout>
 
             </ScrollView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="→ 侧滑以关闭"
+                android:textColor="@color/colorWhite"/>
+
         </LinearLayout>
 
     </RelativeLayout>

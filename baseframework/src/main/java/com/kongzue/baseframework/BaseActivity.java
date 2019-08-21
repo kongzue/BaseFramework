@@ -4,16 +4,13 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -30,7 +27,6 @@ import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
@@ -42,6 +38,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
@@ -52,6 +49,7 @@ import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.DebugLogG;
+import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JsonFormat;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.LanguageUtil;
@@ -101,6 +99,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public OnJumpResponseListener onResponseListener;                       //jump跳转回调
     private OnPermissionResponseListener onPermissionResponseListener;      //权限申请回调
     
+    private FragmentChangeUtil fragmentChangeUtil;
+    
     public BaseActivity me = this;
     
     private boolean isFullScreen = false;
@@ -108,41 +108,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private boolean darkNavigationBarThemeValue = false;
     private int navigationBarBackgroundColorValue = Color.BLACK;
     private int layoutResId = android.R.layout.list_content;
+    private int fragmentLayoutId = -1;
     
     private Bundle savedInstanceState;
     private SwipeBackActivityHelper mHelper;
-    
-    //不再推荐重写onCreate创建Activity，新版本推荐直接在Activity上注解：@Layout(你的layout资源id)
-    @Deprecated
-    protected void onCreate(Bundle savedInstanceState, int layoutResId) {
-        super.onCreate(savedInstanceState);
-        this.savedInstanceState = savedInstanceState;
-        
-        logG("\n" + me.getClass().getSimpleName(), "onCreate");
-        info(2, me.getClass().getSimpleName() + ":onCreate");
-        
-        initAttributes();
-        
-        setContentView(layoutResId);
-        if (isFullScreen) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
-        } else {
-            setTranslucentStatus(true);
-        }
-        
-        isAlive = true;
-        
-        AppManager.getInstance().pushActivity(me);
-        
-        initViews();
-        initDatas(getParameter());
-        setEvents();
-        
-        if (lifeCircleListener != null){ lifeCircleListener.onCreate();}
-        if (globalLifeCircleListener != null){
-            globalLifeCircleListener.onCreate(me, me.getClass().getName());}
-    }
     
     @Override
     @Deprecated
@@ -161,6 +130,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
             return;
         }
+        if (fragmentLayoutId != -1) {
+            fragmentChangeUtil = new FragmentChangeUtil(this, fragmentLayoutId);
+            initFragment(fragmentChangeUtil);
+        }
         
         setContentView(layoutResId);
         if (isFullScreen) {
@@ -175,9 +148,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         initDatas(getParameter());
         setEvents();
         
-        if (lifeCircleListener != null) {lifeCircleListener.onCreate();}
-        if (globalLifeCircleListener != null){
-            globalLifeCircleListener.onCreate(me, me.getClass().getName());}
+        if (lifeCircleListener != null) {
+            lifeCircleListener.onCreate();
+        }
+        if (globalLifeCircleListener != null) {
+            globalLifeCircleListener.onCreate(me, me.getClass().getName());
+        }
     }
     
     public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
@@ -190,12 +166,15 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             FullScreen fullScreen = getClass().getAnnotation(FullScreen.class);
             SwipeBack swipeBack = getClass().getAnnotation(SwipeBack.class);
             Layout layout = getClass().getAnnotation(Layout.class);
+            FragmentLayout fragmentLayout = getClass().getAnnotation(FragmentLayout.class);
             DarkNavigationBarTheme darkNavigationBarTheme = getClass().getAnnotation(DarkNavigationBarTheme.class);
             DarkStatusBarTheme darkStatusBarTheme = getClass().getAnnotation(DarkStatusBarTheme.class);
             NavigationBarBackgroundColor navigationBarBackgroundColor = getClass().getAnnotation(NavigationBarBackgroundColor.class);
             if (fullScreen != null) {
                 isFullScreen = fullScreen.value();
-                if (isFullScreen) {requestWindowFeature(Window.FEATURE_NO_TITLE);}
+                if (isFullScreen) {
+                    requestWindowFeature(Window.FEATURE_NO_TITLE);
+                }
             }
             mHelper.onActivityCreate();
             if (swipeBack != null) {
@@ -204,11 +183,19 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 setSwipeBackEnable(false);
             }
             if (layout != null) {
-                if (layout.value() != -1){ layoutResId = layout.value();}
+                if (layout.value() != -1) {
+                    layoutResId = layout.value();
+                }
             }
-            if (darkStatusBarTheme != null) {darkStatusBarThemeValue = darkStatusBarTheme.value();}
-            if (darkNavigationBarTheme != null){
-                darkNavigationBarThemeValue = darkNavigationBarTheme.value();}
+            if (fragmentLayout != null) {
+                fragmentLayoutId = fragmentLayout.value();
+            }
+            if (darkStatusBarTheme != null) {
+                darkStatusBarThemeValue = darkStatusBarTheme.value();
+            }
+            if (darkNavigationBarTheme != null) {
+                darkNavigationBarThemeValue = darkNavigationBarTheme.value();
+            }
             if (navigationBarBackgroundColor != null) {
                 if (navigationBarBackgroundColor.a() != -1 && navigationBarBackgroundColor.r() != -1 && navigationBarBackgroundColor.g() != -1 && navigationBarBackgroundColor.b() != -1) {
                     navigationBarBackgroundColorValue = Color.argb(navigationBarBackgroundColor.a(), navigationBarBackgroundColor.r(), navigationBarBackgroundColor.g(), navigationBarBackgroundColor.b());
@@ -229,6 +216,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
     
     //可被重写的接口
+    
     /**
      * initViews会在启动时首先执行，建议在此方法内进行布局绑定、View初始化等操作
      */
@@ -236,6 +224,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     /**
      * initDatas会在布局加载后执行，建议在此方法内加载数据和处理布局显示数据
+     *
      * @param parameter 从其他界面传入的数据，提供GET、SET方法获取这些数据
      */
     public abstract void initDatas(JumpParameter parameter);
@@ -245,6 +234,45 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
      */
     public abstract void setEvents();
     
+    /**
+     * 若有 BaseFragment 切换需要，可以使用 @FragmentLayout(R.layout.frameLayout) 注解，初始化 FragmentChangeUtil，并在此方法内 addFragment
+     *
+     * @param fragmentChangeUtil BaseFragment管理和切换类
+     */
+    public void initFragment(FragmentChangeUtil fragmentChangeUtil) {
+    
+    }
+    
+    /**
+     * 切换至指定 BaseFragment
+     *
+     * @param index 已添加的 Fragment 编号（角标）
+     */
+    public void changeFragment(int index) {
+        if (fragmentChangeUtil != null) {
+            fragmentChangeUtil.show(index);
+        }
+    }
+    
+    /**
+     * 切换至指定 BaseFragment
+     *
+     * @param fragment 已添加的 Fragment 对象
+     */
+    public void changeFragment(BaseFragment fragment) {
+        if (fragmentChangeUtil != null) {
+            fragmentChangeUtil.show(fragment);
+        }
+    }
+    
+    /**
+     * 获取 FragmentChangeUtil 对象
+     */
+    public FragmentChangeUtil getFragmentChangeUtil() {
+        return fragmentChangeUtil;
+    }
+    
+    //主题相关设置方法
     public void setDarkStatusBarTheme(boolean value) {
         darkStatusBarThemeValue = value;
         setTranslucentStatus(true);
@@ -691,8 +719,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
             if (verifyPermissions(grantResults)) {
-                if (onPermissionResponseListener != null){
-                    onPermissionResponseListener.onSuccess(permissions);}
+                if (onPermissionResponseListener != null) {
+                    onPermissionResponseListener.onSuccess(permissions);
+                }
             } else {
                 if (onPermissionResponseListener != null) {
                     onPermissionResponseListener.onFail();
@@ -1100,7 +1129,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         isActive = true;
         logG("\n" + me.getClass().getSimpleName(), "onResume");
         if (onResponseListener != null) {
-            onResponseListener.OnResponse(ParameterCache.getInstance().getResponse(me.getClass().getName()));
+            JumpParameter responseData = ParameterCache.getInstance().getResponse(me.getClass().getName());
+            if (responseData==null){
+                responseData = new JumpParameter();
+            }
+            onResponseListener.OnResponse(responseData);
             onResponseListener = null;
         }
         super.onResume();

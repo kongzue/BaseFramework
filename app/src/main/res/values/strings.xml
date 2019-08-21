@@ -13,7 +13,14 @@
 
     <string name="introduction">简介</string>
     <string name="viewOnGithub">访问BaseFramework官方Github</string>
-    <string name="introduction_tip">BaseFramework框架是我对之前编程开发的一些总结，目的是以最快的方式完成项目开发，因此将一些常用的小工具，例如简易吐司、简易log等放在了基础类中，只需要将您项目中的Activity或Fragment继承本框架中的BaseActivity以及BaseFragment，即可使用。\n除此之外BaseActivity还提供沉浸式适配，您可以查看Demo的源代码来了解更多。\n本界面就是基于BaseActivity实现的Demo。</string>
+    <string name="introduction_tip">BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；</string>
 
     <string name="other">其他功能</string>
+    <string name="menu">功能目录</string>
+    <string name="menu_tip">· BaseActivity功能\n···· 沉浸式\n···· 跳转、Activity间通讯\n···· 更简单的跳转后返回数据\n···· 权限申请\n···· BaseActivity提供的小工具\n···· BaseActivity的生命周期\n···· 侧滑返回\n· BaseFragment功能\n···· BaseFragment 是什么\n···· FragmentChangeUtil\n· 设置、属性值的存储工具 Preferences\n· AppManager\n· 异步或同步（演示操作）\n· BaseAdapter\n···· JavaBean 适配方式\n···· Map 适配方式\n···· 多种布局的绑定方式\n···· 数据刷新方法\n· 增强型日志\n· 行为与日志监听\n· 语言变更工具</string>
+    <string name="license">开源协议</string>
+    <string name="license_tip">Copyright BaseFramework\n\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</string>
+    <string name="function">功能</string>
+    <string name="about">关于</string>
+    <string name="github">Github</string>
 </resources>

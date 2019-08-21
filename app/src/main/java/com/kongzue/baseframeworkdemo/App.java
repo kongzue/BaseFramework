@@ -1,6 +1,8 @@
 package com.kongzue.baseframeworkdemo;
 
 import android.app.Application;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
 import com.kongzue.baseframework.BaseActivity;
@@ -25,23 +27,5 @@ public class App extends Application {
         
         BaseFrameworkSettings.DEBUGMODE = true;
         BaseFrameworkSettings.BETA_PLAN = true;
-    
-        AppManager.setOnActivityStatusChangeListener(new AppManager.OnActivityStatusChangeListener() {
-            @Override
-            public void onActivityCreate(BaseActivity activity) {
-            
-            }
-    
-            @Override
-            public void onActivityDestroy(BaseActivity activity) {
-        
-            }
-    
-            @Override
-            public void onAllActivityClose() {
-                Log.e(">>>", "onAllActivityClose ");
-            }
-        });
-        
     }
 }

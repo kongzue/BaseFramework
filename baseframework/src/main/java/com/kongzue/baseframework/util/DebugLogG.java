@@ -63,7 +63,7 @@ public class DebugLogG {
         if (logFile == null) {
             createWriter(context);
         }
-        Preferences.getInstance().set(context, "cache", "bugReporterFile", logFile.getAbsolutePath());
+        Preferences.getInstance().commit(context, "cache", "bugReporterFile", logFile.getAbsolutePath());
         LogG(context, "\nError>>>\n" + getExceptionInfo(e));
     }
     

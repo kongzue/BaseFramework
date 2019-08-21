@@ -7,7 +7,7 @@
     android:background="@color/colorPrimary"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".AdapterTestActivity">
+    tools:context=".activity.AdapterTestActivity">
 
     <!--此部分为非安全区域，在此处可放置会叠加在状态栏、导航栏下的背景图等内容-->
 

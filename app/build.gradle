@@ -6,8 +6,8 @@ android {
         applicationId "com.kongzue.baseframeworkdemo"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 97
-        versionName "6.6.5.2"
+        versionCode 105
+        versionName "6.7.1"
     }
     buildTypes {
         release {
@@ -19,6 +19,8 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation project(':baseframework')
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.kongzue.tabbar:tabbar:1.5.4'
 }

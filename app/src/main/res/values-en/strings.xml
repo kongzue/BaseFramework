@@ -5,7 +5,15 @@
 
     <string name="introduction">Introduction</string>
     <string name="viewOnGithub">View On Github</string>
-    <string name="introduction_tip">BaseFramework is a summary of my previous programming and development. The purpose is to complete the project development in the fastest way. Therefore, some commonly used small tools, such as simple toast and simple log, are placed in the basic class. You only need to inherit the BaseActivity and BaseFragment from your project. \n In addition, BaseActivity also provides immersive adaptation. You can check Demo's source code to learn more. \nThis is a Demo based on BaseActivity.</string>
+    <string name="introduction_tip">The BaseFramework framework includes immersive adaptations, encapsulation of Activity, Fragment, and Adapter, and provides widgets such as permission requests, jumps, delays, prompts, and log output to make it easy to build Android apps quickly.</string>
 
     <string name="other">Others</string>
+    <string name="menu">Function catalog</string>
+    <string name="menu_tip">· BaseActivity function \n···· Immersive \n···· Jump, Activity communication \n···· Return data after simple jump\n··· · Permission application\n····BaseActivity provides a small tool \n···· BaseActivity life cycle \n···· Skid back \n· BaseFragment function \n···· What is BaseFragment\n· ··· FragmentChangeUtil\n· Setting, storage of attribute values ​​Preferences\n· AppManager\n· Asynchronous or synchronous (demo operation)\n· BaseAdapter\n···· JavaBean adaptation method\n···· Map Adaptation method \n···· Binding method for multiple layouts\n···· Data refresh method\n· Enhanced log\n· Behavior and log monitoring\n· Language change tool </string>
+    <string name="license">License</string>
+    <string name="license_tip">Copyright BaseFramework\n\nLicensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License. You may obtain a copy of the License at\n\nhttp://www.apache.org/licenses/LICENSE-2.0\n\nUnless required by applicable law or agreed to in writing, software distributed under the License is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</string>
+    <string name="function">Function</string>
+    <string name="about">About</string>
+    <string name="github">Github</string>
+
 </resources>

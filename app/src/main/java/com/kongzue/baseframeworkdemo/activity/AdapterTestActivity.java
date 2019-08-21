@@ -1,4 +1,4 @@
-package com.kongzue.baseframeworkdemo;
+package com.kongzue.baseframeworkdemo.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +17,7 @@ import com.kongzue.baseframework.interfaces.SimpleAdapterSettings;
 import com.kongzue.baseframework.interfaces.SimpleMapAdapterSettings;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframeworkdemo.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,9 +112,9 @@ public class AdapterTestActivity extends BaseActivity {
                 viewHolder1.txtTitle = convertView.findViewById(R.id.txt_title);
                 return viewHolder1;
             }
-            
+    
             @Override
-            public void setData(Object viewHolder, Map data, int index) {
+            public void setData(Object viewHolder, Map data, List dataList, int index) {
                 ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
                 viewHolder1.txtTitle.setText(data.get("title") + "");
             }
@@ -136,9 +137,9 @@ public class AdapterTestActivity extends BaseActivity {
                 viewHolder1.txtTitle = convertView.findViewById(R.id.txt_title);
                 return viewHolder1;
             }
-            
+    
             @Override
-            public void setData(Object viewHolder, Object d, int index) {
+            public void setData(Object viewHolder, Object d, List dataList, int index) {
                 CustomDatas data = (CustomDatas) d;
                 ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
                 viewHolder1.txtTitle.setText(data.getTitle());
@@ -188,9 +189,9 @@ public class AdapterTestActivity extends BaseActivity {
                         return null;
                 }
             }
-            
+    
             @Override
-            public void setData(int type, Object vh, Map<String, Object> data, int index) {
+            public void setData(int type, Object vh, Map<String, Object> data, List<Map<String, Object>> dataList, int index) {
                 switch (type) {
                     case 0:
                         ViewHolder1 viewHolder1 = (ViewHolder1) vh;
@@ -243,9 +244,9 @@ public class AdapterTestActivity extends BaseActivity {
                         return null;
                 }
             }
-            
+    
             @Override
-            public void setData(int type, Object vh, Object d, int index) {
+            public void setData(int type, Object vh, Object d, List dataList, int index) {
                 CustomDatas data = (CustomDatas) d;
                 switch (type) {
                     case 0:

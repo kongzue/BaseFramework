@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.0-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.1-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.0/link">
-<img src="https://img.shields.io/badge/Maven-6.7.0-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.1/link">
+<img src="https://img.shields.io/badge/Maven-6.7.1-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -41,14 +41,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.0</version>
+  <version>6.7.1</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.0'
+implementation 'com.kongzue.baseframework:baseframework:6.7.1'
 ```
 
 ### AndroidX 版本
@@ -93,6 +93,10 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
 ···· <a href="#2-1">BaseFragment 是什么</a>
 
 ···· <a href="#2-2">FragmentChangeUtil</a>
+
+···· <a href="#2-3">BaseFragment 最佳实践</a>
+
+···· <a href="#2-4">BaseFragment 间的数据传递和回调</a>
 
 · <a href="#3">**设置、属性值的存储工具 Preferences**</a>
 
@@ -378,6 +382,8 @@ BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment
 
 ### <a name="2-2">FragmentChangeUtil</a>
 
+⚠ 6.7.1 版本起，BaseActivity 中已集成此组件，无需自定义 FragmentChangeUtil，详情见 <a href="#2-3">BaseFragment 最佳实践</a>
+
 6.6.4 版本起新增 FragmentChangeUtil 工具便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换，使用方法如下：
 
 1) 初始化
@@ -431,12 +437,142 @@ util.hide(int index);
 
 //隐藏指定 Fragment
 util.hide(fragment);
+
+//获得指定 Fragment
+util.getFragment(int index);
 ```
 
 FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addFragment(BaseFragment fragment)，不再执行预加载，也就是说，执行后，仅添加了 Fragment 而不会执行任何事件。
 
 另一种 addFragment(BaseFragment fragment,boolean isPreload)，第二个参数为 true 时会预加载，initViews、initDatas、setEvents、onResume 都会被触发，这个和之前是一样的。
 
+### <a name="2-3">BaseFragment 最佳实践</a>
+
+⚠ 此章节内容仅限 6.7.1 版本以上使用。
+
+Fragment 依赖于 Activity 来进行显示，在 BaseFramework 中，您可以在 BaseActivity 中创建实例化一个 FrameLayout 布局作为存放 Fragment 的容器：
+```
+<FrameLayout
+    android:id="@+id/frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
+然后在 BaseActivity 上添加注解：
+```
+@FragmentLayout(R.id.frame)
+public class DemoActivity extends BaseActivity {
+
+    //已准备好的 Fragment 
+    private IntroductionFragment introductionFragment = new IntroductionFragment();
+    private FunctionFragment functionFragment = new FunctionFragment();
+    private AboutFragment aboutFragment = new AboutFragment();
+
+    ...
+}
+```
+
+在 DemoActivity 中重写方法 initFragment(...)：
+```
+@Override
+public void initFragment(FragmentChangeUtil fragmentChangeUtil) {
+    //在此处将准备好的 Fragment 添加到 fragmentChangeUtil
+    fragmentChangeUtil.addFragment(introductionFragment);
+    fragmentChangeUtil.addFragment(functionFragment);
+    fragmentChangeUtil.addFragment(aboutFragment);
+    
+    //默认显示第一个 Fragment
+    changeFragment(0);
+}
+```
+使用 changeFragment(int index) 或 changeFragment(baseFragment) 可以快速完成 Fragment 的切换步骤。
+
+使用 getFragmentChangeUtil() 可以获取已实例化的 fragmentChangeUtil 对象。
+
+### <a name="2-4">BaseFragment 间的数据传递和回调</a>
+
+⚠ 此章节内容仅限 6.7.1 版本以上使用，使用此方法的前提请参考 <a href="#2-3">BaseFragment 最佳实践</a>。
+
+在同一个 BaseActivity 中的多个 BaseFragment 实例的场景中，BaseFragment 可以使用自带的 jump(...) 方法实现与其他 BaseFragment 间的跳转和数据传输，具体方法如下：
+```
+//跳转到指定角标的 Fragment，角标即在 BaseActivity 中 fragmentChangeUtil 添加 BaseFragment 时的顺序值
+jump(int index);
+
+//跳转到指定 Fragment
+jump(BaseFragment fragment);
+```
+
+携带参数跳转：
+```
+jump(1, new JumpParameter()
+                .put("参数1", "这是一段文字参数")
+                .put("参数2", "这是一段文字参数")
+);
+
+//或
+jump(baseFragment, new JumpParameter()
+                .put("参数1", "这是一段文字参数")
+                .put("参数2", "这是一段文字参数")
+);
+```
+
+获得返回值：
+```
+jump(1, new OnJumpResponseListener() {
+    @Override
+    public void OnResponse(JumpParameter parameter) {
+        if (parameter == null) {
+            toast("未返回任何数据");
+        } else {
+            toast("收到返回数据，参数“返回数据1”中的值为：" + parameter.get("返回数据1"));
+        }
+    }
+});
+
+//或
+jump(baseFragment, new OnJumpResponseListener() {
+    @Override
+    public void OnResponse(JumpParameter parameter) {
+        if (parameter == null) {
+            toast("未返回任何数据");
+        } else {
+            toast("收到返回数据，参数“返回数据1”中的值为：" + parameter.get("返回数据1"));
+        }
+    }
+});
+```
+
+带参数且获得返回值：
+```
+jump(1, new JumpParameter()
+                .put("参数1", "这是一段文字参数")
+                .put("参数2", "这是一段文字参数")
+        , new OnJumpResponseListener() {
+    @Override
+    public void OnResponse(JumpParameter parameter) {
+        if (parameter==null){
+            toast("未返回任何数据");
+        }else{
+            toast("收到返回数据，参数“返回数据1”中的值为：" + parameter.get("返回数据1"));
+        }
+    }
+});
+
+//或
+jump(baseFragment, new JumpParameter()
+                .put("参数1", "这是一段文字参数")
+                .put("参数2", "这是一段文字参数")
+        , new OnJumpResponseListener() {
+    @Override
+    public void OnResponse(JumpParameter parameter) {
+        if (parameter==null){
+            toast("未返回任何数据");
+        }else{
+            toast("收到返回数据，参数“返回数据1”中的值为：" + parameter.get("返回数据1"));
+        }
+    }
+});
+```
 
 ## <a name="3">设置、属性值的存储工具 Preferences</a>
 Preferences是SharedPreferences的简易封装。
@@ -772,6 +908,18 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.1:
+- BaseActivity 默认集成 FragmentChangeUtil，可使用 @FragmentLayout(layoutId) 注解，方便一键绑定 Fragment 布局和 FragmentChangeUtil 管理器；
+- FragmentChangeUtil 新增 getFragment(index) 方法可获取已添加的 BaseFragment；
+- FragmentChangeUtil 新增 OnFragmentChangeListener 可设置 BaseFragment 显示时监听器；
+- BaseFragment 新增可重写的 onHide() 方法，以判断当 Fragment 被切换时触发；
+- BaseFragment 新增 jump(BaseFragment) 相关方法，包含参数传递和回调方法，用于跳转至同一 BaseActivity 中其他已绑定的 BaseFragment，并传递信息；
+- BaseFragment 新增 setFragmentResponse(JumpParameter) 方法用于设置回传数据；
+- 修复了 BaseFragment 生命周期 onPause 存在的调用错误 bug；
+- 修复崩溃提醒失效的 bug；
+- 新增部分方法注释信息；
+- 更新 Demo APP；
+
 v6.7.0:
 - 代码规范化提升；
 - 修复了 AppManager 中可能存在的空指针问题；

@@ -21,6 +21,7 @@ import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
+import com.kongzue.baseframework.util.ParameterCache;
 import com.kongzue.baseframework.util.toast.Toaster;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
@@ -37,11 +38,14 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public int layoutResId = -1;
     
-    private LifeCircleListener lifeCircleListener;          //快速管理生命周期
+    /**
+     * 快速管理生命周期
+     */
+    private LifeCircleListener lifeCircleListener;
     
     private Bundle savedInstanceState;
     
-    public ME me;                                                 //绑定的BaseActivity
+    public ME me;
     
     public void setActivity(ME activity) {
         this.me = activity;
@@ -50,8 +54,19 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     public BaseFragment() {
     }
     
-    public View rootView;       //根布局，可以直接用
+    /**
+     * 根布局，可以直接用
+     */
+    public View rootView;
     
+    /**
+     * 已完全取代 onCreateView 的使用，请勿重写此方法，要绑定布局请使用 @Layout(...) 注解
+     *
+     * @param inflater           忽略
+     * @param container          忽略
+     * @param savedInstanceState 忽略
+     * @return 忽略
+     */
     @Deprecated
     @Nullable
     @Override
@@ -74,7 +89,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         if (rootView == null) {
             rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
-            rootView.setClickable(true);        //防止点击穿透
+            //防止点击穿透
+            rootView.setClickable(true);
         }
         
         if (lifeCircleListener != null) {
@@ -112,11 +128,29 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      */
     public abstract void setEvents();
     
+    /**
+     * 重写此方法以替代 {@link #onResume()} 方法
+     * onLoad 会在首次进入此界面时执行
+     */
     public void onLoad() {
     
     }
     
+    /**
+     * 重写此方法以替代 {@link #onResume()} 方法
+     *
+     * @param isSwitchFragment 是否是从其他 BaseFragment 切换至此界面
+     */
     public void onShow(boolean isSwitchFragment) {
+    
+    }
+    
+    /**
+     * 重写此方法以获取通过 jump(...) 跳转到此 BaseFragment 时携带的参数
+     *
+     * @param parameter 跳转时携带的参数
+     */
+    public void onParameterReceived(JumpParameter parameter) {
     
     }
     
@@ -221,6 +255,102 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         return me.jump(cls, jumpParameter, onJumpResponseListener, transitionView);
     }
     
+    /**
+     * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment
+     * @param index 角标
+     */
+    public void jump(int index) {
+        me.changeFragment(index);
+    }
+    
+    /**
+     * 跳转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象
+     * @param baseFragment 指定的 BaseFragment 对象
+     */
+    public void jump(BaseFragment baseFragment) {
+        me.changeFragment(baseFragment);
+    }
+    
+    /**
+     * 转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象，并携带要传递参数
+     * @param baseFragment 指定的 BaseFragment 对象
+     * @param parameter 要传递参数
+     */
+    public void jump(BaseFragment baseFragment, JumpParameter parameter) {
+        if (parameter != null) {
+            ParameterCache.getInstance().set(baseFragment.getClass().getName(), parameter);
+        }
+        me.changeFragment(baseFragment);
+    }
+    
+    /**
+     * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment，并携带要传递参数
+     * @param index 角标
+     * @param jumpParameter 要传递参数
+     */
+    public void jump(int index, JumpParameter jumpParameter) {
+        if (jumpParameter != null) {
+            ParameterCache.getInstance().set(me.getFragmentChangeUtil().getFragment(index).getClass().getName(), jumpParameter);
+        }
+        me.changeFragment(index);
+    }
+    
+    private OnJumpResponseListener onJumpResponseListener;
+    
+    /**
+     * 转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象，并携带要传递参数和回调
+     * @param baseFragment 指定的 BaseFragment 对象
+     * @param jumpParameter 要传递参数
+     * @param onJumpResponseListener 回调
+     */
+    public void jump(BaseFragment baseFragment, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener) {
+        ParameterCache.getInstance().cleanResponse(this.getClass().getName());
+        if (jumpParameter == null) {
+            jumpParameter = new JumpParameter();
+        }
+        this.onJumpResponseListener = onJumpResponseListener;
+        ParameterCache.getInstance().set(baseFragment.getClass().getName(),
+                jumpParameter.put("needResponse", true).put("responseClassName", this.getClass().getName())
+        );
+        me.changeFragment(baseFragment);
+    }
+    
+    /**
+     * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment，并携带要传递参数和回调
+     * @param index 角标
+     * @param jumpParameter 要传递参数
+     * @param onJumpResponseListener 回调
+     */
+    public void jump(int index, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener) {
+        ParameterCache.getInstance().cleanResponse(this.getClass().getName());
+        if (jumpParameter == null) {
+            jumpParameter = new JumpParameter();
+        }
+        this.onJumpResponseListener = onJumpResponseListener;
+        ParameterCache.getInstance().set(me.getFragmentChangeUtil().getFragment(index).getClass().getName(),
+                jumpParameter.put("needResponse", true).put("responseClassName", this.getClass().getName())
+        );
+        me.changeFragment(index);
+    }
+    
+    //目标Fragment：设定要返回的数据
+    public void setFragmentResponse(JumpParameter jumpParameter) {
+        ParameterCache.getInstance().setResponse((String) getFragmentParameter().get("responseClassName"), jumpParameter);
+    }
+    
+    public JumpParameter getFragmentParameter() {
+        JumpParameter jumpParameter = ParameterCache.getInstance().get(this.getClass().getName());
+        if (jumpParameter == null) {
+            jumpParameter = new JumpParameter();
+        }
+        return jumpParameter;
+    }
+    
+    //目标Fragment：设定要返回的数据，写法2
+    public void returnFragmentParameter(JumpParameter parameter) {
+        setFragmentResponse(parameter);
+    }
+    
     //大型打印使用，Log默认是有字数限制的，如有需要打印更长的文本可以使用此方法
     public void bigLog(String msg) {
         me.bigLog(msg);
@@ -271,17 +401,34 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         me.runDelayed(runnable, time);
     }
     
-    //复制文本到剪贴板
+    /**
+     * 复制文本到剪贴板
+     *
+     * @param s 要复制的文本
+     * @return 是否成功复制
+     */
     public boolean copy(String s) {
         return me.copy(s);
     }
     
-    //软键盘打开与收起
+    /**
+     * 软键盘打开与收起
+     *
+     * @param show     打开还是关闭
+     * @param editText 必须依赖一个 EditText
+     */
     public void setIMMStatus(boolean show, EditText editText) {
         me.showIME(show, editText);
     }
     
+    /**
+     * 不推荐使用 onResume
+     * 建议使用 {@link #onLoad()} 或 {@link #onShow(boolean)} 代替。
+     * {@link #onLoad()} 仅会在第一次显示时执行一次
+     * {@link #onShow(boolean)} 会在每次恢复显示时执行，其参数 isSwitchFragment 用于判断是否是从其他 Fragment 切换到本界面
+     */
     @Override
+    @Deprecated
     public void onResume() {
         super.onResume();
         if (isCallShow) {
@@ -294,6 +441,21 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         if (isLoaded) {
             onShow(isCallShow);
+    
+            if (isCallShow) {
+                JumpParameter jumpParameter = ParameterCache.getInstance().get(this.getClass().getName());
+                if (jumpParameter != null) {
+                    onParameterReceived(jumpParameter);
+                }
+                if (onJumpResponseListener != null) {
+                    JumpParameter responseData = ParameterCache.getInstance().getResponse(this.getClass().getName());
+                    if (responseData == null) {
+                        responseData = new JumpParameter();
+                    }
+                    onJumpResponseListener.OnResponse(responseData);
+                    onJumpResponseListener = null;
+                }
+            }
         }
         isCallShow = false;
         if (lifeCircleListener != null) {
@@ -304,7 +466,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     @Override
     public void onPause() {
         if (lifeCircleListener != null) {
-            lifeCircleListener.onResume();
+            lifeCircleListener.onPause();
         }
         super.onPause();
     }
@@ -315,6 +477,13 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
             lifeCircleListener.onDestroy();
         }
         super.onDestroy();
+    }
+    
+    /**
+     * 重写此方法以判断当 Fragment 被切换时触发，请注意此时界面可能被暂停
+     */
+    public void onHide(){
+        ParameterCache.getInstance().cleanParameter(this.getClass().getName());
     }
     
     //使用默认浏览器打开链接
@@ -394,6 +563,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     private boolean isLoaded = false;
     private boolean isCallShow = false;
     
+    /**
+     * 此方法是自动执行的，请勿调用
+     */
     public void callShow() {
         isCallShow = true;
         if (rootView != null) {
@@ -407,8 +579,12 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         mAdded = isAdded;
     }
     
-    //1.isAdded() 根本不靠谱，时而返回 false 搞事情...
-    //2.傻X Google竟然把 isAdded() 给final掉了，无奈改个名字吧
+    /**
+     * 1.isAdded() 根本不靠谱，时而返回 false 搞事情...
+     * 2.傻X Google竟然把 isAdded() 给final掉了，无奈改个名字吧
+     *
+     * @return 是否已经被绑定到 FragmentManager
+     */
     public boolean isAddedCompat() {
         return mAdded;
     }

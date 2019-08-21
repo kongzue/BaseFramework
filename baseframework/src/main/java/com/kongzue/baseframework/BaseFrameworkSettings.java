@@ -38,7 +38,7 @@ public class BaseFrameworkSettings {
         String reporterFile = Preferences.getInstance().getString(context, "cache", "bugReporterFile");
         if (reporterFile != null && !reporterFile.isEmpty()) {
             onBugReportListener.onReporter(new File(reporterFile));
-            Preferences.getInstance().set(context, "cache", "bugReporterFile", "");
+            Preferences.getInstance().commit(context, "cache", "bugReporterFile", "");
         }
         
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {

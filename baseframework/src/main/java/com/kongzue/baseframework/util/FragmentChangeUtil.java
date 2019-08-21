@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
+import com.kongzue.baseframework.interfaces.OnFragmentChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,8 @@ import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
  * CreateTime: 2019/2/20 18:17
  */
 public class FragmentChangeUtil {
+    
+    private OnFragmentChangeListener onFragmentChangeListener;
     
     private BaseActivity me;
     private List<BaseFragment> fragmentList;
@@ -43,20 +46,16 @@ public class FragmentChangeUtil {
     }
     
     public FragmentChangeUtil addFragment(BaseFragment fragment) {
-        if (me == null || frameLayoutResId == 0 || fragmentList == null) {
-            log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
-            return null;
-        }
-        fragmentList.add(fragment);
+        addFragment(fragment, true);
         return this;
     }
     
-    public FragmentChangeUtil addFragment(BaseFragment fragment,boolean isPreload) {
+    public FragmentChangeUtil addFragment(BaseFragment fragment, boolean isPreload) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
             return null;
         }
-        if (isPreload){
+        if (isPreload) {
             me.getSupportFragmentManager().beginTransaction().add(frameLayoutResId, fragment).commit();
             me.getSupportFragmentManager().beginTransaction().hide(fragment).commit();
             fragment.setAdded(true);
@@ -76,13 +75,17 @@ public class FragmentChangeUtil {
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
         if (focusFragment != null) {
+            focusFragment.onHide();
             transaction.hide(focusFragment);
         }
         
-        if (!fragment.isAddedCompat()){
+        if (!fragment.isAddedCompat()) {
             transaction.add(frameLayoutResId, fragment);
-        }else{
+        } else {
             transaction.show(fragment);
+            if (onFragmentChangeListener != null) {
+                onFragmentChangeListener.onChange(fragmentList.indexOf(fragment), fragment);
+            }
         }
         
         transaction.commit();
@@ -98,12 +101,16 @@ public class FragmentChangeUtil {
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
         if (focusFragment != null) {
+            focusFragment.onHide();
             transaction.hide(focusFragment);
         }
         
-        if (!fragmentList.get(index).isAddedCompat()){
+        if (!fragmentList.get(index).isAddedCompat()) {
             transaction.add(frameLayoutResId, fragmentList.get(index));
-        }else{
+        } else {
+            if (onFragmentChangeListener != null) {
+                onFragmentChangeListener.onChange(index, fragmentList.get(index));
+            }
             transaction.show(fragmentList.get(index));
         }
         
@@ -120,9 +127,10 @@ public class FragmentChangeUtil {
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
         
-        if (!fragmentList.get(index).isAddedCompat()){
+        if (!fragmentList.get(index).isAddedCompat()) {
             transaction.add(frameLayoutResId, fragmentList.get(index));
         }
+        fragmentList.get(index).onHide();
         transaction.hide(fragmentList.get(index));
         
         transaction.commit();
@@ -135,7 +143,7 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
-        
+        focusFragment.onHide();
         transaction.hide(focusFragment);
         
         transaction.commit();
@@ -150,9 +158,10 @@ public class FragmentChangeUtil {
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
         
         
-        if (!fragment.isAddedCompat()){
+        if (!fragment.isAddedCompat()) {
             transaction.add(frameLayoutResId, fragment);
         }
+        fragment.onHide();
         transaction.hide(fragment);
         
         transaction.commit();
@@ -166,7 +175,7 @@ public class FragmentChangeUtil {
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
         
-        if (fragment.isAddedCompat()){
+        if (fragment.isAddedCompat()) {
             transaction.remove(fragment);
         }
         fragment.setAdded(false);
@@ -211,4 +220,24 @@ public class FragmentChangeUtil {
         }
     }
     
+    public BaseFragment getFragment(int index) {
+        if (me == null || frameLayoutResId == 0 || fragmentList == null) {
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            return null;
+        }
+        if (fragmentList.size() < (index + 1)) {
+            log("错误：要获取的 index=" + index + " 超出了已添加的列表范围：" + fragmentList.size());
+            return null;
+        }
+        return fragmentList.get(index);
+    }
+    
+    public OnFragmentChangeListener getOnFragmentChangeListener() {
+        return onFragmentChangeListener;
+    }
+    
+    public FragmentChangeUtil setOnFragmentChangeListener(OnFragmentChangeListener onFragmentChangeListener) {
+        this.onFragmentChangeListener = onFragmentChangeListener;
+        return this;
+    }
 }

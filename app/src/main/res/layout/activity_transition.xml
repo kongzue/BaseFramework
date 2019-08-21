@@ -6,7 +6,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context="com.kongzue.baseframeworkdemo.JumpActivity">
+    tools:context="com.kongzue.baseframeworkdemo.activity.JumpActivity">
 
     <!--此部分为非安全区域，在此处可放置会叠加在状态栏、导航栏下的背景图等内容-->
 
@@ -27,6 +27,5 @@
             android:text="跳转共享元素动画" />
 
     </RelativeLayout>
-
 
 </RelativeLayout>

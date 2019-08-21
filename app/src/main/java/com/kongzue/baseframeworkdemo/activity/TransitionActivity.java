@@ -1,4 +1,4 @@
-package com.kongzue.baseframeworkdemo;
+package com.kongzue.baseframeworkdemo.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframeworkdemo.R;
 
 @Layout(R.layout.activity_transition)
 @SwipeBack(true)

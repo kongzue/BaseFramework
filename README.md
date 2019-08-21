@@ -18,7 +18,7 @@ BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapte
 
 Demo预览图如下：
 
-![BaseFramework](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/BaseFramework.png)
+![BaseFramework](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/img_baseframework_671.jpg)
 
 试用版和使用方法 Demo 可以前往 <https://fir.im/basefw> 下载
 

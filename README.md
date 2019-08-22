@@ -60,14 +60,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.6.9</version>
+  <version>6.7.1</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.6.9'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.1'
 ```
 
 # 目录

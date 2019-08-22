@@ -23,9 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Layout(R.layout.activity_adapter_test)
-@SwipeBack(true)
-@FullScreen(true)
 public class AdapterTestActivity extends BaseActivity {
     
     private TextView txtTitle;
@@ -113,7 +110,7 @@ public class AdapterTestActivity extends BaseActivity {
             }
             
             @Override
-            public void setData(Object viewHolder, Map data, int index) {
+            public void setData(Object viewHolder, Map data, List dataList, int index) {
                 ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
                 viewHolder1.txtTitle.setText(data.get("title") + "");
             }
@@ -138,7 +135,7 @@ public class AdapterTestActivity extends BaseActivity {
             }
             
             @Override
-            public void setData(Object viewHolder, Object d, int index) {
+            public void setData(Object viewHolder, Object d, List dataList, int index) {
                 CustomDatas data = (CustomDatas) d;
                 ViewHolder1 viewHolder1 = (ViewHolder1) viewHolder;
                 viewHolder1.txtTitle.setText(data.getTitle());
@@ -190,7 +187,7 @@ public class AdapterTestActivity extends BaseActivity {
             }
             
             @Override
-            public void setData(int type, Object vh, Map<String, Object> data, int index) {
+            public void setData(int type, Object vh, Map<String, Object> data, List<Map<String, Object>> dataList, int index) {
                 switch (type) {
                     case 0:
                         ViewHolder1 viewHolder1 = (ViewHolder1) vh;
@@ -245,7 +242,7 @@ public class AdapterTestActivity extends BaseActivity {
             }
             
             @Override
-            public void setData(int type, Object vh, Object d, int index) {
+            public void setData(int type, Object vh, Object d, List dataList, int index) {
                 CustomDatas data = (CustomDatas) d;
                 switch (type) {
                     case 0:

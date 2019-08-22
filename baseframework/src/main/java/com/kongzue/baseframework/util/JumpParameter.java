@@ -34,9 +34,23 @@ public class JumpParameter {
         return (boolean) datas.get(key);
     }
     
+    public boolean getBoolean(String key, boolean defaultValue) {
+        if (datas == null || datas.get(key) == null) {
+            return defaultValue;
+        }
+        return (boolean) datas.get(key);
+    }
+    
     public int getInt(String key) {
         if (datas == null || datas.get(key) == null) {
             return 0;
+        }
+        return (int) datas.get(key);
+    }
+    
+    public int getInt(String key, int defaultValue) {
+        if (datas == null || datas.get(key) == null) {
+            return defaultValue;
         }
         return (int) datas.get(key);
     }
@@ -48,9 +62,23 @@ public class JumpParameter {
         return (String) datas.get(key);
     }
     
+    public String getString(String key, String defaultValue) {
+        if (datas == null || datas.get(key) == null) {
+            return defaultValue;
+        }
+        return (String) datas.get(key);
+    }
+    
     public double getDouble(String key) {
         if (datas == null || datas.get(key) == null) {
             return 0;
+        }
+        return (double) datas.get(key);
+    }
+    
+    public double getDouble(String key, double defaultValue) {
+        if (datas == null || datas.get(key) == null) {
+            return defaultValue;
         }
         return (double) datas.get(key);
     }
@@ -62,6 +90,13 @@ public class JumpParameter {
         return (long) datas.get(key);
     }
     
+    public long getLong(String key, long defaultValue) {
+        if (datas == null || datas.get(key) == null) {
+            return defaultValue;
+        }
+        return (long) datas.get(key);
+    }
+    
     public short getShort(String key) {
         if (datas == null || datas.get(key) == null) {
             return 0;
@@ -69,9 +104,23 @@ public class JumpParameter {
         return (short) datas.get(key);
     }
     
+    public short getShort(String key, short defaultValue) {
+        if (datas == null || datas.get(key) == null) {
+            return defaultValue;
+        }
+        return (short) datas.get(key);
+    }
+    
     public float getFloat(String key) {
         if (datas == null || datas.get(key) == null) {
             return 0;
+        }
+        return (float) datas.get(key);
+    }
+    
+    public float getFloat(String key, float defaultValue) {
+        if (datas == null || datas.get(key) == null) {
+            return defaultValue;
         }
         return (float) datas.get(key);
     }

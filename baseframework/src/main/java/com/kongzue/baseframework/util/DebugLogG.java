@@ -45,13 +45,13 @@ public class DebugLogG {
             logWriter = new FileWriter(logFile, true);
             
             logWriter.write("App.Start===============" +
-                                    "\npackageName>>>" + context.getPackageName() +
-                                    "\nappVer>>>" + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "(" + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode + ")" +
-                                    "\nmanufacturer>>>" + android.os.Build.BRAND.toLowerCase() +
-                                    "\nmodel>>>" + android.os.Build.MODEL.toLowerCase() +
-                                    "\nos-ver>>>" + android.os.Build.VERSION.RELEASE.toLowerCase() +
-                                    "\nandroidId>>>" + android.provider.Settings.System.getString(context.getContentResolver(), android.provider.Settings.System.ANDROID_ID) +
-                                    "\n\nLog.Start===============\n"
+                    "\npackageName>>>" + context.getPackageName() +
+                    "\nappVer>>>" + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "(" + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode + ")" +
+                    "\nmanufacturer>>>" + android.os.Build.BRAND.toLowerCase() +
+                    "\nmodel>>>" + android.os.Build.MODEL.toLowerCase() +
+                    "\nos-ver>>>" + android.os.Build.VERSION.RELEASE.toLowerCase() +
+                    "\nandroidId>>>" + android.provider.Settings.System.getString(context.getContentResolver(), android.provider.Settings.System.ANDROID_ID) +
+                    "\n\nLog.Start===============\n"
             );
             logWriter.close();
         } catch (Exception e) {

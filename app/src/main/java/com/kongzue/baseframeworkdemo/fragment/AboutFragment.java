@@ -66,4 +66,16 @@ public class AboutFragment extends BaseFragment<DemoActivity> {
     public void setEvents() {
     
     }
+    
+    @Override
+    public void onShow(boolean isSwitchFragment) {
+        log("AboutFragment: onShow");
+        super.onShow(isSwitchFragment);
+    }
+    
+    @Override
+    public void onHide() {
+        log("AboutFragment: onHide");
+        super.onHide();
+    }
 }

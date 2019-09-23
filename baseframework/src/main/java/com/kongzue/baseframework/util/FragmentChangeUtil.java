@@ -240,4 +240,12 @@ public class FragmentChangeUtil {
         this.onFragmentChangeListener = onFragmentChangeListener;
         return this;
     }
+    
+    public int size(){
+        if (fragmentList==null){
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            return 0;
+        }
+        return fragmentList.size();
+    }
 }

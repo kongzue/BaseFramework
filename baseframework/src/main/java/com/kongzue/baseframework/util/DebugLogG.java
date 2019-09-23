@@ -44,7 +44,7 @@ public class DebugLogG {
             logFile = new File(context.getExternalCacheDir(), System.currentTimeMillis() + ".bfl");
             logWriter = new FileWriter(logFile, true);
             
-            logWriter.write("App.Start===============" +
+            logWriter.write("BaseApp.Start===============" +
                                     "\npackageName>>>" + context.getPackageName() +
                                     "\nappVer>>>" + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "(" + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionCode + ")" +
                                     "\nmanufacturer>>>" + android.os.Build.BRAND.toLowerCase() +

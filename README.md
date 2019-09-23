@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.1-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.2-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.1/link">
-<img src="https://img.shields.io/badge/Maven-6.7.1-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.2/link">
+<img src="https://img.shields.io/badge/Maven-6.7.2-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -41,14 +41,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.1</version>
+  <version>6.7.2</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.1'
+implementation 'com.kongzue.baseframework:baseframework:6.7.2'
 ```
 
 ### AndroidX 版本
@@ -60,14 +60,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.1</version>
+  <version>6.7.2</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.1'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.2'
 ```
 
 # 目录
@@ -120,6 +120,10 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.1'
 
 · <a href="#9">**语言变更工具**</a>
 
+· <a href="#10">**BaseApp功能**</a>
+
+···· <a href="#10-1">BaseApp提供的小工具</a>
+
 ## <a name="1">BaseActivity功能</a>
 
 ### <a name="1-1">沉浸式</a>
@@ -129,6 +133,8 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.1'
 @DarkStatusBarTheme(true)           //开启顶部状态栏图标、文字暗色模式
 @DarkNavigationBarTheme(true)       //开启底部导航栏按钮暗色模式
 @NavigationBarBackgroundColor(a = 255,r = 255,g = 255,b = 255)      //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
+@NavigationBarBackgroundColorInt(color = -16777216)                 //设置底部导航栏背景颜色（颜色色值）
+@NavigationBarBackgroundColorRes(resId = R.color.black)             //设置底部导航栏背景颜色（color资源Id）
 
 //也可从代码中进行控制：
 setDarkStatusBarTheme(true);            //开启顶部状态栏图标、文字暗色模式
@@ -265,7 +271,23 @@ getMacAddress()
 
 //获取根布局
 getRootView()
+
+//获取状态栏的高度
+getStatusBarHeight()
+
+//获取屏幕宽度
+getDisplayWidth()
+
+//获取屏幕可用部分高度（屏幕高度-状态栏高度-屏幕底栏高度）
+getDisplayHeight()
+
+//获取底栏高度
+getNavbarHeight()
+
+//获取真实的屏幕高度，注意判断非0
+getRootHeight()
 ```
+另外，为方便开发，从 6.7.2 版本起，会自动对布局中使用“back”作为 id 的 View 会自动绑定返回事件（可重写）
 
 ### <a name="1-6">BaseActivity的生命周期</a>
 
@@ -382,7 +404,7 @@ BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment
 
 ### <a name="2-2">FragmentChangeUtil</a>
 
-⚠ 6.7.1 版本起，BaseActivity 中已集成此组件，无需自定义 FragmentChangeUtil，详情见 <a href="#2-3">BaseFragment 最佳实践</a>
+6.7.1 版本起，BaseActivity 中已集成此组件，无需自定义 FragmentChangeUtil，详情见 <a href="#2-3">BaseFragment 最佳实践</a>
 
 6.6.4 版本起新增 FragmentChangeUtil 工具便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换，使用方法如下：
 
@@ -440,11 +462,16 @@ util.hide(fragment);
 
 //获得指定 Fragment
 util.getFragment(int index);
+
+//返回已添加的 Fragment 数量
+util.size();
 ```
 
 FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addFragment(BaseFragment fragment)，不再执行预加载，也就是说，执行后，仅添加了 Fragment 而不会执行任何事件。
 
 另一种 addFragment(BaseFragment fragment,boolean isPreload)，第二个参数为 true 时会预加载，initViews、initDatas、setEvents、onResume 都会被触发，这个和之前是一样的。
+
+另外，为方便开发，从 6.7.2 版本起，会自动对布局中使用“back”作为 id 的 View 会自动绑定返回事件（可重写）
 
 ### <a name="2-3">BaseFragment 最佳实践</a>
 
@@ -598,6 +625,11 @@ set(context, path, preferencesName, ?)
 
 //提供清除（清空）所有属性的方法
 cleanAll();
+```
+
+从 6.7.2 版本开始，支持使用第三方 SharedPreferences 实例（例如来自腾讯的 MMKV），请在所有使用 Preferences 之前，使用以下方法进行初始化：
+```
+Preferences.getInstance().initSharedPreferences(sharedPreferences);
 ```
 
 ## <a name="4">AppManager</a>
@@ -895,6 +927,83 @@ BaseFrameworkSettings.selectLocale = Locale.TRADITIONAL_CHINESE;    //强制变�
 restartMe();
 ```
 
+## <a name="10">BaseApp功能</a>
+
+6.7.2 版本起新增 BaseApp 作为 Application 的基础类。
+
+BaseApp 除了提供类似于 BaseActivity 以及 BaseFragment 的 log(...)、toast(...) 等快捷方法和 me 关键字外，提供两个重写方法 init() 以及 initSDKs() 分别用于初始化 App 数据以及 SDK。
+
+init() 会在主线程执行，用于取代 onCreate() 方法，initSDKs() 则会在异步线程执行，用于初始化可能耗时较大的 SDK，且可以通过 setOnSDKInitializedCallBack(OnSDKInitializedCallBack) 方法获得SDK 初始化完成后的回调。
+
+以下代码是 BaseApp 的实现范例：
+```
+public class App extends BaseApp<App> {     //此处泛型 App 是用于将 关键词 me 映射成您的 App 类，以方便通过 me 关键词使用和访问 App 中的公开方法及成员变量。
+    
+    @Override
+    public void init() {
+        setOnSDKInitializedCallBack(new OnSDKInitializedCallBack() {
+            @Override
+            public void onInitialized() {
+                log("onInitialized: ");
+                Toast.makeText(me, "SDK已加载完毕", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    
+    @Override
+    public void initSDKs() {
+        BaseFrameworkSettings.DEBUGMODE = true;
+        BaseFrameworkSettings.BETA_PLAN = true;
+        try {
+            Thread.sleep(8000);             //模拟大负载SDK加载缓慢的过程
+        }catch (Exception e){}
+    }
+}
+```
+
+运行后可查看结果，App 启动不会受 initSDKs() 时等待的 8 秒影响，另外也可通过 isInitializedSDKs() 方法判断 SDK 是否已经加载完毕。 
+
+另外，OnSDKInitializedCallBack 回调方法 onInitialized() 是自动回到主线程执行的，无需额外处理。
+
+### <a name="10-1">BaseApp功能提供的小工具</a>
+```
+//快速调用 Toast：
+toast(Obj);
+
+//简易Log打印日志（BaseFrameworkSettings.DEBUGMODE = false关闭，注意此开关是同时影响 BaseActivity 和 BaseFragment的）：
+log(Obj);
+
+//dip与像素px转换：
+dip2px(float dpValue);
+
+//像素px与dip转换：
+dip2px(float dpValue);
+
+//数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：
+isNull(String);
+
+//打开指定App
+openApp(String packageName)
+
+//检测App是否已安装
+isInstallApp(String packageName)
+
+//获取状态栏的高度
+getStatusBarHeight()
+
+//获取屏幕宽度
+getDisplayWidth()
+
+//获取屏幕可用部分高度（屏幕高度-状态栏高度-屏幕底栏高度）
+getDisplayHeight()
+
+//获取底栏高度
+getNavbarHeight()
+
+//获取真实的屏幕高度，注意判断非0
+getRootHeight()
+```
+
 ## 开源协议
 ```
 Copyright BaseFramework
@@ -913,6 +1022,14 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.2:
+- 新增 BaseApp，详情请查看 <a href="#10">BaseApp功能</a>；
+- BaseActivity 和 BaseFragment 中布局使用“back”作为 id 的 View 会自动绑定返回事件（可重写）；
+- BaseActivity 新增注解 @NavigationBarBackgroundColorInt(colorInt) 以及 @NavigationBarBackgroundColorRes(colorResId) 可使用 ColorInt 以及颜色资源 ID 设置底部导航栏背景颜色；
+- Preferences 新增 initSharedPreferences(SharedPreferences) 初始化方法可使用其他 SharedPreferences 实例；
+- FragmentChangeUtil 新增 size() 可获取当前绑定的 Fragment 数量；
+- 修复非处于活动状态的 BaseFragment 的 onShow 事件在 BaseActivity 的 resume 过程中被触发的问题；
+
 v6.7.1:
 - BaseActivity 默认集成 FragmentChangeUtil，可使用 @FragmentLayout(layoutId) 注解，方便一键绑定 Fragment 布局和 FragmentChangeUtil 管理器；
 - FragmentChangeUtil 新增 getFragment(index) 方法可获取已添加的 BaseFragment；

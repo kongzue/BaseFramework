@@ -62,4 +62,16 @@ public class IntroductionFragment extends BaseFragment<DemoActivity> {
             }
         });
     }
+    
+    @Override
+    public void onShow(boolean isSwitchFragment) {
+        log("IntroductionFragment: onShow");
+        super.onShow(isSwitchFragment);
+    }
+    
+    @Override
+    public void onHide() {
+        log("IntroductionFragment: onHide");
+        super.onHide();
+    }
 }

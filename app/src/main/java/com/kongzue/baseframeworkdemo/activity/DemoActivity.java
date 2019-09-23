@@ -1,6 +1,7 @@
 package com.kongzue.baseframeworkdemo.activity;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.interfaces.OnFragmentChangeListener;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframework.util.Preferences;
 import com.kongzue.baseframeworkdemo.R;
 import com.kongzue.baseframeworkdemo.fragment.AboutFragment;
 import com.kongzue.baseframeworkdemo.fragment.FunctionFragment;

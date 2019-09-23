@@ -37,6 +37,7 @@ import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public int layoutResId = -1;
+    public boolean isActive = false;                                        //当前Fragment是否处于前台
     
     /**
      * 快速管理生命周期
@@ -49,9 +50,6 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public void setActivity(ME activity) {
         this.me = activity;
-    }
-    
-    public BaseFragment() {
     }
     
     /**
@@ -89,8 +87,6 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         if (rootView == null) {
             rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
-            //防止点击穿透
-            rootView.setClickable(true);
         }
         
         if (lifeCircleListener != null) {
@@ -98,9 +94,22 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         
         initViews();
+        bindAutoEvent();
         initDatas();
         setEvents();
         return rootView;
+    }
+    
+    private void bindAutoEvent() {
+        View backView = findViewById(R.id.back);
+        if (backView!=null){
+            backView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    me.onBackPressed();
+                }
+            });
+        }
     }
     
     public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
@@ -257,6 +266,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment
+     *
      * @param index 角标
      */
     public void jump(int index) {
@@ -265,6 +275,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 跳转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象
+     *
      * @param baseFragment 指定的 BaseFragment 对象
      */
     public void jump(BaseFragment baseFragment) {
@@ -273,8 +284,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象，并携带要传递参数
+     *
      * @param baseFragment 指定的 BaseFragment 对象
-     * @param parameter 要传递参数
+     * @param parameter    要传递参数
      */
     public void jump(BaseFragment baseFragment, JumpParameter parameter) {
         if (parameter != null) {
@@ -285,7 +297,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment，并携带要传递参数
-     * @param index 角标
+     *
+     * @param index         角标
      * @param jumpParameter 要传递参数
      */
     public void jump(int index, JumpParameter jumpParameter) {
@@ -299,8 +312,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象，并携带要传递参数和回调
-     * @param baseFragment 指定的 BaseFragment 对象
-     * @param jumpParameter 要传递参数
+     *
+     * @param baseFragment           指定的 BaseFragment 对象
+     * @param jumpParameter          要传递参数
      * @param onJumpResponseListener 回调
      */
     public void jump(BaseFragment baseFragment, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener) {
@@ -317,8 +331,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment，并携带要传递参数和回调
-     * @param index 角标
-     * @param jumpParameter 要传递参数
+     *
+     * @param index                  角标
+     * @param jumpParameter          要传递参数
      * @param onJumpResponseListener 回调
      */
     public void jump(int index, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener) {
@@ -440,8 +455,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
             }
         }
         if (isLoaded) {
-            onShow(isCallShow);
-    
+            if (isActive) {
+                onShow(isCallShow);
+            }
             if (isCallShow) {
                 JumpParameter jumpParameter = ParameterCache.getInstance().get(this.getClass().getName());
                 if (jumpParameter != null) {
@@ -482,7 +498,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     /**
      * 重写此方法以判断当 Fragment 被切换时触发，请注意此时界面可能被暂停
      */
-    public void onHide(){
+    public void onHide() {
+        isActive = false;
         ParameterCache.getInstance().cleanParameter(this.getClass().getName());
     }
     
@@ -568,6 +585,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      */
     public void callShow() {
         isCallShow = true;
+        isActive = true;
         if (rootView != null) {
             onResume();
         }
@@ -588,5 +606,6 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     public boolean isAddedCompat() {
         return mAdded;
     }
+    
 }
 

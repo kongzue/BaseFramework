@@ -4,9 +4,11 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.BaseFrameworkSettings;
@@ -33,6 +35,7 @@ import java.util.Locale;
 @Layout(R.layout.fragment_function)
 public class FunctionFragment extends BaseFragment<DemoActivity> {
     
+    private TextView textView;
     private Button intentToBaseAdapter;
     private Button btnJump;
     private Button btnResult;
@@ -44,8 +47,10 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     private Button btnChangeLng;
     private Button btnToast;
     
+    
     @Override
     public void initViews() {
+        textView = findViewById(R.id.textView);
         intentToBaseAdapter = findViewById(R.id.intentToBaseAdapter);
         btnJump = findViewById(R.id.btn_jump);
         btnResult = findViewById(R.id.btn_result);
@@ -63,13 +68,13 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     
     }
     
+    //此处为组件绑定事件
     @Override
     public void setEvents() {
-        //此处为组件绑定事件
         btnToast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 toastS("test!");
             }
         });
@@ -77,7 +82,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnChangeLng.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 if (BaseFrameworkSettings.selectLocale == Locale.ENGLISH) {
                     BaseFrameworkSettings.selectLocale = Locale.CHINA;
                 } else {
@@ -90,7 +95,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnGetImei.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 toast(getIMEI());
             }
         });
@@ -98,13 +103,13 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnPrintJsonLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 log("{\"employees\": [{ \"firstName\":\"Bill\" , \"lastName\":\"Gates\" },{ \"firstName\":\"George\" , \"lastName\":\"Bush\" },{ \"firstName\":\"Thomas\" , \"lastName\":\"Carter\" }]}");
-    
+                
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
                 builder.setTitle("提示");
                 builder.setMessage("此功能需要连接Android Studio的Logcat查看输出结果");
-                builder.setPositiveButton("知道了",null);
+                builder.setPositiveButton("知道了", null);
                 AlertDialog dialog = builder.create();
                 dialog.show();
             }
@@ -113,7 +118,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnError.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 doTestError();
             }
         });
@@ -121,7 +126,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnTransition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 jump(TransitionActivity.class, btnTransition);
             }
         });
@@ -129,7 +134,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         intentToBaseAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 jump(AdapterTestActivity.class);
             }
         });
@@ -137,7 +142,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnPermission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
                     @Override
                     public void onSuccess(String[] permissions) {
@@ -155,7 +160,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
                 builder.setTitle("提示");
                 builder.setMessage("跳转到下一个界面后，点击“SET返回数据”按钮即可设定返回数据，当返回此界面时会显示该数据");
@@ -197,7 +202,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnJump.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button)v).getText().toString()));
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
                 builder.setTitle("提示");
                 builder.setMessage("接下来会创建一个Bitmap，并通过BaseActivity的通道传输给下一个BaseActivity，在其中会通过相应的方法接收到这个Bitmap。\n通过BaseActivity自带的jump(...)方法可以传输任何类型的参数给下一个界面。");
@@ -224,5 +229,18 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     @Override
     public void onParameterReceived(JumpParameter parameter) {
         toast(parameter.getString("tip"));
+    }
+    
+    
+    @Override
+    public void onShow(boolean isSwitchFragment) {
+        log("FunctionFragment: onShow");
+        super.onShow(isSwitchFragment);
+    }
+    
+    @Override
+    public void onHide() {
+        log("FunctionFragment: onHide");
+        super.onHide();
     }
 }

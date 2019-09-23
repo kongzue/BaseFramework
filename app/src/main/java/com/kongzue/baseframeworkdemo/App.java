@@ -1,16 +1,13 @@
 package com.kongzue.baseframeworkdemo;
 
-import android.app.Application;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
+import android.graphics.Color;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.BaseApp;
 import com.kongzue.baseframework.BaseFrameworkSettings;
-import com.kongzue.baseframework.interfaces.OnBugReportListener;
-import com.kongzue.baseframework.util.AppManager;
-
-import java.io.File;
+import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
+import com.kongzue.baseframeworkdemo.activity.ResponseActivity;
 
 /**
  * Author: @Kongzue
@@ -19,13 +16,25 @@ import java.io.File;
  * Mail: myzcxhh@live.cn
  * CreateTime: 2018/9/30 04:12
  */
-public class App extends Application {
+public class App extends BaseApp<App> {
     
     @Override
-    public void onCreate() {
-        super.onCreate();
-        
+    public void init() {
+        setOnSDKInitializedCallBack(new OnSDKInitializedCallBack() {
+            @Override
+            public void onInitialized() {
+                log("onInitialized: ");
+                Toast.makeText(me, "SDK已加载完毕", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+    
+    @Override
+    public void initSDKs() {
         BaseFrameworkSettings.DEBUGMODE = true;
         BaseFrameworkSettings.BETA_PLAN = true;
+        try {
+            Thread.sleep(8000);
+        }catch (Exception e){}
     }
 }

@@ -46,6 +46,8 @@ import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorInt;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.DebugLogG;
@@ -145,6 +147,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         AppManager.getInstance().pushActivity(me);
         
         initViews();
+        bindAutoEvent();
         initDatas(getParameter());
         setEvents();
         
@@ -153,6 +156,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
         if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onCreate(me, me.getClass().getName());
+        }
+    }
+    
+    private void bindAutoEvent() {
+        View backView = findViewById(R.id.back);
+        if (backView!=null){
+            backView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
         }
     }
     
@@ -170,6 +185,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             DarkNavigationBarTheme darkNavigationBarTheme = getClass().getAnnotation(DarkNavigationBarTheme.class);
             DarkStatusBarTheme darkStatusBarTheme = getClass().getAnnotation(DarkStatusBarTheme.class);
             NavigationBarBackgroundColor navigationBarBackgroundColor = getClass().getAnnotation(NavigationBarBackgroundColor.class);
+            NavigationBarBackgroundColorRes navigationBarBackgroundColorRes = getClass().getAnnotation(NavigationBarBackgroundColorRes.class);
+            NavigationBarBackgroundColorInt navigationBarBackgroundColorInt = getClass().getAnnotation(NavigationBarBackgroundColorInt.class);
             if (fullScreen != null) {
                 isFullScreen = fullScreen.value();
                 if (isFullScreen) {
@@ -200,6 +217,14 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 if (navigationBarBackgroundColor.a() != -1 && navigationBarBackgroundColor.r() != -1 && navigationBarBackgroundColor.g() != -1 && navigationBarBackgroundColor.b() != -1) {
                     navigationBarBackgroundColorValue = Color.argb(navigationBarBackgroundColor.a(), navigationBarBackgroundColor.r(), navigationBarBackgroundColor.g(), navigationBarBackgroundColor.b());
                 }
+            }
+            if (navigationBarBackgroundColorRes != null) {
+                if (navigationBarBackgroundColorRes.resId()!=-1) {
+                    navigationBarBackgroundColorValue = getColorS(navigationBarBackgroundColorRes.resId());
+                }
+            }
+            if (navigationBarBackgroundColorInt != null) {
+                navigationBarBackgroundColorValue = navigationBarBackgroundColorInt.color();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1130,7 +1155,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         logG("\n" + me.getClass().getSimpleName(), "onResume");
         if (onResponseListener != null) {
             JumpParameter responseData = ParameterCache.getInstance().getResponse(me.getClass().getName());
-            if (responseData==null){
+            if (responseData == null) {
                 responseData = new JumpParameter();
             }
             onResponseListener.OnResponse(responseData);

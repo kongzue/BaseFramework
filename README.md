@@ -60,7 +60,7 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.1</version>
+  <version>6.7.3</version>
   <type>pom</type>
 </dependency>
 ```

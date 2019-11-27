@@ -33,11 +33,15 @@ import android.util.Pair;
 import android.view.Display;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.BindViews;
+import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
@@ -46,6 +50,7 @@ import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorHex;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorInt;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
 import com.kongzue.baseframework.interfaces.SwipeBack;
@@ -132,10 +137,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
             return;
         }
-        if (fragmentLayoutId != -1) {
-            fragmentChangeUtil = new FragmentChangeUtil(this, fragmentLayoutId);
-            initFragment(fragmentChangeUtil);
-        }
         
         setContentView(layoutResId);
         if (isFullScreen) {
@@ -147,7 +148,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         AppManager.getInstance().pushActivity(me);
         
         initViews();
+        if (fragmentLayoutId != -1) {
+            fragmentChangeUtil = new FragmentChangeUtil(this, fragmentLayoutId);
+            initFragment(fragmentChangeUtil);
+        }
         bindAutoEvent();
+        initBindViewAndFunctions();
         initDatas(getParameter());
         setEvents();
         
@@ -159,9 +165,70 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
     }
     
+    protected void initBindViewAndFunctions() {
+        try {
+            Field[] fields = getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(BindView.class)) {
+                    BindView bindView = field.getAnnotation(BindView.class);
+                    if (bindView != null && bindView.value() != 0) {
+                        field.setAccessible(true);
+                        field.set(me, me.findViewById(bindView.value()));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Field[] fields = getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(BindViews.class)) {
+                    BindViews bindView = field.getAnnotation(BindViews.class);
+                    if (bindView != null && bindView.value().length != 0) {
+                        List<View> viewList = new ArrayList<>();
+                        for (int id : bindView.value()) {
+                            viewList.add(findViewById(id));
+                        }
+                        field.setAccessible(true);
+                        field.set(me, viewList);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Method[] methods = getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(OnClick.class)) {
+                    OnClick onClick = method.getAnnotation(OnClick.class);
+                    if (onClick != null && onClick.value() != 0) {
+                        View v = findViewById(onClick.value());
+                        v.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    method.invoke(me, v);
+                                } catch (Exception e) {
+                                    try {
+                                        method.invoke(me);
+                                    } catch (Exception e1) {
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     private void bindAutoEvent() {
         View backView = findViewById(R.id.back);
-        if (backView!=null){
+        if (backView != null) {
             backView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -187,6 +254,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             NavigationBarBackgroundColor navigationBarBackgroundColor = getClass().getAnnotation(NavigationBarBackgroundColor.class);
             NavigationBarBackgroundColorRes navigationBarBackgroundColorRes = getClass().getAnnotation(NavigationBarBackgroundColorRes.class);
             NavigationBarBackgroundColorInt navigationBarBackgroundColorInt = getClass().getAnnotation(NavigationBarBackgroundColorInt.class);
+            NavigationBarBackgroundColorHex navigationBarBackgroundColorHex = getClass().getAnnotation(NavigationBarBackgroundColorHex.class);
             if (fullScreen != null) {
                 isFullScreen = fullScreen.value();
                 if (isFullScreen) {
@@ -219,12 +287,15 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 }
             }
             if (navigationBarBackgroundColorRes != null) {
-                if (navigationBarBackgroundColorRes.resId()!=-1) {
-                    navigationBarBackgroundColorValue = getColorS(navigationBarBackgroundColorRes.resId());
+                if (navigationBarBackgroundColorRes.value() != -1) {
+                    navigationBarBackgroundColorValue = getColorS(navigationBarBackgroundColorRes.value());
                 }
             }
             if (navigationBarBackgroundColorInt != null) {
-                navigationBarBackgroundColorValue = navigationBarBackgroundColorInt.color();
+                navigationBarBackgroundColorValue = navigationBarBackgroundColorInt.value();
+            }
+            if (navigationBarBackgroundColorHex != null) {
+                navigationBarBackgroundColorValue = Color.parseColor(navigationBarBackgroundColorHex.value());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -279,6 +350,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
     }
     
+    public void changeFragment(int index, int enterAnimResId, int exitAnimResId) {
+        if (fragmentChangeUtil != null) {
+            fragmentChangeUtil.anim(enterAnimResId, exitAnimResId).show(index);
+        }
+    }
+    
     /**
      * 切换至指定 BaseFragment
      *
@@ -287,6 +364,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void changeFragment(BaseFragment fragment) {
         if (fragmentChangeUtil != null) {
             fragmentChangeUtil.show(fragment);
+        }
+    }
+    
+    public void changeFragment(BaseFragment fragment, int enterAnimResId, int exitAnimResId) {
+        if (fragmentChangeUtil != null) {
+            fragmentChangeUtil.anim(enterAnimResId, exitAnimResId).show(fragment);
         }
     }
     
@@ -830,10 +913,13 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     //获取底栏高度
     public int getNavbarHeight() {
-        if (setNavigationBarHeightZero) {
-            return 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            WindowInsets windowInsets = null;
+            windowInsets = getWindow().getDecorView().getRootView().getRootWindowInsets();
+            if (windowInsets != null) {
+                return windowInsets.getStableInsetBottom();
+            }
         }
-        int result = 0;
         int resourceId = 0;
         int rid = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
         if (rid != 0) {

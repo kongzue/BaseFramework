@@ -16,13 +16,21 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.BindView;
+import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
 import com.kongzue.baseframework.util.toast.Toaster;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
@@ -38,6 +46,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public int layoutResId = -1;
     public boolean isActive = false;                                        //当前Fragment是否处于前台
+    public int fromFragmentId = -1;
     
     /**
      * 快速管理生命周期
@@ -47,6 +56,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     private Bundle savedInstanceState;
     
     public ME me;
+    
+    public BaseFragment THIS;
     
     public void setActivity(ME activity) {
         this.me = activity;
@@ -70,6 +81,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         me = (ME) getActivity();
+        THIS = this;
         this.savedInstanceState = savedInstanceState;
         try {
             Layout layout = getClass().getAnnotation(Layout.class);
@@ -95,14 +107,76 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         
         initViews();
         bindAutoEvent();
+        initBindViewAndFunctions();
         initDatas();
         setEvents();
         return rootView;
     }
     
+    protected void initBindViewAndFunctions() {
+        try {
+            Field[] fields = getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(BindView.class)) {
+                    BindView bindView = field.getAnnotation(BindView.class);
+                    if (bindView != null && bindView.value() != 0) {
+                        field.setAccessible(true);
+                        field.set(THIS, THIS.findViewById(bindView.value()));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Field[] fields = getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(BindViews.class)) {
+                    BindViews bindView = field.getAnnotation(BindViews.class);
+                    if (bindView != null && bindView.value().length != 0) {
+                        List<View> viewList = new ArrayList<>();
+                        for (int id : bindView.value()) {
+                            viewList.add(findViewById(id));
+                        }
+                        field.setAccessible(true);
+                        field.set(THIS, viewList);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Method[] methods = getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(OnClick.class)) {
+                    OnClick onClick = method.getAnnotation(OnClick.class);
+                    if (onClick != null && onClick.value() != 0) {
+                        View v = findViewById(onClick.value());
+                        v.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    method.invoke(THIS, v);
+                                } catch (Exception e) {
+                                    try {
+                                        method.invoke(THIS);
+                                    } catch (Exception e1) {
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     private void bindAutoEvent() {
         View backView = findViewById(R.id.back);
-        if (backView!=null){
+        if (backView != null) {
             backView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -273,6 +347,10 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         me.changeFragment(index);
     }
     
+    public void jump(int index, int enterAnimResId, int exitAnimResId) {
+        me.changeFragment(index, enterAnimResId, exitAnimResId);
+    }
+    
     /**
      * 跳转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象
      *
@@ -280,6 +358,10 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      */
     public void jump(BaseFragment baseFragment) {
         me.changeFragment(baseFragment);
+    }
+    
+    public void jump(BaseFragment baseFragment, int enterAnimResId, int exitAnimResId) {
+        me.changeFragment(baseFragment, enterAnimResId, exitAnimResId);
     }
     
     /**

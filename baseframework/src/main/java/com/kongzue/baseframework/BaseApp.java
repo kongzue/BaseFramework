@@ -13,7 +13,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -23,15 +22,10 @@ import android.widget.Toast;
 import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
 import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.JsonFormat;
-import com.kongzue.baseframework.util.JumpParameter;
-import com.kongzue.baseframework.util.OnPermissionResponseListener;
-import com.kongzue.baseframework.util.ParameterCache;
 import com.kongzue.baseframework.util.toast.Toaster;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
-import static com.kongzue.baseframework.BaseActivity.isNull;
 import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
@@ -52,7 +46,11 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     
     public abstract void init();
     
-    public abstract void initSDKs();
+    public void initSDKs() {
+    }
+    
+    public void initSDKInitialized() {
+    }
     
     public YourApp me;
     
@@ -63,17 +61,18 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
         
         me = (YourApp) this;
         init();
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
-                synchronized (me){
+                synchronized (me) {
                     isInitializedSDKs = false;
                     initSDKs();
-    
-                    if (onSDKInitializedCallBack!=null){
+                    
+                    if (onSDKInitializedCallBack != null) {
                         mainHandler.post(new Runnable() {
                             @Override
                             public void run() {
+                                initSDKInitialized();
                                 onSDKInitializedCallBack.onInitialized();
                                 isInitializedSDKs = true;
                             }
@@ -164,7 +163,6 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
         }
     }
     
-    
     protected final static String NULL = "";
     private Toast toast;
     
@@ -194,7 +192,6 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-    
                 runnable.run();
             }
         });
@@ -254,7 +251,7 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     
     //获取屏幕宽度
     public int getDisplayWidth() {
-        WindowManager windowManager =(WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display disp = windowManager.getDefaultDisplay();
         Point outP = new Point();
         disp.getSize(outP);
@@ -263,7 +260,7 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     
     //获取屏幕可用部分高度（屏幕高度-状态栏高度-屏幕底栏高度）
     public int getDisplayHeight() {
-        WindowManager windowManager =(WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display disp = windowManager.getDefaultDisplay();
         Point outP = new Point();
         disp.getSize(outP);
@@ -288,7 +285,7 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     
     //获取真实的屏幕高度，注意判断非0
     public int getRootHeight() {
-        WindowManager windowManager =(WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         int diaplayHeight = 0;
         Display display = windowManager.getDefaultDisplay();
         Point point = new Point();

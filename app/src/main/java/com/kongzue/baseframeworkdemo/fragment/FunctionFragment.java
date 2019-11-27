@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
@@ -198,28 +199,26 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
                 dialog.show();
             }
         });
-        
-        btnJump.setOnClickListener(new View.OnClickListener() {
+    }
+    
+    @OnClick(R.id.btn_jump)
+    public void jumpFunction(){
+        setFragmentResponse(new JumpParameter().put("function", btnJump.getText().toString()));
+        AlertDialog.Builder builder = new AlertDialog.Builder(me);
+        builder.setTitle("提示");
+        builder.setMessage("接下来会创建一个Bitmap，并通过BaseActivity的通道传输给下一个BaseActivity，在其中会通过相应的方法接收到这个Bitmap。\n通过BaseActivity自带的jump(...)方法可以传输任何类型的参数给下一个界面。");
+        builder.setPositiveButton("知道了", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-                AlertDialog.Builder builder = new AlertDialog.Builder(me);
-                builder.setTitle("提示");
-                builder.setMessage("接下来会创建一个Bitmap，并通过BaseActivity的通道传输给下一个BaseActivity，在其中会通过相应的方法接收到这个Bitmap。\n通过BaseActivity自带的jump(...)方法可以传输任何类型的参数给下一个界面。");
-                builder.setPositiveButton("知道了", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.img_bkg);
-                        jump(JumpActivity.class, new JumpParameter()
-                                .put("参数1", "这是一段文字参数")
-                                .put("参数2", bmp)
-                        );
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+            public void onClick(DialogInterface dialog, int which) {
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.img_bkg);
+                jump(JumpActivity.class, new JumpParameter()
+                        .put("参数1", "这是一段文字参数")
+                        .put("参数2", bmp)
+                );
             }
         });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
     
     private void doTestError() throws NullPointerException {

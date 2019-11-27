@@ -134,14 +134,18 @@ public class AppManager {
     }
     
     public void deleteActivity(BaseActivity activity) {
-        if (activity != null) {
-            activityStack.remove(activity);
-            if (onActivityStatusChangeListener != null) {
-                onActivityStatusChangeListener.onActivityDestroy(activity);
-                if (activityStack.isEmpty()) {
-                    onActivityStatusChangeListener.onAllActivityClose();
+        try{
+            if (activity != null) {
+                activityStack.remove(activity);
+                if (onActivityStatusChangeListener != null) {
+                    onActivityStatusChangeListener.onActivityDestroy(activity);
+                    if (activityStack.isEmpty()) {
+                        onActivityStatusChangeListener.onAllActivityClose();
+                    }
                 }
             }
+        }catch (Exception e){
+        
         }
     }
     

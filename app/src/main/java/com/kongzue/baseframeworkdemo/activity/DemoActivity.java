@@ -11,16 +11,19 @@ import android.widget.FrameLayout;
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.BaseFrameworkSettings;
+import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
 import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.interfaces.OnFragmentChangeListener;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.Preferences;
+import com.kongzue.baseframeworkdemo.App;
 import com.kongzue.baseframeworkdemo.R;
 import com.kongzue.baseframeworkdemo.fragment.AboutFragment;
 import com.kongzue.baseframeworkdemo.fragment.FunctionFragment;
@@ -44,11 +47,12 @@ public class DemoActivity extends BaseActivity {
     private FunctionFragment functionFragment = new FunctionFragment();
     private AboutFragment aboutFragment = new AboutFragment();
     
+    @BindView(R.id.tabbar)
     private TabBarView tabbar;
     
     @Override
     public void initViews() {
-        tabbar = findViewById(R.id.tabbar);
+        //tabbar = findViewById(R.id.tabbar);
     }
     
     @Override

@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.kongzue.baseframework.BaseApp;
 import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
+import com.kongzue.baseframework.util.Preferences;
 import com.kongzue.baseframeworkdemo.activity.ResponseActivity;
 
 /**
@@ -36,5 +37,9 @@ public class App extends BaseApp<App> {
         try {
             Thread.sleep(8000);
         }catch (Exception e){}
+    
+        Preferences.getInstance().set(me,"test","testB",true);
+        String test = Preferences.getInstance().getString(me,"test","testB");
+        log("testB:" + test);
     }
 }

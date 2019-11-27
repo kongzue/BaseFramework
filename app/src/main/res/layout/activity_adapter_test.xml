@@ -134,11 +134,11 @@
                         android:textColor="#fff"
                         android:textSize="12dp" />
 
-                    <ListView
+                    <com.kongzue.baseframeworkdemo.util.AutoHeightListView
                         android:id="@+id/list"
                         android:layout_width="match_parent"
-                        android:layout_height="400dp"
-                        android:background="#3f000000"></ListView>
+                        android:layout_height="wrap_content"
+                        android:background="#3f000000"></com.kongzue.baseframeworkdemo.util.AutoHeightListView>
 
                 </LinearLayout>
 

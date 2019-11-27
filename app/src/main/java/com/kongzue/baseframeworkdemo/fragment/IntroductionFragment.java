@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframeworkdemo.activity.DemoActivity;
@@ -49,16 +50,14 @@ public class IntroductionFragment extends BaseFragment<DemoActivity> {
                 
             }
         });
+    }
     
-        btnFab.setOnClickListener(new View.OnClickListener() {
+    @OnClick(R.id.btn_fab)
+    public void startTest(){
+        jump(1, new JumpParameter().put("tip", "开始尝试功能！"), new OnJumpResponseListener() {
             @Override
-            public void onClick(View v) {
-                jump(1, new JumpParameter().put("tip", "开始尝试功能！"), new OnJumpResponseListener() {
-                    @Override
-                    public void OnResponse(JumpParameter jumpParameter) {
-                        toast("你刚刚使用了：" + jumpParameter.getString("function"));
-                    }
-                });
+            public void OnResponse(JumpParameter jumpParameter) {
+                toast("你刚刚使用了：" + jumpParameter.getString("function"));
             }
         });
     }

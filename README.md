@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.2-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.3-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.2/link">
-<img src="https://img.shields.io/badge/Maven-6.7.2-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.3/link">
+<img src="https://img.shields.io/badge/Maven-6.7.3-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -41,14 +41,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.2</version>
+  <version>6.7.3</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.2'
+implementation 'com.kongzue.baseframework:baseframework:6.7.3'
 ```
 
 ### AndroidX 版本
@@ -67,7 +67,7 @@ Maven仓库：
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.1'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.3'
 ```
 
 # 目录
@@ -133,8 +133,9 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.1'
 @DarkStatusBarTheme(true)           //开启顶部状态栏图标、文字暗色模式
 @DarkNavigationBarTheme(true)       //开启底部导航栏按钮暗色模式
 @NavigationBarBackgroundColor(a = 255,r = 255,g = 255,b = 255)      //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
-@NavigationBarBackgroundColorInt(color = -16777216)                 //设置底部导航栏背景颜色（颜色色值）
-@NavigationBarBackgroundColorRes(resId = R.color.black)             //设置底部导航栏背景颜色（color资源Id）
+@NavigationBarBackgroundColorInt(-16777216)                         //设置底部导航栏背景颜色（颜色色值）
+@NavigationBarBackgroundColorRes(R.color.black)                     //设置底部导航栏背景颜色（color资源Id）
+@NavigationBarBackgroundColorHex("#FFFFFF")                         //设置底部导航栏背景颜色（颜色代码）
 
 //也可从代码中进行控制：
 setDarkStatusBarTheme(true);            //开启顶部状态栏图标、文字暗色模式
@@ -1022,6 +1023,16 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.3:
+- 新增 @NavigationBarBackgroundColorHex 直接设置HEX颜色值设置底栏背景颜色；
+- @NavigationBarBackgroundColorInt 和 @NavigationBarBackgroundColorRes 设置时取消 key；
+- 新增注解 @OnClick 和 @BindView、@BindViews 注解以绑定布局和点击事件；
+- 修复 AppManager 可能存在的 deleteActivity 方法空指针 bug；
+- FragmentChangeUtil 新增 getFragment(Class) 方法获取已添加的 Fragment 实例化对象；
+- FragmentChangeUtil 新增 anim(int enterAnimResId, int exitAnimResId) 可在 show() 方法前设置切换动画；
+- BaseActivity 新增 changeFragment(..., int enterAnimResId, int exitAnimResId) 切换已绑定的 Fragment 时的切换动画；
+- BaseActivity 更新获取底栏高度方法；
+
 v6.7.2:
 - 新增 BaseApp，详情请查看 <a href="#10">BaseApp功能</a>；
 - BaseActivity 和 BaseFragment 中布局使用“back”作为 id 的 View 会自动绑定返回事件（可重写）；

@@ -6,16 +6,16 @@ def siteUrl = 'https://github.com/kongzue/BaseFramework' //项目在github主页
 def gitUrl = 'https://github.com/kongzue/BaseFramework.git'   //Git仓库的地址
 
 group = "com.kongzue.baseframeworkx"//发布aar前缀根节点
-version = "6.7.1"//发布aar的库版本
+version = "6.7.3"//发布aar的库版本
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
 
     defaultConfig {
         minSdkVersion 15
-        targetSdkVersion 28
-        versionCode 105
-        versionName "6.7.1"
+        targetSdkVersion 29
+        versionCode 107
+        versionName "6.7.3"
     }
 
     buildTypes {
@@ -90,6 +90,6 @@ bintray {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.0.0+'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

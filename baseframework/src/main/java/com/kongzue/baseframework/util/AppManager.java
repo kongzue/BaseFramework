@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
+ * @author xiaohaibin
  * @link https://xiaohaibin.github.io/
  * @email： xhb_199409@163.com
  * @github: https://github.com/xiaohaibin
@@ -133,14 +134,18 @@ public class AppManager {
     }
     
     public void deleteActivity(BaseActivity activity) {
-        if (activity != null) {
-            activityStack.remove(activity);
-            if (onActivityStatusChangeListener != null) {
-                onActivityStatusChangeListener.onActivityDestroy(activity);
-                if (activityStack.isEmpty()) {
-                    onActivityStatusChangeListener.onAllActivityClose();
+        try{
+            if (activity != null) {
+                activityStack.remove(activity);
+                if (onActivityStatusChangeListener != null) {
+                    onActivityStatusChangeListener.onActivityDestroy(activity);
+                    if (activityStack.isEmpty()) {
+                        onActivityStatusChangeListener.onAllActivityClose();
+                    }
                 }
             }
+        }catch (Exception e){
+        
         }
     }
     

@@ -16,20 +16,28 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.BindView;
+import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
 import com.kongzue.baseframework.util.toast.Toaster;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
 /**
- * @Version: 6.5.5
+ * @Version: 6.7.0
  * @Author: Kongzue
- * @github: https://github.com/kongzue/BaseFrameworkSettings
+ * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
@@ -37,6 +45,8 @@ import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public int layoutResId = -1;
+    public boolean isActive = false;                                        //当前Fragment是否处于前台
+    public int fromFragmentId = -1;
     
     /**
      * 快速管理生命周期
@@ -47,11 +57,10 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public ME me;
     
+    public BaseFragment THIS;
+    
     public void setActivity(ME activity) {
         this.me = activity;
-    }
-    
-    public BaseFragment() {
     }
     
     /**
@@ -72,6 +81,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         me = (ME) getActivity();
+        THIS = this;
         this.savedInstanceState = savedInstanceState;
         try {
             Layout layout = getClass().getAnnotation(Layout.class);
@@ -89,8 +99,6 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         if (rootView == null) {
             rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
-            //防止点击穿透
-            rootView.setClickable(true);
         }
         
         if (lifeCircleListener != null) {
@@ -98,9 +106,84 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         
         initViews();
+        bindAutoEvent();
+        initBindViewAndFunctions();
         initDatas();
         setEvents();
         return rootView;
+    }
+    
+    protected void initBindViewAndFunctions() {
+        try {
+            Field[] fields = getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(BindView.class)) {
+                    BindView bindView = field.getAnnotation(BindView.class);
+                    if (bindView != null && bindView.value() != 0) {
+                        field.setAccessible(true);
+                        field.set(THIS, THIS.findViewById(bindView.value()));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Field[] fields = getClass().getDeclaredFields();
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(BindViews.class)) {
+                    BindViews bindView = field.getAnnotation(BindViews.class);
+                    if (bindView != null && bindView.value().length != 0) {
+                        List<View> viewList = new ArrayList<>();
+                        for (int id : bindView.value()) {
+                            viewList.add(findViewById(id));
+                        }
+                        field.setAccessible(true);
+                        field.set(THIS, viewList);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Method[] methods = getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(OnClick.class)) {
+                    OnClick onClick = method.getAnnotation(OnClick.class);
+                    if (onClick != null && onClick.value() != 0) {
+                        View v = findViewById(onClick.value());
+                        v.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    method.invoke(THIS, v);
+                                } catch (Exception e) {
+                                    try {
+                                        method.invoke(THIS);
+                                    } catch (Exception e1) {
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void bindAutoEvent() {
+        View backView = findViewById(R.id.back);
+        if (backView != null) {
+            backView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    me.onBackPressed();
+                }
+            });
+        }
     }
     
     public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
@@ -257,24 +340,35 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment
+     *
      * @param index 角标
      */
     public void jump(int index) {
         me.changeFragment(index);
     }
     
+    public void jump(int index, int enterAnimResId, int exitAnimResId) {
+        me.changeFragment(index, enterAnimResId, exitAnimResId);
+    }
+    
     /**
      * 跳转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象
+     *
      * @param baseFragment 指定的 BaseFragment 对象
      */
     public void jump(BaseFragment baseFragment) {
         me.changeFragment(baseFragment);
     }
     
+    public void jump(BaseFragment baseFragment, int enterAnimResId, int exitAnimResId) {
+        me.changeFragment(baseFragment, enterAnimResId, exitAnimResId);
+    }
+    
     /**
      * 转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象，并携带要传递参数
+     *
      * @param baseFragment 指定的 BaseFragment 对象
-     * @param parameter 要传递参数
+     * @param parameter    要传递参数
      */
     public void jump(BaseFragment baseFragment, JumpParameter parameter) {
         if (parameter != null) {
@@ -285,7 +379,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment，并携带要传递参数
-     * @param index 角标
+     *
+     * @param index         角标
      * @param jumpParameter 要传递参数
      */
     public void jump(int index, JumpParameter jumpParameter) {
@@ -299,8 +394,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 转到绑定在同一 BaseActivity 下指定已实例化的 BaseFragment 对象，并携带要传递参数和回调
-     * @param baseFragment 指定的 BaseFragment 对象
-     * @param jumpParameter 要传递参数
+     *
+     * @param baseFragment           指定的 BaseFragment 对象
+     * @param jumpParameter          要传递参数
      * @param onJumpResponseListener 回调
      */
     public void jump(BaseFragment baseFragment, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener) {
@@ -317,8 +413,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     /**
      * 跳转到绑定在同一 BaseActivity 下指定角标的 BaseFragment，并携带要传递参数和回调
-     * @param index 角标
-     * @param jumpParameter 要传递参数
+     *
+     * @param index                  角标
+     * @param jumpParameter          要传递参数
      * @param onJumpResponseListener 回调
      */
     public void jump(int index, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener) {
@@ -440,8 +537,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
             }
         }
         if (isLoaded) {
-            onShow(isCallShow);
-            
+            if (isActive) {
+                onShow(isCallShow);
+            }
             if (isCallShow) {
                 JumpParameter jumpParameter = ParameterCache.getInstance().get(this.getClass().getName());
                 if (jumpParameter != null) {
@@ -482,7 +580,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     /**
      * 重写此方法以判断当 Fragment 被切换时触发，请注意此时界面可能被暂停
      */
-    public void onHide(){
+    public void onHide() {
+        isActive = false;
         ParameterCache.getInstance().cleanParameter(this.getClass().getName());
     }
     
@@ -568,6 +667,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      */
     public void callShow() {
         isCallShow = true;
+        isActive = true;
         if (rootView != null) {
             onResume();
         }
@@ -588,5 +688,5 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     public boolean isAddedCompat() {
         return mAdded;
     }
+    
 }
-

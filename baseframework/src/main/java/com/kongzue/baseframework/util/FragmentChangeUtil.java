@@ -29,6 +29,8 @@ public class FragmentChangeUtil {
     private BaseActivity me;
     private List<BaseFragment> fragmentList;
     private BaseFragment focusFragment;
+    private int enterAnimResId;
+    private int exitAnimResId;
     
     private int frameLayoutResId;
     
@@ -74,6 +76,12 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        if (enterAnimResId != 0 && exitAnimResId != 0) {
+            transaction.setCustomAnimations(enterAnimResId, exitAnimResId);
+            enterAnimResId = 0;
+            exitAnimResId = 0;
+        }
+        
         if (focusFragment != null) {
             focusFragment.onHide();
             transaction.hide(focusFragment);
@@ -100,6 +108,12 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        if (enterAnimResId != 0 && exitAnimResId != 0) {
+            transaction.setCustomAnimations(enterAnimResId, exitAnimResId);
+            enterAnimResId = 0;
+            exitAnimResId = 0;
+        }
+        
         if (focusFragment != null) {
             focusFragment.onHide();
             transaction.hide(focusFragment);
@@ -126,6 +140,11 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        if (enterAnimResId != 0 && exitAnimResId != 0) {
+            transaction.setCustomAnimations(enterAnimResId, exitAnimResId);
+            enterAnimResId = 0;
+            exitAnimResId = 0;
+        }
         
         if (!fragmentList.get(index).isAddedCompat()) {
             transaction.add(frameLayoutResId, fragmentList.get(index));
@@ -143,6 +162,12 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        if (enterAnimResId != 0 && exitAnimResId != 0) {
+            transaction.setCustomAnimations(enterAnimResId, exitAnimResId);
+            enterAnimResId = 0;
+            exitAnimResId = 0;
+        }
+        
         focusFragment.onHide();
         transaction.hide(focusFragment);
         
@@ -156,7 +181,11 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
-        
+        if (enterAnimResId != 0 && exitAnimResId != 0) {
+            transaction.setCustomAnimations(enterAnimResId, exitAnimResId);
+            enterAnimResId = 0;
+            exitAnimResId = 0;
+        }
         
         if (!fragment.isAddedCompat()) {
             transaction.add(frameLayoutResId, fragment);
@@ -174,6 +203,11 @@ public class FragmentChangeUtil {
             return null;
         }
         FragmentTransaction transaction = me.getSupportFragmentManager().beginTransaction();
+        if (enterAnimResId != 0 && exitAnimResId != 0) {
+            transaction.setCustomAnimations(enterAnimResId, exitAnimResId);
+            enterAnimResId = 0;
+            exitAnimResId = 0;
+        }
         
         if (fragment.isAddedCompat()) {
             transaction.remove(fragment);
@@ -232,12 +266,39 @@ public class FragmentChangeUtil {
         return fragmentList.get(index);
     }
     
+    public BaseFragment getFragment(Class c) {
+        if (me == null || frameLayoutResId == 0 || fragmentList == null) {
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            return null;
+        }
+        for (BaseFragment b : fragmentList) {
+            if (b.getClass().equals(c)) {
+                return b;
+            }
+        }
+        return null;
+    }
+    
     public OnFragmentChangeListener getOnFragmentChangeListener() {
         return onFragmentChangeListener;
     }
     
     public FragmentChangeUtil setOnFragmentChangeListener(OnFragmentChangeListener onFragmentChangeListener) {
         this.onFragmentChangeListener = onFragmentChangeListener;
+        return this;
+    }
+    
+    public int size() {
+        if (fragmentList == null) {
+            log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
+            return 0;
+        }
+        return fragmentList.size();
+    }
+    
+    public FragmentChangeUtil anim(int enterAnimResId, int exitAnimResId) {
+        this.enterAnimResId = enterAnimResId;
+        this.exitAnimResId = exitAnimResId;
         return this;
     }
 }

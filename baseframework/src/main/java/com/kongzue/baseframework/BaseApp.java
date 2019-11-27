@@ -271,22 +271,6 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     
     //获取底栏高度
     public int getNavbarHeight() {
-        if (setNavigationBarHeightZero) {
-            return 0;
-        }
-        int result = 0;
-        int resourceId = 0;
-        int rid = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
-        if (rid != 0) {
-            resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-            return getResources().getDimensionPixelSize(resourceId);
-        } else {
-            return 0;
-        }
-    }
-    
-    //获取真实的屏幕高度，注意判断非0
-    public int getRootHeight() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             try{
                 WindowInsets windowInsets = null;
@@ -304,6 +288,23 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
         } else {
             return 0;
         }
+    }
+    
+    //获取真实的屏幕高度，注意判断非0
+    public int getRootHeight() {
+        WindowManager windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        int diaplayHeight = 0;
+        Display display = windowManager.getDefaultDisplay();
+        Point point = new Point();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            display.getRealSize(point);
+            diaplayHeight = point.y;
+        } else {
+            DisplayMetrics dm = new DisplayMetrics();
+            windowManager.getDefaultDisplay().getMetrics(dm);
+            diaplayHeight = dm.heightPixels; //得到高度```
+        }
+        return diaplayHeight;
     }
     
     public boolean copy(String s) {

@@ -88,6 +88,8 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.3'
 
 ···· <a href="#1-7">侧滑返回</a>
 
+···· <a href="#1-8">布局绑定和事件绑定</a>
+
 · <a href="#2">**BaseFragment功能**</a>
 
 ···· <a href="#2-1">BaseFragment 是什么</a>
@@ -97,6 +99,8 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.3'
 ···· <a href="#2-3">BaseFragment 最佳实践</a>
 
 ···· <a href="#2-4">BaseFragment 间的数据传递和回调</a>
+
+···· <a href="#1-8">布局绑定和事件绑定</a>
 
 · <a href="#3">**设置、属性值的存储读取工具 Preferences**</a>
 
@@ -373,6 +377,36 @@ public class YourActivity extends BaseActivity {
 
 此效果使用到的框架来源于开源的 @ikew0ng 的 SwipeBackLayout(<https://github.com/ikew0ng/SwipeBackLayout>) 开源协议为 Apache License2.0
 
+### <a name="1-8">布局绑定和事件绑定</a>
+
+在 BaseActivity 和 BaseFragment 中均可使用事件绑定
+
+使用注解 @BindView(int id) 以替代 findViewById(int id) 方法：
+```
+@BindView(R.id.btn_ok)
+private Button okButton;
+```
+
+使用注解 @BindViews(int id) 以替代 findViewById(int id) 方法：
+```
+@BindViews({R.id.key1, R.id.key2, R.id.key3})
+private List<Button> keyboardButtons;
+```
+
+使用注解 @OnClick(int id) 来代替 setOnClickListener(listener)：
+```
+@OnClick(R.id.btn_ok)
+public void startTest(){
+    //点击方法
+}
+
+//也可接收 View：
+@OnClick(R.id.btn_ok)
+public void startTest(View btnOk){
+    //点击方法
+}
+```
+
 ## <a name="2">BaseFragment功能</a>
 
 ### <a name="2-1">BaseFragment 是什么</a>
@@ -438,7 +472,7 @@ util.show(int index);
 ```
 * 索引即已添加的 Fragment 的编号。
 
-4) 额外方法：
+4) FragmentChangeUtil 的额外方法：
 ```
 //获取目前有几个已添加的 Fragment
 util.getCount();    
@@ -464,8 +498,14 @@ util.hide(fragment);
 //获得指定 Fragment
 util.getFragment(int index);
 
+//使用Class来获得堆栈中最后的指定 Fragment
+util.getFragment(Class fragmentClass);
+
 //返回已添加的 Fragment 数量
 util.size();
+
+//添加切换动画（请在show(...)方法前执行）
+util.anim(int enterAnimResId, int exitAnimResId)
 ```
 
 FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addFragment(BaseFragment fragment)，不再执行预加载，也就是说，执行后，仅添加了 Fragment 而不会执行任何事件。
@@ -516,6 +556,15 @@ public void initFragment(FragmentChangeUtil fragmentChangeUtil) {
 使用 changeFragment(int index) 或 changeFragment(baseFragment) 可以快速完成 Fragment 的切换步骤。
 
 使用 getFragmentChangeUtil() 可以获取已实例化的 fragmentChangeUtil 对象。
+
+添加切换动画：
+```
+//根据指定角标切换到相应 Fragment
+changeFragment(int index, int enterAnimResId, int exitAnimResId);
+
+//根据对象切换至相应 Fragment
+changeFragment(BaseFragment fragment, int enterAnimResId, int exitAnimResId);
+```
 
 ### <a name="2-4">BaseFragment 间的数据传递和回调</a>
 

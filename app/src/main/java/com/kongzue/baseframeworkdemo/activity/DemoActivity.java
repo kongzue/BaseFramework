@@ -6,12 +6,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.BindView;
+import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.FragmentLayout;

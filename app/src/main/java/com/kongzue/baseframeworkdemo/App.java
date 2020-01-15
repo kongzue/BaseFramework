@@ -1,5 +1,6 @@
 package com.kongzue.baseframeworkdemo;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.Toast;
@@ -37,7 +38,7 @@ public class App extends BaseApp<App> {
         try {
             Thread.sleep(8000);
         }catch (Exception e){}
-    
+        
         Preferences.getInstance().set(me,"test","testB",true);
         String test = Preferences.getInstance().getString(me,"test","testB");
         log("testB:" + test);

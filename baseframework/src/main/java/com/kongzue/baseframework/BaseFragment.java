@@ -258,8 +258,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         me.log(obj);
     }
     
-    public void error(final Object obj) {
-        me.error(obj);
+    public void errorLog(final Object obj) {
+        me.errorLog(obj);
     }
     
     //位移动画

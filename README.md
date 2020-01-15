@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.3-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.4-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.3/link">
-<img src="https://img.shields.io/badge/Maven-6.7.3-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.4/link">
+<img src="https://img.shields.io/badge/Maven-6.7.4-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -41,14 +41,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.3</version>
+  <version>6.7.4</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.3'
+implementation 'com.kongzue.baseframework:baseframework:6.7.4'
 ```
 
 ### AndroidX 版本
@@ -60,14 +60,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.3</version>
+  <version>6.7.4</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.3'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.4'
 ```
 
 # 目录
@@ -687,6 +687,7 @@ AppManager 是 BaseActivity 的管理工具类，原工具是由 @xiaohaibin(<ht
 
 提供如下方法：
 ```
+getActiveActivity()             //获取当前处于活跃的BaseActivity（注意可能为null）
 killActivity(baseActivity)      //结束指定BaseActivity
 killAllActivity()               //结束所有BaseActivity
 AppExit()                       //退出App
@@ -1023,6 +1024,9 @@ toast(Obj);
 //简易Log打印日志（BaseFrameworkSettings.DEBUGMODE = false关闭，注意此开关是同时影响 BaseActivity 和 BaseFragment的）：
 log(Obj);
 
+//简易Log打印日志（E级别）
+errorLog(...)
+
 //dip与像素px转换：
 dip2px(float dpValue);
 
@@ -1072,6 +1076,14 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.4:
+- AppManager 新增方法 getActiveActivity() 方法获取当前活跃的 BaseActivity 对象；
+- 修复 AppManager 的 getActivityInstance(...)、deleteActivity(...)、killActivity(...)、finishActivity()、currentActivity()方法可能引发的空指针异常；
+- 修改 FragmentChangeUtil 默认 getFocusFragment() 方法返回 BaseFragment()；
+- 完善 Preferences 自定义 SharedPreferences 对象的方法及新增切换 Path 的回调方法；
+- 完善 BaseActivity 中使用绑定 FragmentChangeUtil 在部分内存不足导致 Activity 被释放的情况下导致 Fragment 无法加载的问题；
+- BaseActivity 和 BaseFragment 的 error(...) 输出错误日志的方法被修改为 errorLog(...)；
+
 v6.7.3:
 - 新增 @NavigationBarBackgroundColorHex 直接设置HEX颜色值设置底栏背景颜色；
 - @NavigationBarBackgroundColorInt 和 @NavigationBarBackgroundColorRes 设置时取消 key；

@@ -148,10 +148,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         AppManager.getInstance().pushActivity(me);
         
         initViews();
-        if (fragmentLayoutId != -1) {
-            fragmentChangeUtil = new FragmentChangeUtil(this, fragmentLayoutId);
-            initFragment(fragmentChangeUtil);
-        }
+        initFragments();
         bindAutoEvent();
         initBindViewAndFunctions();
         initDatas(getParameter());
@@ -162,6 +159,13 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
         if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onCreate(me, me.getClass().getName());
+        }
+    }
+    
+    private void initFragments() {
+        if (fragmentLayoutId != -1) {
+            fragmentChangeUtil = new FragmentChangeUtil(this, fragmentLayoutId);
+            initFragment(fragmentChangeUtil);
         }
     }
     
@@ -347,12 +351,16 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void changeFragment(int index) {
         if (fragmentChangeUtil != null) {
             fragmentChangeUtil.show(index);
+        }else{
+            initFragments();
         }
     }
     
     public void changeFragment(int index, int enterAnimResId, int exitAnimResId) {
         if (fragmentChangeUtil != null) {
             fragmentChangeUtil.anim(enterAnimResId, exitAnimResId).show(index);
+        }else{
+            initFragments();
         }
     }
     
@@ -661,7 +669,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
     }
     
-    public void error(final Object obj) {
+    public void errorLog(final Object obj) {
         try {
             if (DEBUGMODE) {
                 String msg = obj.toString();
@@ -1254,6 +1262,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onResume(me, me.getClass().getName());
         }
+        AppManager.setActiveActivity(this);
     }
     
     @Override
@@ -1510,7 +1519,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (globalLifeCircleListener != null) {
-            globalLifeCircleListener.WindowFocus(me, me.getClass().getName(), hasFocus);
+            globalLifeCircleListener.windowFocus(me, me.getClass().getName(), hasFocus);
         }
     }
 }

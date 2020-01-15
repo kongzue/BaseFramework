@@ -7,6 +7,7 @@ import android.content.Context;
 import com.kongzue.baseframework.BaseActivity;
 
 import java.lang.ref.ReferenceQueue;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ public class AppManager {
     private static OnActivityStatusChangeListener onActivityStatusChangeListener;
     private static Stack<BaseActivity> activityStack;
     private static AppManager instance;
+    private static WeakReference<BaseActivity> activeActivity;
     
     private AppManager() {
     }
@@ -56,6 +58,9 @@ public class AppManager {
      * 获取当前Activity（堆栈中最后一个压入的）
      */
     public BaseActivity currentActivity() {
+        if (activityStack == null) {
+            return null;
+        }
         BaseActivity activity = null;
         if (!activityStack.empty()) {
             activity = activityStack.lastElement();
@@ -64,9 +69,21 @@ public class AppManager {
     }
     
     /**
+     * 获取当前处于活动状态的Activity
+     *
+     * @return
+     */
+    public BaseActivity getActiveActivity() {
+        return activeActivity.get();
+    }
+    
+    /**
      * 结束当前Activity（堆栈中最后一个压入的）
      */
     public void finishActivity() {
+        if (activityStack == null) {
+            return;
+        }
         BaseActivity activity = activityStack.lastElement();
         killActivity(activity);
     }
@@ -75,7 +92,7 @@ public class AppManager {
      * 结束指定的Activity
      */
     public void killActivity(BaseActivity activity) {
-        if (activity != null) {
+        if (activity != null && activityStack != null) {
             if (activity != null) {
                 activity.finishActivity();
             }
@@ -88,6 +105,9 @@ public class AppManager {
      * 结束指定类名的Activity
      */
     public void killActivity(Class<?> cls) {
+        if (activityStack == null) {
+            return;
+        }
         Iterator<BaseActivity> iterator = activityStack.iterator();
         BaseActivity temp = null;
         while (iterator.hasNext()) {
@@ -134,8 +154,8 @@ public class AppManager {
     }
     
     public void deleteActivity(BaseActivity activity) {
-        try{
-            if (activity != null) {
+        try {
+            if (activity != null && activityStack != null) {
                 activityStack.remove(activity);
                 if (onActivityStatusChangeListener != null) {
                     onActivityStatusChangeListener.onActivityDestroy(activity);
@@ -144,7 +164,7 @@ public class AppManager {
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
         
         }
     }
@@ -179,6 +199,9 @@ public class AppManager {
      * @param cls activity
      */
     public BaseActivity getActivityInstance(Class<?> cls) {
+        if (activityStack == null) {
+            return null;
+        }
         if (!activityStack.empty()) {
             Stack<BaseActivity> reverseList = new Stack<BaseActivity>();
             reverseList.addAll(activityStack);
@@ -220,5 +243,9 @@ public class AppManager {
         void onActivityDestroy(BaseActivity activity);
         
         void onAllActivityClose();
+    }
+    
+    public static void setActiveActivity(BaseActivity activeActivity) {
+        AppManager.activeActivity = new WeakReference<>(activeActivity);
     }
 }

@@ -9,11 +9,11 @@ import android.content.SharedPreferences;
  * Version 2.0
  * Update 2018.5.27
  */
-
 public class Preferences {
     
     private static Preferences preferences;
     private SharedPreferences sp;
+    private ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack;
     
     private Preferences() {
     }
@@ -223,10 +223,71 @@ public class Preferences {
     private void initSharedPreferences(Context context, String path) {
         if (sp == null) {
             sp = context.getApplicationContext().getSharedPreferences(path, Context.MODE_PRIVATE);
+        } else {
+            if (changeSharedPreferencesPathCallBack!=null) {
+                sp = changeSharedPreferencesPathCallBack.onPathChange(path);
+            }
         }
     }
     
-    public void initSharedPreferences(SharedPreferences sp) {
+    /**
+     * 获取 SharedPreferences 实例
+     * @return SharedPreferences实例对象
+     */
+    public SharedPreferences getSharedPreferences() {
+        return sp;
+    }
+    
+    /**
+     * ChangeSharedPreferencesPathCallBack 是用于切换 SharedPreferences 路径的回调函数，
+     * 请返回已切换至指定 Path 后的 SharedPreferences 对象。
+     * 一般可使用以下代码：
+     * return Preferences.getInstance().getSharedPreferences().getSharedPreferences(path, Context.MODE_PRIVATE);
+     *
+     * 完成切换操作，实际可能需要根据 SharedPreferences 实例的实际情况决定。
+     *
+     */
+    public interface ChangeSharedPreferencesPathCallBack {
+        SharedPreferences onPathChange(String path);
+    }
+    
+    /**
+     * 此方法已废弃，原因是原方法需要单独指定 ChangeSharedPreferencesPathCallBack。
+     * ChangeSharedPreferencesPathCallBack 是用于切换 SharedPreferences 路径的回调函数，
+     * 如果要自定义 SharedPreferences 实例，一定要指定 ChangeSharedPreferencesPathCallBack 切换方法，
+     * 否则可能导致无法切换至指定 Path
+     *
+     * @param sp    自定义 SharedPreferences 实例
+     * @return      继续执行其他方法
+     */
+    @Deprecated
+    public Preferences initSharedPreferences(SharedPreferences sp) {
         this.sp = sp;
+        return this;
+    }
+    
+    /**
+     * 初始化自定义 SharedPreferences 实例，要执行此方法请务必于开始任何读写操作前进行。
+     * ChangeSharedPreferencesPathCallBack 是用于切换 SharedPreferences 路径的回调函数，
+     * 如果要自定义 SharedPreferences 实例，一定要指定 ChangeSharedPreferencesPathCallBack 切换方法，
+     * 否则可能导致无法切换至指定 Path
+     *
+     * @param sp                                        自定义 SharedPreferences 实例
+     * @param changeSharedPreferencesPathCallBack       ChangeSharedPreferencesPathCallBack 回调
+     * @return                                          继续执行其他方法
+     */
+    public Preferences initSharedPreferences(SharedPreferences sp, ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack) {
+        this.sp = sp;
+        this.changeSharedPreferencesPathCallBack = changeSharedPreferencesPathCallBack;
+        return this;
+    }
+    
+    public ChangeSharedPreferencesPathCallBack getChangeSharedPreferencesPathCallBack() {
+        return changeSharedPreferencesPathCallBack;
+    }
+    
+    public Preferences setChangeSharedPreferencesPathCallBack(ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack) {
+        this.changeSharedPreferencesPathCallBack = changeSharedPreferencesPathCallBack;
+        return this;
     }
 }

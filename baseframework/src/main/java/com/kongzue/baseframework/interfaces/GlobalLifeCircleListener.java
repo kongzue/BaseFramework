@@ -19,7 +19,7 @@ public abstract class GlobalLifeCircleListener {
     
     public abstract void onDestroy(BaseActivity me, String className);
     
-    public void WindowFocus(BaseActivity me, String className, boolean hasFocus) {
+    public void windowFocus(BaseActivity me, String className, boolean hasFocus) {
     
     }
 }

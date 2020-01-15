@@ -227,7 +227,7 @@ public class FragmentChangeUtil {
         return fragmentList.size();
     }
     
-    public Fragment getFocusFragment() {
+    public BaseFragment getFocusFragment() {
         return focusFragment;
     }
     

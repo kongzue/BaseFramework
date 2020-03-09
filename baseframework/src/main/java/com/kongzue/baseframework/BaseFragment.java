@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.ColorRes;
 import androidx.annotation.IdRes;
 import androidx.annotation.Nullable;
@@ -84,18 +85,15 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         this.savedInstanceState = savedInstanceState;
         try {
             Layout layout = getClass().getAnnotation(Layout.class);
-            if (layout == null) {
-                layoutResId = getLayout();
+            if (layout != null && layout.value() != -1) {
+                layoutResId = layout.value();
             } else {
-                if (layout.value() != -1) {
-                    layoutResId = layout.value();
-                } else {
-                    throw new Exception("请在您的Fragment的Class上注解：@Layout(你的layout资源id)");
-                }
+                throw new Exception("请在您的Fragment的Class上注解：@Layout(你的layout资源id)");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        layoutResId = resetLayoutResId();
         if (rootView == null) {
             rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
         }
@@ -110,6 +108,10 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         initDatas();
         setEvents();
         return rootView;
+    }
+    
+    protected int resetLayoutResId() {
+        return layoutResId;
     }
     
     protected void initBindViewAndFunctions() {
@@ -189,11 +191,6 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         this.lifeCircleListener = lifeCircleListener;
     }
     
-    //不再推荐使用，建议直接在Fragment上注解：@Layout(你的layout资源id)
-    @Deprecated
-    public int getLayout() {
-        return layoutResId;
-    }
     
     /**
      * initViews会在启动时首先执行，建议在此方法内进行布局绑定、View初始化等操作

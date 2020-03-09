@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -134,6 +136,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         isAlive = true;
         
         initAttributes();
+        layoutResId = resetLayoutResId();
         if (layoutResId == android.R.layout.list_content) {
             Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
             return;
@@ -161,6 +164,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onCreate(me, me.getClass().getName());
         }
+    }
+    
+    protected int resetLayoutResId() {
+        return layoutResId;
     }
     
     private void initFragments() {
@@ -352,7 +359,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void changeFragment(int index) {
         if (fragmentChangeUtil != null) {
             fragmentChangeUtil.show(index);
-        }else{
+        } else {
             initFragments();
         }
     }
@@ -360,7 +367,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void changeFragment(int index, int enterAnimResId, int exitAnimResId) {
         if (fragmentChangeUtil != null) {
             fragmentChangeUtil.anim(enterAnimResId, exitAnimResId).show(index);
-        }else{
+        } else {
             initFragments();
         }
     }

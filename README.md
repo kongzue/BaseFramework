@@ -1040,21 +1040,25 @@ setOnCrashListener(new OnBugReportListener() {
 
 ### 开启功能
 
-开启所有日志保存功能，包含 Activity 基本生命周期、使用 log(...) 语句输出的、使用 toast(...) 输出的信息：
+开启所有日志记录功能，包含 Activity 基本生命周期、使用 log(...) 语句输出的、使用 toast(...) 输出的信息：
 ```
 BaseFrameworkSettings.BETA_PLAN = true;
 ```
 
 开启崩溃日志监控功能：
 ```
+//除了可以在 BaseApp 中开启此功能外，也可通过 BaseFrameworkSettings 单独设置：
 BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportListener() {
+
     @Override
-    public void onReporter(File file) {
-        Log.v(">>>", "onReporter: "+file.getAbsolutePath());
+    public boolean onCrash(Exception e, final File crashLogFile) {
+        //TODO: 请在这里处理异常信息
+        Log.v(">>>", "onReporter: "+crashLogFile.getAbsolutePath());    //crashLogFile 为闪退信息存储的文件
+        return false;   
     }
 });
 ```
-当发生崩溃时，会在下次 App 启动后，此监听器中返回发生崩溃的整个 App 运行周期的日志文件（含崩溃信息）
+当发生崩溃时，会执行此回调，此监听器中返回错误信息及发生崩溃的整个 App 运行周期的日志文件（含崩溃信息）
 
 崩溃日志监控功能可以在不开启 BETA_PLAN 的情况下单独使用。
 

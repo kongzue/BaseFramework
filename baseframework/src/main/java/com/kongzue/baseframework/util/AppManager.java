@@ -74,6 +74,9 @@ public class AppManager {
      * @return
      */
     public BaseActivity getActiveActivity() {
+        if (activeActivity == null) {
+            return null;
+        }
         return activeActivity.get();
     }
     

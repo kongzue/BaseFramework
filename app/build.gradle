@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.kongzue.baseframeworkdemo"
         minSdkVersion 15
-        targetSdkVersion 28
-        versionCode 97
-        versionName "6.6.5.2"
+        targetSdkVersion 29
+        versionCode 110
+        versionName "6.7.5"
     }
     buildTypes {
         release {
@@ -20,5 +20,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.kongzue.tabbar:tabbar:1.5.4'
     implementation project(':baseframework')
 }

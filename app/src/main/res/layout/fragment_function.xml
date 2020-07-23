@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:text="@string/function"
+        android:textColor="#ffffff"
+        android:textSize="20sp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#fff">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="10dp">
+
+            <Button
+                android:id="@+id/intentToBaseAdapter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="查看BaseAdapter的Demo" />
+
+            <Button
+                android:id="@+id/btn_jump"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="带自定义参数的跳转" />
+
+            <Button
+                android:id="@+id/btn_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="更简单的跳转后返回数据" />
+
+            <Button
+                android:id="@+id/btn_transition"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="跳转共享元素动画"
+                android:transitionName="test" />
+
+            <Button
+                android:id="@+id/btn_permission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="申请权限（测试用，无实际业务逻辑）" />
+
+            <Button
+                android:id="@+id/btn_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="触发一个崩溃（不会闪退）" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="请使用Logcat查看:"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_printJsonLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="打印json数据" />
+
+                <Button
+                    android:id="@+id/btn_printMapLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="打印Map数据" />
+
+                <Button
+                    android:id="@+id/btn_printListLog"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="打印List数据" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_getImei"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="获取IMEI" />
+
+            <Button
+                android:id="@+id/btn_changeLng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_change_lng" />
+
+            <Button
+                android:id="@+id/btn_toast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="兼容Toast提示" />
+
+            <Button
+                android:id="@+id/btn_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="主线程计时器" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="请注意"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="· 在BaseActivity中，约定关键词me代替Activity.this，因此您在编写代码时，在异步线程中可以轻松使用me关键字直接引用当前Activity。\n\n· 在BaseActivity以及BaseFramework框架中，我们不推荐重写onCreate()方法，而推荐直接在您的class上使用注解@Layout(您的资源文件布局，例如R.layout.xxx)其余的步骤会自动完成。\n\n· 在BaseActivity中您可以使用多种小工具，包含不限于：\n//简易吐司：\ntoast(Obj);\n//简易Log打印日志：\nlog(Obj);\n//软键盘开关：\nsetIMMStatus(boolean show, EditText editText);\n//dip与像素px转换：\ndip2px(Context context, float dpValue);\n//像素px与dip转换：\ndip2px(Context context, float dpValue);\n//申请权限：\nrequestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {...});\n//属性动画：\nmoveAnimation(Object obj, String perference, float aimValue, long time, long delay);\n//数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：\nisNull(String);"
+                android:textSize="12dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

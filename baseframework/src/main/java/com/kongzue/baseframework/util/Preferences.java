@@ -12,8 +12,7 @@ import android.content.SharedPreferences;
 public class Preferences {
     
     private static Preferences preferences;
-    private SharedPreferences sp;
-    private ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack;
+    private static ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack;
     
     private Preferences() {
     }
@@ -66,6 +65,20 @@ public class Preferences {
     }
     
     /**
+     * 读取属性为Int类型
+     *
+     * @param context         上下文索引
+     * @param path            路径
+     * @param preferencesName 属性名
+     * @param defaultValue    默认值
+     * @return Int
+     */
+    public int getInt(Context context, String path, String preferencesName, int defaultValue) {
+        int value = initSharedPreferences(context, path).getInt(preferencesName, defaultValue);
+        return value;
+    }
+    
+    /**
      * 读取属性为String类型
      *
      * @param context         上下文索引
@@ -75,8 +88,7 @@ public class Preferences {
      * @return String
      */
     public String getString(Context context, String path, String preferencesName, String defaultValue) {
-        initSharedPreferences(context, path);
-        String value = sp.getString(preferencesName, defaultValue);
+        String value = initSharedPreferences(context, path).getString(preferencesName, defaultValue);
         return value;
     }
     
@@ -90,24 +102,43 @@ public class Preferences {
      * @return Boolean
      */
     public boolean getBoolean(Context context, String path, String preferencesName, boolean defaultValue) {
-        initSharedPreferences(context, path);
-        boolean value = sp.getBoolean(preferencesName, defaultValue);
+        boolean value = initSharedPreferences(context, path).getBoolean(preferencesName, defaultValue);
         return value;
     }
     
-    /**
-     * 读取属性为Int类型
-     *
-     * @param context         上下文索引
-     * @param path            路径
-     * @param preferencesName 属性名
-     * @param defaultValue    默认值
-     * @return Int
-     */
-    public int getInt(Context context, String path, String preferencesName, int defaultValue) {
-        initSharedPreferences(context, path);
-        int value = sp.getInt(preferencesName, defaultValue);
+    public float getFloat(Context context, String path, String preferencesName) {
+        return getFloat(context, path, preferencesName, 0);
+    }
+    
+    public float getFloat(Context context, String path, String preferencesName, float defaultValue) {
+        float value = initSharedPreferences(context, path).getFloat(preferencesName, defaultValue);
         return value;
+    }
+    
+    public long getLong(Context context, String path, String preferencesName) {
+        return getLong(context, path, preferencesName, 0);
+    }
+    
+    public long getLong(Context context, String path, String preferencesName, long defaultValue) {
+        long value = initSharedPreferences(context, path).getLong(preferencesName, defaultValue);
+        return value;
+    }
+    
+    public double getDouble(Context context, String path, String preferencesName) {
+        return getDouble(context, path, preferencesName, 0);
+    }
+    
+    public double getDouble(Context context, String path, String preferencesName, double defaultValue) {
+        String value = initSharedPreferences(context, path).getString(preferencesName, String.valueOf(defaultValue));
+        if (value != null) {
+            try {
+                return Double.parseDouble(value);
+            } catch (Exception e) {
+                return defaultValue;
+            }
+        } else {
+            return defaultValue;
+        }
     }
     
     /**
@@ -120,8 +151,7 @@ public class Preferences {
      * @return none
      */
     public void set(Context context, String path, String preferencesName, String value) {
-        initSharedPreferences(context, path);
-        SharedPreferences.Editor editor = sp.edit();
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
         editor.putString(preferencesName, value);
         editor.apply();
     }
@@ -136,8 +166,7 @@ public class Preferences {
      * @return none
      */
     public void set(Context context, String path, String preferencesName, boolean value) {
-        initSharedPreferences(context, path);
-        SharedPreferences.Editor editor = sp.edit();
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
         editor.putBoolean(preferencesName, value);
         editor.apply();
     }
@@ -152,9 +181,53 @@ public class Preferences {
      * @return none
      */
     public void set(Context context, String path, String preferencesName, int value) {
-        initSharedPreferences(context, path);
-        SharedPreferences.Editor editor = sp.edit();
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
         editor.putInt(preferencesName, value);
+        editor.apply();
+    }
+    
+    /**
+     * 写入float属性方法，占用资源较少，但不会立即生效
+     *
+     * @param context         上下文索引
+     * @param path            路径
+     * @param preferencesName 属性名
+     * @param value           值
+     * @return none
+     */
+    public void set(Context context, String path, String preferencesName, float value) {
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
+        editor.putFloat(preferencesName, value);
+        editor.apply();
+    }
+    
+    /**
+     * 写入double属性方法，占用资源较少，但不会立即生效
+     *
+     * @param context         上下文索引
+     * @param path            路径
+     * @param preferencesName 属性名
+     * @param value           值
+     * @return none
+     */
+    public void set(Context context, String path, String preferencesName, double value) {
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
+        editor.putString(preferencesName, String.valueOf(value));
+        editor.apply();
+    }
+    
+    /**
+     * 写入long属性方法，占用资源较少，但不会立即生效
+     *
+     * @param context         上下文索引
+     * @param path            路径
+     * @param preferencesName 属性名
+     * @param value           值
+     * @return none
+     */
+    public void set(Context context, String path, String preferencesName, long value) {
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
+        editor.putLong(preferencesName, value);
         editor.apply();
     }
     
@@ -168,8 +241,7 @@ public class Preferences {
      * @return none
      */
     public void commit(Context context, String path, String preferencesName, String value) {
-        initSharedPreferences(context, path);
-        SharedPreferences.Editor editor = sp.edit();
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
         editor.putString(preferencesName, value);
         editor.commit();
     }
@@ -184,8 +256,7 @@ public class Preferences {
      * @return none
      */
     public void commit(Context context, String path, String preferencesName, boolean value) {
-        initSharedPreferences(context, path);
-        SharedPreferences.Editor editor = sp.edit();
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
         editor.putBoolean(preferencesName, value);
         editor.commit();
     }
@@ -200,9 +271,26 @@ public class Preferences {
      * @return none
      */
     public void commit(Context context, String path, String preferencesName, int value) {
-        initSharedPreferences(context, path);
-        SharedPreferences.Editor editor = sp.edit();
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
         editor.putInt(preferencesName, value);
+        editor.commit();
+    }
+    
+    public void commit(Context context, String path, String preferencesName, float value) {
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
+        editor.putFloat(preferencesName, value);
+        editor.commit();
+    }
+    
+    public void commit(Context context, String path, String preferencesName, double value) {
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
+        editor.putString(preferencesName, String.valueOf(value));
+        editor.commit();
+    }
+    
+    public void commit(Context context, String path, String preferencesName, long value) {
+        SharedPreferences.Editor editor = initSharedPreferences(context, path).edit();
+        editor.putLong(preferencesName, value);
         editor.commit();
     }
     
@@ -214,27 +302,19 @@ public class Preferences {
      * @return none
      */
     public void cleanAll(Context context, String path) {
-        initSharedPreferences(context, path);
+        SharedPreferences sp = initSharedPreferences(context, path);
         if (sp != null) {
             sp.edit().clear().apply();
         }
     }
     
-    private void initSharedPreferences(Context context, String path) {
-        if (sp == null) {
-            sp = context.getApplicationContext().getSharedPreferences(path, Context.MODE_PRIVATE);
+    private SharedPreferences initSharedPreferences(Context context, String path) {
+        SharedPreferences sp;
+        if (changeSharedPreferencesPathCallBack != null) {
+            sp = changeSharedPreferencesPathCallBack.onPathChange(path);
         } else {
-            if (changeSharedPreferencesPathCallBack!=null) {
-                sp = changeSharedPreferencesPathCallBack.onPathChange(path);
-            }
+            sp = context.getApplicationContext().getSharedPreferences(path, Context.MODE_PRIVATE);
         }
-    }
-    
-    /**
-     * 获取 SharedPreferences 实例
-     * @return SharedPreferences实例对象
-     */
-    public SharedPreferences getSharedPreferences() {
         return sp;
     }
     
@@ -243,51 +323,18 @@ public class Preferences {
      * 请返回已切换至指定 Path 后的 SharedPreferences 对象。
      * 一般可使用以下代码：
      * return Preferences.getInstance().getSharedPreferences().getSharedPreferences(path, Context.MODE_PRIVATE);
-     *
+     * <p>
      * 完成切换操作，实际可能需要根据 SharedPreferences 实例的实际情况决定。
-     *
      */
     public interface ChangeSharedPreferencesPathCallBack {
         SharedPreferences onPathChange(String path);
     }
     
-    /**
-     * 此方法已废弃，原因是原方法需要单独指定 ChangeSharedPreferencesPathCallBack。
-     * ChangeSharedPreferencesPathCallBack 是用于切换 SharedPreferences 路径的回调函数，
-     * 如果要自定义 SharedPreferences 实例，一定要指定 ChangeSharedPreferencesPathCallBack 切换方法，
-     * 否则可能导致无法切换至指定 Path
-     *
-     * @param sp    自定义 SharedPreferences 实例
-     * @return      继续执行其他方法
-     */
-    @Deprecated
-    public Preferences initSharedPreferences(SharedPreferences sp) {
-        this.sp = sp;
-        return this;
-    }
-    
-    /**
-     * 初始化自定义 SharedPreferences 实例，要执行此方法请务必于开始任何读写操作前进行。
-     * ChangeSharedPreferencesPathCallBack 是用于切换 SharedPreferences 路径的回调函数，
-     * 如果要自定义 SharedPreferences 实例，一定要指定 ChangeSharedPreferencesPathCallBack 切换方法，
-     * 否则可能导致无法切换至指定 Path
-     *
-     * @param sp                                        自定义 SharedPreferences 实例
-     * @param changeSharedPreferencesPathCallBack       ChangeSharedPreferencesPathCallBack 回调
-     * @return                                          继续执行其他方法
-     */
-    public Preferences initSharedPreferences(SharedPreferences sp, ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack) {
-        this.sp = sp;
-        this.changeSharedPreferencesPathCallBack = changeSharedPreferencesPathCallBack;
-        return this;
-    }
-    
-    public ChangeSharedPreferencesPathCallBack getChangeSharedPreferencesPathCallBack() {
+    public static ChangeSharedPreferencesPathCallBack getChangeSharedPreferencesPathCallBack() {
         return changeSharedPreferencesPathCallBack;
     }
     
-    public Preferences setChangeSharedPreferencesPathCallBack(ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack) {
-        this.changeSharedPreferencesPathCallBack = changeSharedPreferencesPathCallBack;
-        return this;
+    public static void setChangeSharedPreferencesPathCallBack(ChangeSharedPreferencesPathCallBack l) {
+        changeSharedPreferencesPathCallBack = l;
     }
 }

@@ -88,9 +88,10 @@ public class MainActivity extends BaseActivity {
     @Override
     public void initDatas(JumpParameter parameter) {
         BaseFrameworkSettings.turnOnReadErrorInfoPermissions(this, new OnBugReportListener() {
+            
             @Override
-            public void onReporter(final File file) {
-                log(file.getAbsolutePath());
+            public boolean onCrash(Exception e, final File crashLogFile) {
+                log(crashLogFile.getAbsolutePath());
                 runOnMain(new Runnable() {
                     @Override
                     public void run() {
@@ -100,19 +101,20 @@ public class MainActivity extends BaseActivity {
                         builder.setPositiveButton("愿意", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                toast("请对file进行处理：" + file.getAbsolutePath());
+                                toast("请对file进行处理：" + crashLogFile.getAbsolutePath());
                             }
                         });
                         builder.setNegativeButton("不了", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                            
+                    
                             }
                         });
                         AlertDialog dialog = builder.create();
                         dialog.show();
                     }
                 });
+                return false;
             }
         });
         

@@ -22,6 +22,7 @@ import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
@@ -32,6 +33,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
@@ -83,19 +85,23 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         me = (ME) getActivity();
         THIS = this;
         this.savedInstanceState = savedInstanceState;
-        try {
-            Layout layout = getClass().getAnnotation(Layout.class);
-            if (layout != null && layout.value() != -1) {
-                layoutResId = layout.value();
-            } else {
-                throw new Exception("请在您的Fragment的Class上注解：@Layout(你的layout资源id)");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        layoutResId = resetLayoutResId();
+        
+        rootView = interceptSetContentView();
         if (rootView == null) {
-            rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+            try {
+                Layout layout = getClass().getAnnotation(Layout.class);
+                if (layout != null && layout.value() != -1) {
+                    layoutResId = layout.value();
+                } else {
+                    throw new Exception("请在您的Fragment的Class上注解：@Layout(你的layout资源id)");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            layoutResId = resetLayoutResId();
+            if (rootView == null) {
+                rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+            }
         }
         
         if (lifeCircleListener != null) {
@@ -108,6 +114,10 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         initDatas();
         setEvents();
         return rootView;
+    }
+    
+    public View interceptSetContentView() {
+        return null;
     }
     
     protected int resetLayoutResId() {
@@ -191,6 +201,11 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         this.lifeCircleListener = lifeCircleListener;
     }
     
+    //不再推荐使用，建议直接在Fragment上注解：@Layout(你的layout资源id)
+    @Deprecated
+    public int getLayout() {
+        return layoutResId;
+    }
     
     /**
      * initViews会在启动时首先执行，建议在此方法内进行布局绑定、View初始化等操作
@@ -494,6 +509,32 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         me.runDelayed(runnable, time);
     }
     
+    private List<CycleRunner> cycleTimerList = new ArrayList<>();
+    
+    public CycleRunner runCycle(Runnable runnable, long firstDelay, long interval) {
+        CycleRunner runner = new CycleRunner();
+        runner.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        }, firstDelay, interval);
+        cycleTimerList.add(runner);
+        return runner;
+    }
+    
+    public CycleRunner runOnMainCycle(Runnable runnable, long firstDelay, long interval) {
+        CycleRunner runner = new CycleRunner();
+        runner.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnMain(runnable);
+            }
+        }, firstDelay, interval);
+        cycleTimerList.add(runner);
+        return runner;
+    }
+    
     /**
      * 复制文本到剪贴板
      *
@@ -569,6 +610,11 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     public void onDestroy() {
         if (lifeCircleListener != null) {
             lifeCircleListener.onDestroy();
+        }
+        for (CycleRunner runnable : cycleTimerList) {
+            if (!runnable.isCanceled()) {
+                runnable.cancel();
+            }
         }
         super.onDestroy();
     }
@@ -686,4 +732,3 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     }
     
 }
-

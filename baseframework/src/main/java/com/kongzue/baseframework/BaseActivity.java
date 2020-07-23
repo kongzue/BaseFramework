@@ -58,6 +58,7 @@ import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
 import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JsonFormat;
@@ -86,6 +87,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TimerTask;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
@@ -127,6 +129,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     @Deprecated
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (BaseApp.getPrivateInstance() == null) {
+            BaseApp.setPrivateInstance(getApplication());
+        }
         mHelper = new SwipeBackActivityHelper(this);
         this.savedInstanceState = savedInstanceState;
         
@@ -136,13 +141,16 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         isAlive = true;
         
         initAttributes();
-        layoutResId = resetLayoutResId();
-        if (layoutResId == android.R.layout.list_content) {
-            Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
-            return;
+        
+        if (!interceptSetContentView()) {
+            layoutResId = resetLayoutResId();
+            if (layoutResId == android.R.layout.list_content) {
+                Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
+                return;
+            }
+            setContentView(layoutResId);
         }
         
-        setContentView(layoutResId);
         if (isFullScreen) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
@@ -166,12 +174,16 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
     }
     
+    public boolean interceptSetContentView() {
+        return false;
+    }
+    
     protected int resetLayoutResId() {
         return layoutResId;
     }
     
     private void initFragments() {
-        if (fragmentLayoutId != -1) {
+        if (fragmentLayoutId != -1 && fragmentChangeUtil == null) {
             fragmentChangeUtil = new FragmentChangeUtil(this, fragmentLayoutId);
             initFragment(fragmentChangeUtil);
         }
@@ -604,12 +616,13 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private Toast toast;
     
     public void runOnMain(Runnable runnable) {
+        if (!isAlive) {
+            return;
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (isAlive) {
-                    runnable.run();
-                }
+                runnable.run();
             }
         });
     }
@@ -624,12 +637,39 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
     
     public void runDelayed(Runnable runnable, long time) {
-        new Handler().postDelayed(new Runnable() {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 runnable.run();
             }
         }, time);
+    }
+    
+    private List<CycleRunner> cycleTimerList = new ArrayList<>();
+    
+    public CycleRunner runCycle(Runnable runnable, long firstDelay, long interval) {
+        CycleRunner runner = new CycleRunner();
+        runner.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runnable.run();
+            }
+        }, firstDelay, interval);
+        cycleTimerList.add(runner);
+        return runner;
+    }
+    
+    public CycleRunner runOnMainCycle(Runnable runnable, long firstDelay, long interval) {
+        CycleRunner runner = new CycleRunner();
+        runner.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnMain(runnable);
+            }
+        }, firstDelay, interval);
+        cycleTimerList.add(runner);
+        return runner;
     }
     
     //简易吐司
@@ -657,45 +697,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     //简易Log
     public void log(final Object obj) {
-        try {
-            if (DEBUGMODE) {
-                String msg = obj.toString();
-                if (isNull(msg)) {
-                    return;
-                }
-                if (obj.toString().length() > 2048) {
-                    bigLog(msg);
-                } else {
-                    logG("log", msg);
-                    if (!JsonFormat.formatJson(msg)) {
-                        Log.v(">>>>>>", msg);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        DebugLogG.LogI(obj);
     }
     
     public void errorLog(final Object obj) {
-        try {
-            if (DEBUGMODE) {
-                String msg = obj.toString();
-                if (isNull(msg)) {
-                    return;
-                }
-                if (obj.toString().length() > 2048) {
-                    bigLog(msg);
-                } else {
-                    logG("log", msg);
-                    if (!JsonFormat.formatJson(msg)) {
-                        Log.e(">>>>>>", msg);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        DebugLogG.LogE(obj);
     }
     
     private void info(int level, String msg) {
@@ -1304,31 +1310,17 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onDestroy(me, me.getClass().getName());
         }
+        for (CycleRunner runnable : cycleTimerList) {
+            if (!runnable.isCanceled()) {
+                runnable.cancel();
+            }
+        }
         super.onDestroy();
     }
     
     //大型打印使用，Log默认是有字数限制的，如有需要打印更长的文本可以使用此方法
     public void bigLog(String msg) {
-        Log.i(">>>bigLog", "BIGLOG.start=================================");
-        if (isNull(msg)) {
-            return;
-        }
-        logG("log", msg);
-        int strLength = msg.length();
-        int start = 0;
-        int end = 2000;
-        for (int i = 0; i < 100; i++) {
-            //剩下的文本还是大于规定长度则继续重复截取并输出
-            if (strLength > end) {
-                Log.v(">>>", msg.substring(start, end));
-                start = end;
-                end = end + 2000;
-            } else {
-                Log.v(">>>", msg.substring(start, strLength));
-                break;
-            }
-        }
-        Log.i(">>>bigLog", "BIGLOG.end=================================");
+        DebugLogG.bigLog(msg, false);
     }
     
     public static GlobalLifeCircleListener getGlobalLifeCircleListener() {
@@ -1344,9 +1336,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
     
     private void logG(String tag, Object o) {
-        if (BETA_PLAN) {
-            DebugLogG.LogG(me, tag + ">>>" + o.toString());
-        }
+        DebugLogG.LogG(tag + ">>>" + o.toString());
     }
     
     //使用默认浏览器打开链接
@@ -1529,5 +1519,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (globalLifeCircleListener != null) {
             globalLifeCircleListener.windowFocus(me, me.getClass().getName(), hasFocus);
         }
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.remove("android:support:fragments");
     }
 }

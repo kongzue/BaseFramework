@@ -73,13 +73,6 @@ public class DemoActivity extends BaseActivity {
         fragmentChangeUtil.addFragment(aboutFragment);
         
         changeFragment(0);
-        
-        App.Settings.init(new Preferences.ChangeSharedPreferencesPathCallBack() {
-            @Override
-            public SharedPreferences onPathChange(String path) {
-                return null;
-            }
-        });
     }
     
     @Override

@@ -39,11 +39,9 @@ public class FragmentChangeUtil {
     }
     
     public FragmentChangeUtil build(BaseActivity me, int frameLayoutResId) {
-        if (me.getSavedInstanceState() == null) {
-            this.me = me;
-            this.frameLayoutResId = frameLayoutResId;
-            fragmentList = new ArrayList<>();
-        }
+        this.me = me;
+        this.frameLayoutResId = frameLayoutResId;
+        fragmentList = new ArrayList<>();
         return this;
     }
     

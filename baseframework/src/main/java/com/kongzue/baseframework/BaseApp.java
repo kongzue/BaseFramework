@@ -5,6 +5,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -20,12 +21,17 @@ import android.view.WindowInsets;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
 import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.JsonFormat;
+import com.kongzue.baseframework.util.Preferences;
 import com.kongzue.baseframework.util.toast.Toaster;
 
+import java.io.File;
+import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
@@ -55,6 +61,7 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     }
     
     public YourApp me;
+    private static Application instance;
     
     @Override
     @Deprecated
@@ -62,6 +69,8 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
         super.onCreate();
         
         me = (YourApp) this;
+        instance = me;
+        
         init();
         new Thread() {
             @Override
@@ -95,74 +104,19 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     }
     
     public void log(final Object obj) {
-        try {
-            if (DEBUGMODE) {
-                String msg = obj.toString();
-                if (isNull(msg)) {
-                    return;
-                }
-                if (obj.toString().length() > 2048) {
-                    bigLog(msg);
-                } else {
-                    logG("log", msg);
-                    if (!JsonFormat.formatJson(msg)) {
-                        Log.v(">>>>>>", msg);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        DebugLogG.LogI(obj);
     }
     
     public void error(final Object obj) {
-        try {
-            if (DEBUGMODE) {
-                String msg = obj.toString();
-                if (isNull(msg)) {
-                    return;
-                }
-                if (obj.toString().length() > 2048) {
-                    bigLog(msg);
-                } else {
-                    logG("log", msg);
-                    if (!JsonFormat.formatJson(msg)) {
-                        Log.e(">>>>>>", msg);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        DebugLogG.LogE(obj);
     }
     
     public void bigLog(String msg) {
-        Log.i(">>>bigLog", "BIGLOG.start=================================");
-        if (isNull(msg)) {
-            return;
-        }
-        logG("log", msg);
-        int strLength = msg.length();
-        int start = 0;
-        int end = 2000;
-        for (int i = 0; i < 100; i++) {
-            //剩下的文本还是大于规定长度则继续重复截取并输出
-            if (strLength > end) {
-                Log.v(">>>", msg.substring(start, end));
-                start = end;
-                end = end + 2000;
-            } else {
-                Log.v(">>>", msg.substring(start, strLength));
-                break;
-            }
-        }
-        Log.i(">>>bigLog", "BIGLOG.end=================================");
+        DebugLogG.bigLog(msg, false);
     }
     
     private void logG(String tag, Object o) {
-        if (BETA_PLAN) {
-            DebugLogG.LogG(me, tag + ">>>" + o.toString());
-        }
+        DebugLogG.LogG(tag + ">>>" + o.toString());
     }
     
     protected final static String NULL = "";
@@ -232,7 +186,7 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     
     //启动当前应用设置页面
     public void startAppSettings() {
-        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         intent.setData(Uri.parse("package:" + getPackageName()));
         startActivity(intent);
     }
@@ -272,13 +226,14 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     //获取底栏高度
     public int getNavbarHeight() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            try{
+            try {
                 WindowInsets windowInsets = null;
                 windowInsets = AppManager.getInstance().currentActivity().getWindow().getDecorView().getRootView().getRootWindowInsets();
                 if (windowInsets != null) {
                     return windowInsets.getStableInsetBottom();
                 }
-            }catch (Exception e){}
+            } catch (Exception e) {
+            }
         }
         int resourceId = 0;
         int rid = getResources().getIdentifier("config_showNavigationBar", "bool", "android");
@@ -353,5 +308,244 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
             e.printStackTrace();
         }
         return packageInfo != null;
+    }
+    
+    public static Settings Settings(String path) {
+        return new Settings(path);
+    }
+    
+    /**
+     * 代理属性存储
+     */
+    public static class Settings {
+        
+        public static void init(com.kongzue.baseframework.util.Preferences.ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack) {
+            com.kongzue.baseframework.util.Preferences.getInstance().setChangeSharedPreferencesPathCallBack(changeSharedPreferencesPathCallBack);
+        }
+        
+        private String path;
+        
+        public Settings(String path) {
+            this.path = path;
+        }
+        
+        public static void set(String path, String key, String value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
+        }
+        
+        public static void set(String path, String key, boolean value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
+        }
+        
+        public static void set(String path, String key, int value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
+        }
+        
+        public static void set(String path, String key, float value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
+        }
+        
+        public static void set(String path, String key, long value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
+        }
+        
+        public static void set(String path, String key, double value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
+        }
+        
+        public static void commit(String path, String key, String value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
+        }
+        
+        public static void commit(String path, String key, boolean value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
+        }
+        
+        public static void commit(String path, String key, int value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
+        }
+        
+        public static void commit(String path, String key, float value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
+        }
+        
+        public static void commit(String path, String key, long value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
+        }
+        
+        public static void commit(String path, String key, double value) {
+            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
+        }
+        
+        public static String getString(String path, String key) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getString(instance, path, key);
+        }
+        
+        public static String getString(String path, String key, String defaultValue) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getString(instance, path, key, defaultValue);
+        }
+        
+        public static boolean getBoolean(String path, String key) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getBoolean(instance, path, key);
+        }
+        
+        public static boolean getBoolean(String path, String key, boolean defaultValue) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getBoolean(instance, path, key, defaultValue);
+        }
+        
+        public static int getInt(String path, String key) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getInt(instance, path, key);
+        }
+        
+        public static int getInt(String path, String key, int defaultValue) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getInt(instance, path, key, defaultValue);
+        }
+        
+        public static float getFloat(String path, String key) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getFloat(instance, path, key);
+        }
+        
+        public static float getFloat(String path, String key, float defaultValue) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getFloat(instance, path, key, defaultValue);
+        }
+        
+        public static long getLong(String path, String key) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getLong(instance, path, key);
+        }
+        
+        public static long getLong(String path, String key, long defaultValue) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getLong(instance, path, key, defaultValue);
+        }
+        
+        public static double getDouble(String path, String key) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getDouble(instance, path, key);
+        }
+        
+        public static double getDouble(String path, String key, double defaultValue) {
+            return com.kongzue.baseframework.util.Preferences.getInstance().getDouble(instance, path, key, defaultValue);
+        }
+        
+        public static void clean(String path) {
+            com.kongzue.baseframework.util.Preferences.getInstance().cleanAll(instance, path);
+        }
+        
+        public void set(String key, String value) {
+            Settings.set(path, key, value);
+        }
+        
+        public void set(String key, boolean value) {
+            Settings.set(path, key, value);
+        }
+        
+        public void set(String key, int value) {
+            Settings.set(path, key, value);
+        }
+        
+        public void set(String key, float value) {
+            Settings.set(path, key, value);
+        }
+        
+        public void set(String key, long value) {
+            Settings.set(path, key, value);
+        }
+        
+        public void set(String key, double value) {
+            Settings.set(path, key, value);
+        }
+        
+        public void commit(String key, String value) {
+            Settings.commit(path, key, value);
+        }
+        
+        public void commit(String key, boolean value) {
+            Settings.commit(path, key, value);
+        }
+        
+        public void commit(String key, int value) {
+            Settings.commit(path, key, value);
+        }
+        
+        public void commit(String key, float value) {
+            Settings.commit(path, key, value);
+        }
+        
+        public void commit(String key, long value) {
+            Settings.commit(path, key, value);
+        }
+        
+        public void commit(String key, double value) {
+            Settings.commit(path, key, value);
+        }
+        
+        public String getString(String key) {
+            return getString(path, key);
+        }
+        
+        public String getStringWithDefaultValue(String key, String defaultValue) {
+            return getString(path, key, defaultValue);
+        }
+        
+        public boolean getBoolean(String key) {
+            return getBoolean(path, key);
+        }
+        
+        public boolean getBoolean(String key, boolean defaultValue) {
+            return getBoolean(path, key, defaultValue);
+        }
+        
+        public int getInt(String key) {
+            return getInt(path, key);
+        }
+        
+        public int getInt(String key, int defaultValue) {
+            return getInt(path, key, defaultValue);
+        }
+        
+        public float getFloat(String key) {
+            return getFloat(path, key);
+        }
+        
+        public float getFloat(String key, float defaultValue) {
+            return getFloat(path, key, defaultValue);
+        }
+        
+        public long getLong(String key) {
+            return getLong(path, key);
+        }
+        
+        public long getLong(String key, long defaultValue) {
+            return getLong(path, key, defaultValue);
+        }
+        
+        public double getDouble(String key) {
+            return getDouble(path, key);
+        }
+        
+        public double getDouble(String key, double defaultValue) {
+            return getDouble(path, key, defaultValue);
+        }
+        
+        public void clean() {
+            clean(path);
+        }
+    }
+    
+    public static void setPrivateInstance(Application context) {
+        BaseApp.instance = context;
+    }
+    
+    public static Application getPrivateInstance() {
+        if (instance == null) {
+            return null;
+        }
+        return instance;
+    }
+    
+    public void setOnCrashListener(OnBugReportListener onBugReportListener) {
+        BaseFrameworkSettings.turnOnReadErrorInfoPermissions(this, onBugReportListener);
+    }
+    
+    public void exit() {
+        BaseFrameworkSettings.exitApp();
     }
 }

@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.4-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.5-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.4/link">
-<img src="https://img.shields.io/badge/Maven-6.7.4-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.5/link">
+<img src="https://img.shields.io/badge/Maven-6.7.5-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -32,6 +32,8 @@ Demo预览图如下：
 
 - 规范化！无论是在 BaseActivity 还是 BaseFragment ，默认都有 initViews()、initDatas()、setEvents() 三个方法，他们分别代表加载组件、初始化数据、组件绑定事件三个步骤，因其执行顺序是固定的，且为了代码规范化，这三个方法必须重写，也建议将相关业务逻辑写在对应方法中，以方便维护和管理。
 
+- 骚操作！提供大量更为好用和快捷的常用方法工具，大幅度减少因参数、引用造成的额外代码量，更好用的日志输出方便甩锅，不死的小强更能保证你的 App 不再因为异常而闪退。
+
 ## Maven仓库或Gradle的引用方式
 
 ### Support 版本
@@ -41,14 +43,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.4</version>
+  <version>6.7.5</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.4'
+implementation 'com.kongzue.baseframework:baseframework:6.7.5'
 ```
 
 ### AndroidX 版本
@@ -60,21 +62,23 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.4</version>
+  <version>6.7.5</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.4'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.5'
 ```
 
 # 目录
 
 · <a href="#1">**BaseActivity功能**</a>
 
-···· <a href="#1-1">沉浸式</a>
+···· <a href="#1-0">沉浸式</a>
+
+···· <a href="#1-1">绑定 Layout 布局</a>
 
 ···· <a href="#1-2">跳转、Activity间通讯</a>
 
@@ -92,15 +96,15 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.4'
 
 · <a href="#2">**BaseFragment功能**</a>
 
-···· <a href="#2-1">BaseFragment 是什么</a>
+···· <a href="#2-0">BaseFragment 是什么</a>
+
+···· <a href="#2-1">绑定 Layout 布局</a>
 
 ···· <a href="#2-2">FragmentChangeUtil</a>
 
 ···· <a href="#2-3">BaseFragment 最佳实践</a>
 
 ···· <a href="#2-4">BaseFragment 间的数据传递和回调</a>
-
-···· <a href="#1-8">布局绑定和事件绑定</a>
 
 · <a href="#3">**设置、属性值的存储读取工具 Preferences**</a>
 
@@ -120,7 +124,7 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.4'
 
 · <a href="#8">**增强型日志**</a>
 
-· <a href="#7">**行为与日志监听**</a>
+· <a href="#7">**行为与日志监听 + 不死的小强**</a>
 
 · <a href="#9">**语言变更工具**</a>
 
@@ -130,9 +134,9 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.4'
 
 ## <a name="1">BaseActivity功能</a>
 
-### <a name="1-1">沉浸式</a>
+### <a name="1-0">沉浸式</a>
 
-- 在 BaseActivity 中，您还可以使用以下注解对沉浸式进行控制：
+在 BaseActivity 中，您还可以使用以下注解对沉浸式进行控制：
 ```
 @DarkStatusBarTheme(true)           //开启顶部状态栏图标、文字暗色模式
 @DarkNavigationBarTheme(true)       //开启底部导航栏按钮暗色模式
@@ -146,6 +150,39 @@ setDarkStatusBarTheme(true);            //开启顶部状态栏图标、文字�
 setDarkNavigationBarTheme(true);        //开启底部导航栏按钮暗色模式
 setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
 ```
+
+### <a name="1-1">绑定 Layout 布局</a>
+
+BaseActivity 默认使用注解来绑定布局：
+```
+@Layout(R.layout.activity_demo)
+public class DemoActivity extends BaseActivity {
+    ...
+```
+
+不建议重写 onCreate 方法，根据约定，请无需关心绑定布局的过程，你只需要在 initView() 方法中绑定、加载 View 组件，initData() 方法中加载数据，在 setEvents() 方法中绑定事件即可。
+
+除了注解绑定外，你也可以使用 resetLayoutResId() 方法重载布局资源，例如实现自定义主题：
+```
+@Override
+protected int resetLayoutResId() {
+    if (darkMode){
+        return R.layout.activity_demo_dark;
+    }else{
+        return super.resetLayoutResId();
+    }
+}
+```
+
+额外的，你还可以拦截绑定过程，暂时不绑定布局（可能会出现错误，仅用于特殊情况）：
+```
+@Override
+public boolean interceptSetContentView() {
+    return true;            //拦截绑定布局的过程
+}
+```
+
+绑定 View 组件请参考 <a href="#1-8">布局绑定和事件绑定</a> 章节
 
 ### <a name="1-2">跳转、Activity间通讯（带自定义参数的跳转）</a>
 Android 默认的 Intent无法支持自定义类型参数的跳转，BaseActivity 通过自有的数据通道允许传输自定义类型的数据给要跳转到的另一个 BaseActivity：
@@ -409,7 +446,7 @@ public void startTest(View btnOk){
 
 ## <a name="2">BaseFragment功能</a>
 
-### <a name="2-1">BaseFragment 是什么</a>
+### <a name="2-0">BaseFragment 是什么</a>
 BaseFragment 与普通的 Fragment 有什么区别？
 
 首先，创建它变得异常的简单，你只需要在class上注解 `@Layout(你的布局资源文件id，例如R.layout.xxx)` 即可，剩下的事情BaseFragment会自动帮你完成。
@@ -436,6 +473,41 @@ BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment
 6.6.8 版本起，BaseFragment 新增一个可重写方法 onShow，之前的 onLoad 会在首次显示该 Fragment 时触发，而 onShow 是用来替代 onResume 的，但不会在预加载时触发。
 
 另外，onShow 的参数 isSwitchFragment(boolean) 用于判断是否是从其他 Fragment 切换到此界面。
+
+
+### <a name="2-1">绑定 Layout 布局</a>
+
+BaseFragment 默认使用注解来绑定布局：
+```
+@Layout(R.layout.activity_demo)
+public class FunctionFragment extends BaseFragment<DemoActivity> {
+    ...
+```
+BaseFragment 默认有一个泛型（非必需），请传入你要绑定的目标 Activity，这样就可以直接在 BaseFragment 中通过 me. 来直接调用绑定 Activity 的 public 成员或方法。
+
+不建议重写 onCreate 方法，根据约定，请无需关心绑定布局的过程，你只需要在 initView() 方法中绑定、加载 View 组件，initData() 方法中加载数据，在 setEvents() 方法中绑定事件即可。
+
+除了注解绑定外，你也可以使用 resetLayoutResId() 方法重载布局资源，例如实现自定义主题：
+```
+@Override
+protected int resetLayoutResId() {
+    if (darkMode){
+        return R.layout.activity_demo_dark;
+    }else{
+        return super.resetLayoutResId();
+    }
+}
+```
+
+额外的，你还可以拦截绑定过程，暂时不绑定布局（可能会出现错误，仅用于特殊情况）：
+```
+@Override
+public boolean interceptSetContentView() {
+    return true;            //拦截绑定布局的过程
+}
+```
+
+与 BaseActivity 一样，你也可以通过 @BindView(...)、@OnClick(...) 等方法绑定组件布局和设置点击事件，详情请参考 BaseActivity 的 <a href="#1-8">布局绑定和事件绑定</a> 章节。
 
 ### <a name="2-2">FragmentChangeUtil</a>
 
@@ -677,9 +749,26 @@ set(context, path, preferencesName, ?)
 cleanAll();
 ```
 
-从 6.7.2 版本开始，支持使用第三方 SharedPreferences 实例（例如来自腾讯的 MMKV），请在所有使用 Preferences 之前，使用以下方法进行初始化：
+从 6.7.5 版本起，如果您使用 BaseApp 作为应用的 Application 实例，您可以使用 BaseApp 提供的 Settings 类进行设置、属性的读写操作。
+
+例如 Demo 中，我们编写了 App 类继承 BaseApp 并作为 Demo 应用的 Application，则可以按如下方法读写设置：
 ```
-Preferences.getInstance().initSharedPreferences(sharedPreferences);
+//自定义 SharedPreferences 实例（可选，默认不设置即使用系统 SharedPreferences 实例）
+App.Settings.init(new Preferences.ChangeSharedPreferencesPathCallBack() {
+    @Override
+    public SharedPreferences onPathChange(String path) {
+        //sharedPreferences: 可以使用第三方的 SharedPreferences 实例，例如来自腾讯的 MMKV 等
+        return sharedPreferences;
+    }
+});
+
+//写设置：
+App.Settings("path").set("key", "value");
+App.Settings.set("path", "key", "value");
+
+//读设置
+String value = App.Settings("path").getString("key");
+String value2 = App.Settings.getString("path", "key");
 ```
 
 ## <a name="4">AppManager</a>
@@ -917,7 +1006,7 @@ D/>>>: MainActivity:onDestroy
 使用 log(...) 方法输出日志内容时，若内容是 json 字符串，会自动格式化输出，方便查看。
 
 
-## <a name="7">行为与日志监听</a>
+## <a name="7">行为与日志监听 + 不死的小强</a>
 
 ![Kongzue's Beta Plan](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/betaplan_baseframework.jpg)
 
@@ -932,6 +1021,22 @@ D/>>>: MainActivity:onDestroy
 3.可根据日志顺序按流程追溯用户操作步骤；
 
 您可以前往此处查看<a href="BUGREPORT.md">日志文件内容样例</a>
+
+从 6.7.5 版本起可通过重写 BaseApp 作为 Application 并通过以下代码直接配置 CrashListener：
+
+```
+setOnCrashListener(new OnBugReportListener() {
+    @Override
+    public boolean onCrash(Exception e, final File crashLogFile) {
+        //TODO: 请在这里处理异常信息
+        //return true时，会在执行完上述代码后关闭 App，但 return false，则会拦截此错误，App 不会闪退，继续运行
+        return false;   
+    }
+});
+```
+通过 OnBugReportListener 的 onCrash(...) 方法返回值，可拦截 App 运行过程中的异常，而不让 App 闪退。
+
+您可以在这里弹出一个对话框用于提示用户是否反馈错误信息，并选择继续保持 App 的运行，具体请参考代码：<a href="https://github.com/kongzue/BaseFramework/blob/master/app/src/main/java/com/kongzue/baseframeworkdemo/App.java">BaseApp Demo</a>
 
 ### 开启功能
 
@@ -1016,6 +1121,13 @@ public class App extends BaseApp<App> {     //此处泛型 App 是用于将 关�
 
 另外，OnSDKInitializedCallBack 回调方法 onInitialized() 是自动回到主线程执行的，无需额外处理。
 
+从 6.7.5 版本起，新增 Settings 方法/静态类用于直接取代设置、属性值的存储读取工具 Preferences，具体请参考 <a href="#3">**设置、属性值的存储读取工具 Preferences**</a> 章节。
+
+额外的，可通过如下方法直接关闭 App：
+```
+.exit();    //退出 App
+```
+
 ### <a name="10-1">BaseApp功能提供的小工具</a>
 ```
 //快速调用 Toast：
@@ -1076,6 +1188,15 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.5:
+- LogG 统一日志打印流程；
+- BaseActivity 和 BaseFragment 提供可重写的方法 interceptSetContentView() 可阻止默认初始化布局的流程；
+- BaseActivity 和 BaseFragment 提供可重写的方法 resetLayoutResId() 用于重定向布局资源 id（可用于主题换服等操作）；
+- BaseApp 提供 Settings 方法及静态类用于快速完成设置键值的读写；
+- BaseApp 提供 setOnCrashListener(...) 可设置崩溃闪退拦截，可通过回调 onCrash 的 return 值操作是否因闪退关闭 App；
+- BaseApp 提供 exit() 方法可直接退出程序；
+- 修复可能因系统资源回收导致 Fragment 切换失效的bug；
+
 v6.7.4:
 - AppManager 新增方法 getActiveActivity() 方法获取当前活跃的 BaseActivity 对象；
 - 修复 AppManager 的 getActivityInstance(...)、deleteActivity(...)、killActivity(...)、finishActivity()、currentActivity()方法可能引发的空指针异常；

@@ -317,7 +317,6 @@ public class AdapterTestActivity extends BaseActivity {
         datas.add(new CustomDatas().setTitle("我是布局2").setType(1));
         datas.add(new CustomDatas().setTitle("我是布局3").setType(2));
         
-        
         Map<Integer, Integer> layoutResIdMap = new HashMap<>();
         layoutResIdMap.put(0, R.layout.item_list_layout1);
         layoutResIdMap.put(1, R.layout.item_list_layout2);

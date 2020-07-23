@@ -33,7 +33,7 @@ public class JumpActivity extends BaseActivity {
     @Override
     public void initDatas(JumpParameter parameter) {
         String parameter1 = (String) getParameter().get("参数1");
-        if (!isNull(parameter1)) txtP1.setText("第一个参数读取到的值为：" + parameter1);
+        if (!isNull(parameter1)) txtP1.setText("第一个参数读取到的值为：\n" + parameter1);
 
         Bitmap parameter2 = (Bitmap) getParameter().get("参数2");
         if (parameter2 != null) imgP2.setImageBitmap(parameter2);

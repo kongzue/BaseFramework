@@ -9,6 +9,12 @@ import java.io.File;
  * Mail: myzcxhh@live.cn
  * CreateTime: 2018/9/30 15:47
  */
-public interface OnBugReportListener {
-    void onReporter(File file);
+public abstract class OnBugReportListener {
+    
+    @Deprecated
+    public void onReporter(File file) {
+    
+    }
+    
+    public abstract boolean onCrash(Exception e,File crashLogFile);
 }

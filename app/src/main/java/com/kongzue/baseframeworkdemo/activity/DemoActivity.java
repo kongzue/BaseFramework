@@ -54,39 +54,11 @@ public class DemoActivity extends BaseActivity {
     
     @Override
     public void initViews() {
-        //tabbar = findViewById(R.id.tabbar);
+        tabbar = findViewById(R.id.tabbar);
     }
     
     @Override
     public void initDatas(JumpParameter parameter) {
-        BaseFrameworkSettings.turnOnReadErrorInfoPermissions(this, new OnBugReportListener() {
-            @Override
-            public void onReporter(final File file) {
-                runOnMain(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(me);
-                        builder.setTitle("Ops！发生了一次崩溃！");
-                        builder.setMessage("您是否愿意帮助我们改进程序以修复此Bug？");
-                        builder.setPositiveButton("愿意", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                toast("请对file进行处理：" + file.getAbsolutePath());
-                            }
-                        });
-                        builder.setNegativeButton("不了", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                            
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }
-                });
-            }
-        });
-        
         List<Tab> tabs = new ArrayList<>();
         tabs.add(new Tab(this, getString(R.string.introduction), R.mipmap.img_tab_introduction));
         tabs.add(new Tab(this, getString(R.string.function), R.mipmap.img_maintab_function));
@@ -101,6 +73,13 @@ public class DemoActivity extends BaseActivity {
         fragmentChangeUtil.addFragment(aboutFragment);
         
         changeFragment(0);
+        
+        App.Settings.init(new Preferences.ChangeSharedPreferencesPathCallBack() {
+            @Override
+            public SharedPreferences onPathChange(String path) {
+                return null;
+            }
+        });
     }
     
     @Override

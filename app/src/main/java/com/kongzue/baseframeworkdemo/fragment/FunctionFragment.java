@@ -24,7 +24,11 @@ import com.kongzue.baseframeworkdemo.R;
 import com.kongzue.baseframeworkdemo.activity.ResponseActivity;
 import com.kongzue.baseframeworkdemo.activity.TransitionActivity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author: Kongzue
@@ -44,10 +48,12 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     private Button btnPermission;
     private Button btnError;
     private Button btnPrintJsonLog;
+    private Button btnPrintMapLog;
+    private Button btnPrintListLog;
     private Button btnGetImei;
     private Button btnChangeLng;
     private Button btnToast;
-    
+    private Button btnTimer;
     
     @Override
     public void initViews() {
@@ -59,9 +65,12 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnPermission = findViewById(R.id.btn_permission);
         btnError = findViewById(R.id.btn_error);
         btnPrintJsonLog = findViewById(R.id.btn_printJsonLog);
+        btnPrintMapLog = findViewById(R.id.btn_printMapLog);
+        btnPrintListLog = findViewById(R.id.btn_printListLog);
         btnGetImei = findViewById(R.id.btn_getImei);
         btnChangeLng = findViewById(R.id.btn_changeLng);
         btnToast = findViewById(R.id.btn_toast);
+        btnTimer = findViewById(R.id.btn_timer);
     }
     
     @Override
@@ -69,13 +78,31 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     
     }
     
+    private int time;
+    
     //此处为组件绑定事件
     @Override
     public void setEvents() {
+        btnTimer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
+                runOnMainCycle(new Runnable() {
+                    @Override
+                    public void run() {
+                        time++;
+                        btnTimer.setText("t:" + time);
+                    }
+                }, 1000, 1000);
+            }
+        });
+        
         btnToast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
                 toastS("test!");
             }
         });
@@ -84,6 +111,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
                 if (BaseFrameworkSettings.selectLocale == Locale.ENGLISH) {
                     BaseFrameworkSettings.selectLocale = Locale.CHINA;
                 } else {
@@ -96,8 +124,51 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         btnGetImei.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 toast(getIMEI());
+            }
+        });
+        
+        btnPrintMapLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+                
+                Map<String,Object> map = new HashMap<>();
+                map.put("name","kongzue");
+                map.put("email","myzcxhh@live.cn");
+                map.put("website","kongzue.com");
+                map.put("times",20);
+                map.put("signed",true);
+                log(map);
+    
+                AlertDialog.Builder builder = new AlertDialog.Builder(me);
+                builder.setTitle("提示");
+                builder.setMessage("此功能需要连接Android Studio的Logcat查看输出结果");
+                builder.setPositiveButton("知道了", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+        
+        btnPrintListLog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
+                List list = new ArrayList();
+                list.add("listItem 1");
+                list.add("listItem 2");
+                list.add(true);
+                list.add(25.6);
+                
+                log(list);
+    
+                AlertDialog.Builder builder = new AlertDialog.Builder(me);
+                builder.setTitle("提示");
+                builder.setMessage("此功能需要连接Android Studio的Logcat查看输出结果");
+                builder.setPositiveButton("知道了", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
         
@@ -105,6 +176,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
                 log("{\"employees\": [{ \"firstName\":\"Bill\" , \"lastName\":\"Gates\" },{ \"firstName\":\"George\" , \"lastName\":\"Bush\" },{ \"firstName\":\"Thomas\" , \"lastName\":\"Carter\" }]}");
                 
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
@@ -120,6 +192,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
                 doTestError();
             }
         });
@@ -128,6 +201,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
                 jump(TransitionActivity.class, btnTransition);
             }
         });
@@ -136,6 +210,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
                 jump(AdapterTestActivity.class);
             }
         });
@@ -144,6 +219,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
                 requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
                     @Override
                     public void onSuccess(String[] permissions) {
@@ -162,6 +238,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+    
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
                 builder.setTitle("提示");
                 builder.setMessage("跳转到下一个界面后，点击“SET返回数据”按钮即可设定返回数据，当返回此界面时会显示该数据");
@@ -202,7 +279,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     }
     
     @OnClick(R.id.btn_jump)
-    public void jumpFunction(){
+    public void jumpFunction() {
         setFragmentResponse(new JumpParameter().put("function", btnJump.getText().toString()));
         AlertDialog.Builder builder = new AlertDialog.Builder(me);
         builder.setTitle("提示");

@@ -7,11 +7,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.TextView;
 
+import com.kongzue.baseframework.BaseApp;
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
+import com.kongzue.baseframework.util.Preferences;
+import com.kongzue.baseframeworkdemo.App;
 import com.kongzue.baseframeworkdemo.activity.DemoActivity;
 import com.kongzue.baseframeworkdemo.R;
 
@@ -47,13 +50,12 @@ public class IntroductionFragment extends BaseFragment<DemoActivity> {
                 Uri uri = Uri.parse("https://github.com/kongzue/BaseFramework");
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
-                
             }
         });
     }
     
     @OnClick(R.id.btn_fab)
-    public void startTest(){
+    public void startTest() {
         jump(1, new JumpParameter().put("tip", "开始尝试功能！"), new OnJumpResponseListener() {
             @Override
             public void OnResponse(JumpParameter jumpParameter) {

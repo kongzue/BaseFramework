@@ -13,9 +13,12 @@ import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframeworkdemo.App;
 import com.kongzue.baseframeworkdemo.R;
 
+//使用 @Layout 注解直接绑定要显示的布局
 @Layout(R.layout.activity_jump)
+//支持侧滑返回
 @SwipeBack(true)
 public class JumpActivity extends BaseActivity {
 
@@ -24,6 +27,7 @@ public class JumpActivity extends BaseActivity {
     private Button btnClose;
 
     @Override
+    //此处用于绑定布局组件，你也可以使用 @BindView(resId) 来初始化组件
     public void initViews() {
         txtP1 = findViewById(R.id.txt_p1);
         imgP2 = findViewById(R.id.img_p2);
@@ -31,6 +35,7 @@ public class JumpActivity extends BaseActivity {
     }
 
     @Override
+    //请在此编写初始化操作，例如读取数据等，以及对 UI 组件进行赋值
     public void initDatas(JumpParameter parameter) {
         String parameter1 = (String) getParameter().get("参数1");
         if (!isNull(parameter1)) txtP1.setText("第一个参数读取到的值为：\n" + parameter1);
@@ -40,6 +45,7 @@ public class JumpActivity extends BaseActivity {
     }
 
     @Override
+    //此处为组件绑定功能事件、回调等方法
     public void setEvents() {
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -24,8 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//使用 @Layout 注解直接绑定要显示的布局
 @Layout(R.layout.activity_adapter_test)
+//支持侧滑返回
 @SwipeBack(true)
+//全屏显示此界面
 @FullScreen(true)
 public class AdapterTestActivity extends BaseActivity {
     
@@ -38,6 +41,7 @@ public class AdapterTestActivity extends BaseActivity {
     private ListView list;
     
     @Override
+    //此处用于绑定布局组件，你也可以使用 @BindView(resId) 来初始化组件
     public void initViews() {
         txtTitle = findViewById(R.id.txt_title);
         btnSimpleBean = findViewById(R.id.btn_simple_bean);
@@ -51,6 +55,7 @@ public class AdapterTestActivity extends BaseActivity {
     private BaseAdapter baseAdapter;
     
     @Override
+    //请在此编写初始化操作，例如读取数据等，以及对 UI 组件进行赋值
     public void initDatas(JumpParameter parameter) {
 //        initMultipleBeanTest();
 //        initMultipleMapTest();
@@ -61,6 +66,7 @@ public class AdapterTestActivity extends BaseActivity {
     }
     
     @Override
+    //此处为组件绑定功能事件、回调等方法
     public void setEvents() {
         btnSimpleBean.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +101,7 @@ public class AdapterTestActivity extends BaseActivity {
         });
     }
     
+    //添加演示数据
     private void initExperimentalTest() {
         List<com.kongzue.baseframework.experimental.BaseAdapter.SimpleData> dataList = new ArrayList<>();
         CustomData customData = new CustomData(R.layout.item_list_layout1,"测试");

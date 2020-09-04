@@ -14,4 +14,10 @@
     </declare-styleable>
 
     <attr name="SwipeBackLayoutStyle" format="reference"/>
+
+    <declare-styleable name="TableLayout">
+        <attr name="marginDp" format="dimension"/>
+        <attr name="itemHeight" format="dimension"/>
+        <attr name="column" format="integer"/>
+    </declare-styleable>
 </resources>

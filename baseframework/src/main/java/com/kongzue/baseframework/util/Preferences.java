@@ -6,11 +6,14 @@ import android.util.Log;
 
 /**
  * 本类采用单例设计模式，请使用getInstance()获取本类对象后进行使用
+ * 本类在最新版本已废弃，建议直接使用 BaseApp.Settings 作为数据存储实现
+ *
  * Created by Kongzue on 2017/3/28.
  * Version 3.0
  * Update 2020.1.15
  */
 
+@Deprecated
 public class Preferences {
     
     private static Preferences preferences;

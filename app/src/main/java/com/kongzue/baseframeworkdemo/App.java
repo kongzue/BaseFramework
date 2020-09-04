@@ -1,19 +1,16 @@
 package com.kongzue.baseframeworkdemo;
 
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseApp;
 import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
 import com.kongzue.baseframework.util.AppManager;
-import com.kongzue.baseframework.util.Preferences;
-import com.kongzue.baseframeworkdemo.activity.ResponseActivity;
+import com.kongzue.baseframeworkdemo.util.User;
 
 import java.io.File;
 
@@ -39,7 +36,7 @@ public class App extends BaseApp<App> {
         setOnCrashListener(new OnBugReportListener() {
             @Override
             public boolean onCrash(Exception e, final File crashLogFile) {
-                if (!AppManager.getInstance().getActiveActivity().isActive) {
+                if (AppManager.getInstance().getActiveActivity() == null || !AppManager.getInstance().getActiveActivity().isActive) {
                     return false;
                 }
                 AlertDialog.Builder builder = new AlertDialog.Builder(AppManager.getInstance().getActiveActivity());
@@ -64,6 +61,32 @@ public class App extends BaseApp<App> {
                 return false;
             }
         });
+
+//        Bitmap bm = null;       //随便写的 Demo
+//        App.cache.set("key","value");
+//        App.cache.set("bitmap",bm);
+//        App.cache.clean();
+        
+        User user = new User("张三", 18, "192.168.1.1");
+        App.user.set("userInfo", user);
+    }
+    
+    public static USER user = new USER();
+    
+    public static class USER extends Settings {
+        
+        public USER() {
+            super("user");
+        }
+    }
+    
+    public static CACHE cache;
+    
+    public static class CACHE extends Settings {
+        
+        public CACHE() {
+            super("cache");
+        }
     }
     
     @Override

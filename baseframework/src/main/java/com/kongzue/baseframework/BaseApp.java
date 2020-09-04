@@ -5,17 +5,15 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowInsets;
 import android.view.WindowManager;
@@ -25,18 +23,12 @@ import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
 import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.DebugLogG;
-import com.kongzue.baseframework.util.JsonFormat;
-import com.kongzue.baseframework.util.Preferences;
+import com.kongzue.baseframework.util.SettingsUtil;
 import com.kongzue.baseframework.util.toast.Toaster;
 
-import java.io.File;
-import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
-import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
-import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
 
 /**
  * @author: Kongzue
@@ -62,6 +54,10 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     
     public YourApp me;
     private static Application instance;
+    
+    public static <App extends BaseApp> App getInstance(Class<App> appClass) {
+        return (App) instance;
+    }
     
     @Override
     @Deprecated
@@ -172,17 +168,22 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     }
     
     //用于进行dip和px转换
-    public int dip2px(float dpValue) {
-        final float scale = getResources().getDisplayMetrics().density;
+    public static int dip2px(float dpValue) {
+        if (getPrivateInstance() == null) {
+            return (int) (dpValue * (Resources.getSystem().getDisplayMetrics().density) + 0.5f);
+        }
+        final float scale = getPrivateInstance().getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
     
     //用于进行px和dip转换
-    public int px2dip(float pxValue) {
-        final float scale = getResources().getDisplayMetrics().density;
+    public static int px2dip(float pxValue) {
+        if (getPrivateInstance() == null) {
+            return (int) (pxValue / (Resources.getSystem().getDisplayMetrics().density) + 0.5f);
+        }
+        final float scale = getPrivateInstance().getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
-    
     
     //启动当前应用设置页面
     public void startAppSettings() {
@@ -281,12 +282,15 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     }
     
     //打开指定App
-    public boolean openApp(String packageName) {
-        PackageManager packageManager = getPackageManager();
+    public static boolean openApp(String packageName) {
+        if (getPrivateInstance() == null) {
+            return false;
+        }
+        PackageManager packageManager = getPrivateInstance().getPackageManager();
         if (isInstallApp(packageName)) {
             try {
                 Intent intent = packageManager.getLaunchIntentForPackage(packageName);
-                startActivity(intent);
+                getPrivateInstance().startActivity(intent);
                 return true;
             } catch (Exception e) {
                 if (DEBUGMODE) {
@@ -300,10 +304,10 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     }
     
     //检测App是否已安装
-    public boolean isInstallApp(String packageName) {
+    public static boolean isInstallApp(String packageName) {
         PackageInfo packageInfo = null;
         try {
-            packageInfo = getPackageManager().getPackageInfo(packageName, 0);
+            packageInfo = getPrivateInstance().getPackageManager().getPackageInfo(packageName, 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -314,226 +318,32 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
         return new Settings(path);
     }
     
-    /**
-     * 代理属性存储
-     */
-    public static class Settings {
-        
-        public static void init(com.kongzue.baseframework.util.Preferences.ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack) {
-            com.kongzue.baseframework.util.Preferences.getInstance().setChangeSharedPreferencesPathCallBack(changeSharedPreferencesPathCallBack);
-        }
-        
-        private String path;
+    public static class Settings extends SettingsUtil {
         
         public Settings(String path) {
-            this.path = path;
-        }
-        
-        public static void set(String path, String key, String value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
-        }
-        
-        public static void set(String path, String key, boolean value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
-        }
-        
-        public static void set(String path, String key, int value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
-        }
-        
-        public static void set(String path, String key, float value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
-        }
-        
-        public static void set(String path, String key, long value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
-        }
-        
-        public static void set(String path, String key, double value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().set(instance, path, key, value);
-        }
-        
-        public static void commit(String path, String key, String value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
-        }
-        
-        public static void commit(String path, String key, boolean value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
-        }
-        
-        public static void commit(String path, String key, int value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
-        }
-        
-        public static void commit(String path, String key, float value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
-        }
-        
-        public static void commit(String path, String key, long value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
-        }
-        
-        public static void commit(String path, String key, double value) {
-            com.kongzue.baseframework.util.Preferences.getInstance().commit(instance, path, key, value);
-        }
-        
-        public static String getString(String path, String key) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getString(instance, path, key);
-        }
-        
-        public static String getString(String path, String key, String defaultValue) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getString(instance, path, key, defaultValue);
-        }
-        
-        public static boolean getBoolean(String path, String key) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getBoolean(instance, path, key);
-        }
-        
-        public static boolean getBoolean(String path, String key, boolean defaultValue) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getBoolean(instance, path, key, defaultValue);
-        }
-        
-        public static int getInt(String path, String key) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getInt(instance, path, key);
-        }
-        
-        public static int getInt(String path, String key, int defaultValue) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getInt(instance, path, key, defaultValue);
-        }
-        
-        public static float getFloat(String path, String key) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getFloat(instance, path, key);
-        }
-        
-        public static float getFloat(String path, String key, float defaultValue) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getFloat(instance, path, key, defaultValue);
-        }
-        
-        public static long getLong(String path, String key) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getLong(instance, path, key);
-        }
-        
-        public static long getLong(String path, String key, long defaultValue) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getLong(instance, path, key, defaultValue);
-        }
-        
-        public static double getDouble(String path, String key) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getDouble(instance, path, key);
-        }
-        
-        public static double getDouble(String path, String key, double defaultValue) {
-            return com.kongzue.baseframework.util.Preferences.getInstance().getDouble(instance, path, key, defaultValue);
-        }
-        
-        public static void clean(String path) {
-            com.kongzue.baseframework.util.Preferences.getInstance().cleanAll(instance, path);
-        }
-        
-        public void set(String key, String value) {
-            Settings.set(path, key, value);
-        }
-        
-        public void set(String key, boolean value) {
-            Settings.set(path, key, value);
-        }
-        
-        public void set(String key, int value) {
-            Settings.set(path, key, value);
-        }
-        
-        public void set(String key, float value) {
-            Settings.set(path, key, value);
-        }
-        
-        public void set(String key, long value) {
-            Settings.set(path, key, value);
-        }
-        
-        public void set(String key, double value) {
-            Settings.set(path, key, value);
-        }
-        
-        public void commit(String key, String value) {
-            Settings.commit(path, key, value);
-        }
-        
-        public void commit(String key, boolean value) {
-            Settings.commit(path, key, value);
-        }
-        
-        public void commit(String key, int value) {
-            Settings.commit(path, key, value);
-        }
-        
-        public void commit(String key, float value) {
-            Settings.commit(path, key, value);
-        }
-        
-        public void commit(String key, long value) {
-            Settings.commit(path, key, value);
-        }
-        
-        public void commit(String key, double value) {
-            Settings.commit(path, key, value);
-        }
-        
-        public String getString(String key) {
-            return getString(path, key);
-        }
-        
-        public String getStringWithDefaultValue(String key, String defaultValue) {
-            return getString(path, key, defaultValue);
-        }
-        
-        public boolean getBoolean(String key) {
-            return getBoolean(path, key);
-        }
-        
-        public boolean getBoolean(String key, boolean defaultValue) {
-            return getBoolean(path, key, defaultValue);
-        }
-        
-        public int getInt(String key) {
-            return getInt(path, key);
-        }
-        
-        public int getInt(String key, int defaultValue) {
-            return getInt(path, key, defaultValue);
-        }
-        
-        public float getFloat(String key) {
-            return getFloat(path, key);
-        }
-        
-        public float getFloat(String key, float defaultValue) {
-            return getFloat(path, key, defaultValue);
-        }
-        
-        public long getLong(String key) {
-            return getLong(path, key);
-        }
-        
-        public long getLong(String key, long defaultValue) {
-            return getLong(path, key, defaultValue);
-        }
-        
-        public double getDouble(String key) {
-            return getDouble(path, key);
-        }
-        
-        public double getDouble(String key, double defaultValue) {
-            return getDouble(path, key, defaultValue);
-        }
-        
-        public void clean() {
-            clean(path);
+            super(path);
         }
     }
     
+    /**
+     * 此方法用于主动设置实例化 application 对象以实现一些需要 context 的场合下不需要传参，减少工作量，
+     * 在您有实现 App extends BaseApp 的情况下无需调用，
+     * 请勿手动调用此方法，此接口仅用于 BaseActivity 以固定逻辑调用。
+     *
+     * @param context Application 上下文
+     * @hide
+     */
     public static void setPrivateInstance(Application context) {
         BaseApp.instance = context;
     }
     
+    /**
+     * 此方法用于主动获取实例化的 application 对象以实现一些需要 context 的场合下不需要传参，减少工作量，
+     * 如需要使用 App 的实例化对象，请勿使用本方法，
+     * 请自行实现 getInstance() 方法，或使用 {@link #getInstance(Class)} 来获取。
+     *
+     * @return 例化的 application 对象
+     */
     public static Application getPrivateInstance() {
         if (instance == null) {
             return null;

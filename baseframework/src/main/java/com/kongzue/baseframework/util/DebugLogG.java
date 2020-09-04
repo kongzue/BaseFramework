@@ -165,7 +165,12 @@ public class DebugLogG {
         if (logFile == null) {
             createWriter();
         }
-        Preferences.getInstance().commit(BaseApp.getPrivateInstance(), "cache", "bugReporterFile", logFile.getAbsolutePath());
+        if (BaseApp.getPrivateInstance() != null) {
+            if (logFile == null) {
+                createWriter();
+            }
+            Preferences.getInstance().commit(BaseApp.getPrivateInstance(), "cache", "bugReporterFile", logFile.getAbsolutePath());
+        }
         showInfo(e);
     }
     

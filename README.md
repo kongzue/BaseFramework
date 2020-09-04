@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.5-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.6-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.5/link">
-<img src="https://img.shields.io/badge/Maven-6.7.5-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.6/link">
+<img src="https://img.shields.io/badge/Maven-6.7.6-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -43,14 +43,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.5</version>
+  <version>6.7.6</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.5'
+implementation 'com.kongzue.baseframework:baseframework:6.7.6'
 ```
 
 ### AndroidX 版本
@@ -62,15 +62,19 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.5</version>
+  <version>6.7.6</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.5'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.6'
 ```
+
+## 使用提示
+    
+以下文档为各功能模块的介绍，额外的，强烈建议阅读 [DemoActivity.java](https://github.com/kongzue/BaseFramework/blob/master/app/src/main/java/com/kongzue/baseframeworkdemo/activity/DemoActivity.java) 和 [FunctionFragment.java](https://github.com/kongzue/BaseFramework/blob/master/app/src/main/java/com/kongzue/baseframeworkdemo/fragment/FunctionFragment.java) 两个范例代码内容以了解更详细的开发流程和功能说明。
 
 # 目录
 
@@ -106,7 +110,7 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.5'
 
 ···· <a href="#2-4">BaseFragment 间的数据传递和回调</a>
 
-· <a href="#3">**设置、属性值的存储读取工具 Preferences**</a>
+· <a href="#3">**设置、属性值的存储读取工具 Settings**</a>
 
 · <a href="#4">**AppManager**</a>
 
@@ -149,6 +153,16 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.5'
 setDarkStatusBarTheme(true);            //开启顶部状态栏图标、文字暗色模式
 setDarkNavigationBarTheme(true);        //开启底部导航栏按钮暗色模式
 setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
+```
+
+建议直接使用无 ActionBar 的 Activity 样式：
+```
+<!-- 在 res/values/styles.xml 中修改继承关系为：Theme.AppCompat.Light.NoActionBar -->
+<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <item name="colorPrimary">@color/colorPrimary</item>
+    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+    <item name="colorAccent">@color/colorAccent</item>
+</style>
 ```
 
 ### <a name="1-1">绑定 Layout 布局</a>
@@ -728,11 +742,14 @@ jump(functionFragment, new JumpParameter()
 setFragmentResponse(JumpParameter parameter);
 ```
 
-## <a name="3">设置、属性值的存储读取工具 Preferences</a>
+## <a name="3">设置、属性值的存储读取工具 Settings</a>
+
+@Deprecated
+```
 Preferences是SharedPreferences的简易封装。
 
 每次手写SharedPreferences过于繁琐，因此封装了一个简易的属性记录读取类。 通过对属性的常见数据类型进行封装，使属性读取写入更方便，同时提供一些属性管理方法。
-```
+
 //读取属性为String类型
 //参数：context上下文索引，path路径，preferencesName属性名
 getString(context, path, preferencesName)
@@ -747,13 +764,14 @@ set(context, path, preferencesName, ?)
 
 //提供清除（清空）所有属性的方法
 cleanAll();
+
 ```
 
 从 6.7.5 版本起，如果您使用 BaseApp 作为应用的 Application 实例，您可以使用 BaseApp 提供的 Settings 类进行设置、属性的读写操作。
 
 例如 Demo 中，我们编写了 App 类继承 BaseApp 并作为 Demo 应用的 Application，则可以按如下方法读写设置：
 ```
-//自定义 SharedPreferences 实例（可选，默认不设置即使用系统 SharedPreferences 实例）
+//可选：自定义 SharedPreferences 实例（可选，默认不设置即使用系统 SharedPreferences 实例）
 App.Settings.init(new Preferences.ChangeSharedPreferencesPathCallBack() {
     @Override
     public SharedPreferences onPathChange(String path) {
@@ -769,6 +787,41 @@ App.Settings.set("path", "key", "value");
 //读设置
 String value = App.Settings("path").getString("key");
 String value2 = App.Settings.getString("path", "key");
+```
+
+另外，为了更容易区分和编写数据存储逻辑，您可以自定义类继承 Settings，重写构造方法直接设定好 path，以便于后续读写操作可以直接进行：
+```
+public static CACHE cache = new CACHE();
+public static class CACHE extends Settings{
+    public CACHE() {
+        super("cache");
+    }
+}
+
+//进行读写：
+App.cache.set("key", "value");
+String value = App.cache.getString("key");
+
+//图像读写：
+Bitmap bm;      //可直接存储 Bitmap  
+App.cache.set("bitmap", bm);
+Bitmap readBmp = App.cache.getBitmap("bitmap");
+//备注：图像读写本质上是借助 PictureCache 类在缓存区进行的文件存储操作，你也可以手动使用 PictureCache 进行读写操作。
+
+//数据清除
+App.cache.clean();
+```
+
+对于序列化对象，也可以直接使用 Settings 进行存取：
+
+例如，对于序列化对象 User 进行读写即：
+```
+//存储
+User user = new User("张三", 18, "192.168.1.1");
+App.user.set("userInfo", user);
+
+//读取（请注意结果可能为 null）
+User user = App.user.getObject("userInfo", User.class);
 ```
 
 ## <a name="4">AppManager</a>
@@ -1192,6 +1245,14 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.6:
+- BaseApp 提供 getInstance(Class) 方法获取已实例化的 App 对象；
+- BaseActivity 和 BaseFragment 新增实验性的 click(view, OnClickListener) 防重复点击的方法；
+- BaseActivity 和 BaseFragment 新增 showIME(@notNull editText) 和 hideIME(@nullable editText) 方法用于快速显示/隐藏输入法；
+- 新增 PictureCache 工具类，BaseApp 提供 Settings 提供 bitmap 的缓存读写；
+- 修复 DebugLogG 在创建日志文件时出现的空指针问题；
+- 修复调用 AppManager.getActiveActivity() 的空指针问题；
+
 v6.7.5:
 - LogG 统一日志打印流程；
 - BaseActivity 和 BaseFragment 提供可重写的方法 interceptSetContentView() 可阻止默认初始化布局的流程；

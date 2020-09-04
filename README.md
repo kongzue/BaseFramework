@@ -744,42 +744,9 @@ setFragmentResponse(JumpParameter parameter);
 
 ## <a name="3">设置、属性值的存储读取工具 Settings</a>
 
-@Deprecated
+如果您编写了 BaseApp 的实现类 App（具体请参考章节<a href="#10">《BaseApp功能》</a>），您可以使用以下方法进行设置的读写：
 ```
-Preferences是SharedPreferences的简易封装。
-
-每次手写SharedPreferences过于繁琐，因此封装了一个简易的属性记录读取类。 通过对属性的常见数据类型进行封装，使属性读取写入更方便，同时提供一些属性管理方法。
-
-//读取属性为String类型
-//参数：context上下文索引，path路径，preferencesName属性名
-getString(context, path, preferencesName)
-//类似的，提供读取为Boolean的方法：
-getBoolean(context, path, preferencesName)
-//提供读取为Int的方法：
-getInt(context, path, preferencesName)
-
-//写入属性方法是统一的
-//参数：context上下文索引，path路径，preferencesName属性名，value根据属性数据类型定义
-set(context, path, preferencesName, ?)
-
-//提供清除（清空）所有属性的方法
-cleanAll();
-
-```
-
-从 6.7.5 版本起，如果您使用 BaseApp 作为应用的 Application 实例，您可以使用 BaseApp 提供的 Settings 类进行设置、属性的读写操作。
-
-例如 Demo 中，我们编写了 App 类继承 BaseApp 并作为 Demo 应用的 Application，则可以按如下方法读写设置：
-```
-//可选：自定义 SharedPreferences 实例（可选，默认不设置即使用系统 SharedPreferences 实例）
-App.Settings.init(new Preferences.ChangeSharedPreferencesPathCallBack() {
-    @Override
-    public SharedPreferences onPathChange(String path) {
-        //sharedPreferences: 可以使用第三方的 SharedPreferences 实例，例如来自腾讯的 MMKV 等
-        return sharedPreferences;
-    }
-});
-
+//参数 "path" 为分区名，之后您可以单独清除某个分区的存储信息而不影响其他已存储的信息
 //写设置：
 App.Settings("path").set("key", "value");
 App.Settings.set("path", "key", "value");
@@ -789,27 +756,19 @@ String value = App.Settings("path").getString("key");
 String value2 = App.Settings.getString("path", "key");
 ```
 
-另外，为了更容易区分和编写数据存储逻辑，您可以自定义类继承 Settings，重写构造方法直接设定好 path，以便于后续读写操作可以直接进行：
+额外的，您可以直接将 bitmap 进行缓存：
 ```
-public static CACHE cache = new CACHE();
-public static class CACHE extends Settings{
-    public CACHE() {
-        super("cache");
-    }
-}
-
-//进行读写：
-App.cache.set("key", "value");
-String value = App.cache.getString("key");
-
 //图像读写：
 Bitmap bm;      //可直接存储 Bitmap  
-App.cache.set("bitmap", bm);
-Bitmap readBmp = App.cache.getBitmap("bitmap");
+App.Settings("path").set("bitmap", bm);
+Bitmap readBmp = App.Settings("path").getBitmap("bitmap");
 //备注：图像读写本质上是借助 PictureCache 类在缓存区进行的文件存储操作，你也可以手动使用 PictureCache 进行读写操作。
+```
 
+对分区数据进行清除：
+```
 //数据清除
-App.cache.clean();
+App.Settings("path").clean();
 ```
 
 对于序列化对象，也可以直接使用 Settings 进行存取：
@@ -822,6 +781,45 @@ App.user.set("userInfo", user);
 
 //读取（请注意结果可能为 null）
 User user = App.user.getObject("userInfo", User.class);
+```
+
+为了更容易区分和编写数据存储逻辑，您可以自行编写存储类继承 SettingsUtil 来实现存储读写。
+
+例如 Demo 中，我们编写了用于存储用户信息的 USER 存储类：
+```
+public class USER extends SettingsUtil {
+    
+    public USER() {
+        //初始化方法用于确定存储分区（path），之后您可以单独清除某个分区的存储信息而不影响其他已存储的信息
+        super("user");
+    }
+}
+```
+然后在 App 类中编写了 USER 的实现：
+```
+public static USER user = new USER();
+```
+
+接下来，即可在应用的任意地方使用 App.user 来访问用户信息的读写操作，无需再次传入分区名作为参数
+```
+ App.user.set("userName", "张三");
+```
+
+### 自定义存储器实现实例（非必需操作）
+SettingsUtil 的底层是 SharedPreferences 的封装，而 SharedPreferences 是可以使用第三方实现的。
+
+默认不设置则使用系统默认的 SharedPreferences 实现方式。
+
+要使用第三方实现，可以在 SettingsUtil.init(...) 回调中给出第三方实现的实例化对象即可：
+```
+//可选：自定义 SharedPreferences 实例（可选，默认不设置即使用系统 SharedPreferences 实例）
+SettingsUtil.init(new Preferences.ChangeSharedPreferencesPathCallBack() {
+    @Override
+    public SharedPreferences onPathChange(String path) {
+        //sharedPreferences: 可以使用第三方的 SharedPreferences 实例，例如来自腾讯的 MMKV 等
+        return sharedPreferences;
+    }
+});
 ```
 
 ## <a name="4">AppManager</a>
@@ -1246,6 +1244,8 @@ limitations under the License.
 
 ## <a name="about">更新日志</a>：
 v6.7.6:
+- 为 Demo 项目提供了完整的注释信息；
+- Settings 提供了 JavaBean 的读写支持；
 - BaseApp 提供 getInstance(Class) 方法获取已实例化的 App 对象；
 - BaseActivity 和 BaseFragment 新增实验性的 click(view, OnClickListener) 防重复点击的方法；
 - BaseActivity 和 BaseFragment 新增 showIME(@notNull editText) 和 hideIME(@nullable editText) 方法用于快速显示/隐藏输入法；

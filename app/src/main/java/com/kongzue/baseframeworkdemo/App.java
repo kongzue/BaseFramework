@@ -10,6 +10,7 @@ import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.SettingsUtil;
 import com.kongzue.baseframeworkdemo.util.User;
 
 import java.io.File;
@@ -73,7 +74,7 @@ public class App extends BaseApp<App> {
     
     public static USER user = new USER();
     
-    public static class USER extends Settings {
+    public static class USER extends SettingsUtil {
         
         public USER() {
             super("user");
@@ -82,7 +83,7 @@ public class App extends BaseApp<App> {
     
     public static CACHE cache;
     
-    public static class CACHE extends Settings {
+    public static class CACHE extends SettingsUtil {
         
         public CACHE() {
             super("cache");

@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -249,7 +250,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     }
     
     public final <T extends View> T findViewById(@IdRes int id) {
-        return rootView.findViewById(id);
+        return (T) rootView.findViewById(id);
     }
     
     private Toast toast;
@@ -555,6 +556,14 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         me.showIME(show, editText);
     }
     
+    public void showIME(@NonNull EditText editText) {
+        me.showIME(editText);
+    }
+    
+    public void hideIME(@Nullable EditText editText) {
+        me.hideIME(editText);
+    }
+    
     /**
      * 不推荐使用 onResume
      * 建议使用 {@link #onLoad()} 或 {@link #onShow(boolean)} 代替。
@@ -731,4 +740,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         return mAdded;
     }
     
+    public void click(View v, View.OnClickListener onClickListener) {
+        me.click(v, onClickListener);
+    }
 }

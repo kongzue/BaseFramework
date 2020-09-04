@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
  * Version 2.0
  * Update 2018.5.27
  */
+@Deprecated
 public class Preferences {
     
     private static Preferences preferences;

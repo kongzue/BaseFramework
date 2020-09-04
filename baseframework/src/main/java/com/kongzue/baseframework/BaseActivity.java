@@ -23,6 +23,7 @@ import android.provider.Settings;
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.SharedElementCallback;
@@ -34,6 +35,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowInsets;
@@ -119,7 +121,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private boolean darkStatusBarThemeValue = false;
     private boolean darkNavigationBarThemeValue = false;
     private int navigationBarBackgroundColorValue = Color.BLACK;
-    private int layoutResId = android.R.layout.list_content;
+    private int layoutResId = 0;
     private int fragmentLayoutId = -1;
     
     private Bundle savedInstanceState;
@@ -144,9 +146,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         
         if (!interceptSetContentView()) {
             layoutResId = resetLayoutResId();
-            if (layoutResId == android.R.layout.list_content) {
+            if (layoutResId == 0) {
                 Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
-                return;
             }
             setContentView(layoutResId);
         }
@@ -737,6 +738,29 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         } else {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+        }
+    }
+    
+    public void showIME(@NonNull EditText editText) {
+        if (editText == null) {
+            return;
+        }
+        editText.requestFocus();
+        editText.setFocusableInTouchMode(true);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+    }
+    
+    public void hideIME(@Nullable EditText editText) {
+        if (editText != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(),  InputMethodManager.HIDE_NOT_ALWAYS);
+        } else {
+            View view = getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(),  InputMethodManager.HIDE_NOT_ALWAYS);
+            }
         }
     }
     
@@ -1525,5 +1549,41 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.remove("android:support:fragments");
+    }
+    
+    public void click(View v, View.OnClickListener onClickListener) {
+        v.setFocusableInTouchMode(true);
+        v.setOnTouchListener(new View.OnTouchListener() {
+            int touchFlag = 0;
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (touchFlag == 0) {
+                            touchFlag = 1;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (touchFlag == 1) {
+                            touchFlag = -1;
+                            onClickListener.onClick(v);
+                            runDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    touchFlag = 0;
+                                }
+                            }, 500);
+                        }
+                        break;
+                    case MotionEvent.ACTION_CANCEL:
+                        if (touchFlag == 1) {
+                            touchFlag = 0;
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
     }
 }

@@ -105,8 +105,6 @@ public class BaseFrameworkSettings {
                     Log.v(">>>>>>", logStr);
                 }
             }
-            
-            Log.v(">>>>>>", logStr);
         }
     }
     

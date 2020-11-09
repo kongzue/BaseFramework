@@ -43,14 +43,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.6</version>
+  <version>6.7.7</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.6'
+implementation 'com.kongzue.baseframework:baseframework:6.7.7'
 ```
 
 ### AndroidX 版本
@@ -73,7 +73,7 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.6'
 ```
 
 ## 使用提示
-    
+
 以下文档为各功能模块的介绍，额外的，强烈建议阅读 [DemoActivity.java](https://github.com/kongzue/BaseFramework/blob/master/app/src/main/java/com/kongzue/baseframeworkdemo/activity/DemoActivity.java) 和 [FunctionFragment.java](https://github.com/kongzue/BaseFramework/blob/master/app/src/main/java/com/kongzue/baseframeworkdemo/fragment/FunctionFragment.java) 两个范例代码内容以了解更详细的开发流程和功能说明。
 
 # 目录
@@ -342,6 +342,9 @@ getNavbarHeight()
 
 //获取真实的屏幕高度，注意判断非0
 getRootHeight()
+
+//返回按键事件拦截（重写此方法，return true为拦截返回按键事件）
+onBack()
 ```
 另外，为方便开发，从 6.7.2 版本起，会自动对布局中使用“back”作为 id 的 View 会自动绑定返回事件（可重写）
 
@@ -592,6 +595,9 @@ util.size();
 
 //添加切换动画（请在show(...)方法前执行）
 util.anim(int enterAnimResId, int exitAnimResId)
+
+//返回按键事件拦截（重写此方法，return true为拦截返回按键事件）
+onBack()
 ```
 
 FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addFragment(BaseFragment fragment)，不再执行预加载，也就是说，执行后，仅添加了 Fragment 而不会执行任何事件。
@@ -1243,7 +1249,16 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.7:
+
+- 取消了强制`@Layout`设置布局的形式，现在还可以通过重写`resetLayoutResId()`方法来绑定布局；
+- 在 BaseActivity 和 BaseFragment 中提供了全新的可重写`onBack()`方法，以取代BaseActivity的onBackPressed()方法，当此方法return值为true时，将拦截返回事件，若当前Activity正在显示一个BaseFragment，那么会优先询问正在显示的BaseFragment是否拦截；
+- 在 BaseActivity 和 BaseFragment 中提供了可重写`lazyInit()`方法，此方法执行过程是在当前 Activity 或 Fragment 完成渲染后执行。
+- BaseFragment 提供了`jump(int index, OnJumpResponseListener onJumpResponseListener)`可直接跳转到其他 BaseFragment 并在返回后获得返回数据。
+- 修复了 BaseFrameworkSettings.log(...) 重复打印日志的 bug；
+
 v6.7.6:
+
 - 为 Demo 项目提供了完整的注释信息；
 - Settings 提供了 JavaBean 的读写支持；
 - BaseApp 提供 getInstance(Class) 方法获取已实例化的 App 对象；

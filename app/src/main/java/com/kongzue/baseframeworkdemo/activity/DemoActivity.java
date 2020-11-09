@@ -3,6 +3,7 @@ package com.kongzue.baseframeworkdemo.activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.view.View;
+
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.interfaces.BindView;
@@ -62,6 +63,15 @@ public class DemoActivity extends BaseActivity {
         tabs.add(new Tab(this, getString(R.string.function), R.mipmap.img_maintab_function));
         tabs.add(new Tab(this, getString(R.string.github), R.mipmap.img_maintab_me));
         tabbar.setTab(tabs);
+    }
+    
+    @Override
+    protected void lazyInit(JumpParameter parameter) {
+    
+    }
+    
+    private void doTestError() throws NullPointerException {
+        throw new NullPointerException("This is a exception for test");
     }
     
     @Override

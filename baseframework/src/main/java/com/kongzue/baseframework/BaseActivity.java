@@ -114,7 +114,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private boolean darkStatusBarThemeValue = false;
     private boolean darkNavigationBarThemeValue = false;
     private int navigationBarBackgroundColorValue = Color.BLACK;
-    private int layoutResId = 0;
+    private int layoutResId = -1;
     private int fragmentLayoutId = -1;
     
     private Bundle savedInstanceState;
@@ -139,8 +139,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         
         if (!interceptSetContentView()) {
             layoutResId = resetLayoutResId();
-            if (layoutResId == 0) {
-                Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
+            if (layoutResId == -1) {
+                errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
+                return;
             }
             setContentView(layoutResId);
         }
@@ -153,12 +154,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
         AppManager.getInstance().pushActivity(me);
         
+        initBindViewAndFunctions();
         initViews();
         initFragments();
         bindAutoEvent();
-        initBindViewAndFunctions();
         initDatas(getParameter());
         setEvents();
+        getRootView().post(new Runnable() {
+            @Override
+            public void run() {
+                lazyInit(getParameter());
+            }
+        });
         
         if (lifeCircleListener != null) {
             lifeCircleListener.onCreate();
@@ -254,6 +261,30 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 }
             });
         }
+    }
+    
+    /**
+     * 不推荐使用此方法，推荐重写 onBack()，并使用 return 值确定是否拦截返回按键的事件
+     */
+    @Override
+    @Deprecated
+    public void onBackPressed() {
+        if (!onBack()) {
+            super.onBackPressed();
+        }
+    }
+    
+    /**
+     * 根绝 return 值确定是否允许执行返回指令。
+     * 若当前 Activity 正在显示 Fragment，会优先询问正在显示的 Fragment 是否拦截返回事件。
+     *
+     * @return true：拦截返回指令；false：执行返回指令。
+     */
+    public boolean onBack() {
+        if (fragmentChangeUtil != null && fragmentChangeUtil.getFocusFragment() != null) {
+            return fragmentChangeUtil.getFocusFragment().onBack();
+        }
+        return false;
     }
     
     public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
@@ -727,10 +758,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             editText.requestFocus();
             editText.setFocusableInTouchMode(true);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+            imm.showSoftInput(editText, InputMethodManager.RESULT_UNCHANGED_SHOWN);
         } else {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
     
@@ -741,18 +772,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         editText.requestFocus();
         editText.setFocusableInTouchMode(true);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+        imm.showSoftInput(editText, InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
     
     public void hideIME(@Nullable EditText editText) {
         if (editText != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(),  InputMethodManager.HIDE_NOT_ALWAYS);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         } else {
             View view = getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(),  InputMethodManager.HIDE_NOT_ALWAYS);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }
     }
@@ -1272,6 +1303,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             jumpParameter = new JumpParameter();
         }
         return jumpParameter;
+    }
+    
+    protected void lazyInit(JumpParameter parameter) {
     }
     
     @Override

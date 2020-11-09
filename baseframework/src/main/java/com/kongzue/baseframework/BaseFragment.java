@@ -90,13 +90,15 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
                 Layout layout = getClass().getAnnotation(Layout.class);
                 if (layout != null && layout.value() != -1) {
                     layoutResId = layout.value();
-                } else {
-                    throw new Exception("请在您的Fragment的Class上注解：@Layout(你的layout资源id)");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
             layoutResId = resetLayoutResId();
+            if (layoutResId == -1) {
+                errorLog("请在您的Fragment的Class上注解：@Layout(你的layout资源id)，或重写resetLayoutResId()方法以设置布局");
+                return null;
+            }
             if (rootView == null) {
                 rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
             }
@@ -111,7 +113,18 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         initBindViewAndFunctions();
         initDatas();
         setEvents();
+        
+        rootView.post(new Runnable() {
+            @Override
+            public void run() {
+                lazyInit(getParameter());
+            }
+        });
+        
         return rootView;
+    }
+    
+    protected void lazyInit(JumpParameter parameter) {
     }
     
     public View interceptSetContentView() {
@@ -439,6 +452,16 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         me.changeFragment(index);
     }
     
+    public void jump(int index, OnJumpResponseListener onJumpResponseListener) {
+        ParameterCache.getInstance().cleanResponse(this.getClass().getName());
+        JumpParameter jumpParameter = new JumpParameter();
+        this.onJumpResponseListener = onJumpResponseListener;
+        ParameterCache.getInstance().set(me.getFragmentChangeUtil().getFragment(index).getClass().getName(),
+                jumpParameter.put("needResponse", true).put("responseClassName", this.getClass().getName())
+        );
+        me.changeFragment(index);
+    }
+    
     //目标Fragment：设定要返回的数据
     public void setFragmentResponse(JumpParameter jumpParameter) {
         ParameterCache.getInstance().setResponse((String) getFragmentParameter().get("responseClassName"), jumpParameter);
@@ -739,6 +762,10 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public void click(View v, View.OnClickListener onClickListener) {
         me.click(v, onClickListener);
+    }
+    
+    public boolean onBack() {
+        return false;
     }
 }
 

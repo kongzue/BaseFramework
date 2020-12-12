@@ -49,6 +49,7 @@ Maven仓库：
 ```
 Gradle：
 在dependencies{}中添加引用：
+
 ```
 implementation 'com.kongzue.baseframework:baseframework:6.7.7'
 ```
@@ -70,6 +71,23 @@ Gradle：
 在dependencies{}中添加引用：
 ```
 implementation 'com.kongzue.baseframeworkx:baseframework:6.7.6'
+```
+
+### 测试版本
+
+警告：测试版本可能存在不稳定情况，如果有任何问题请提交 [issues](https://github.com/kongzue/BaseFramework/issues)，并在标题注明测试版本号
+
+```
+implementation 'com.kongzue.baseframework:baseframework:6.7.7.6'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.7.6'
+```
+
+更新日志：
+
+```
+- 新增了@OnClicks(...)注解可以绑定多个组件的点击事件；
+- 修复了在initDatas()、setEvents()方法中调用jump并设置返回监听器时出现返回监听器直接空值返回的问题。
+- @FragmentLayout(...)新增ViewPager支持；
 ```
 
 ## 使用提示

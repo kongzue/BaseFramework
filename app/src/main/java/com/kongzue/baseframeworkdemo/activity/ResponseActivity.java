@@ -6,6 +6,7 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframeworkdemo.App;
@@ -15,6 +16,8 @@ import com.kongzue.baseframeworkdemo.R;
 @Layout(R.layout.activity_response)
 //支持侧滑返回
 @SwipeBack(true)
+//设置底部导航栏背景颜色，此外还可以使用 @NavigationBarBackgroundColor 来指定 argb 颜色
+@NavigationBarBackgroundColorRes(R.color.colorWhite)
 public class ResponseActivity extends BaseActivity {
 
     private TextView txtTitle;

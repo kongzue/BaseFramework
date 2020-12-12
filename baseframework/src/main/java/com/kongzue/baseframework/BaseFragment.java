@@ -23,7 +23,9 @@ import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.util.CycleRunner;
+import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
@@ -191,6 +193,34 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
                                 }
                             }
                         });
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            Method[] methods = getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(OnClicks.class)) {
+                    OnClicks onClicks = method.getAnnotation(OnClicks.class);
+                    if (onClicks != null && onClicks.value().length != 0) {
+                        for (int id : onClicks.value()) {
+                            View v = findViewById(id);
+                            v.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    try {
+                                        method.invoke(me, v);
+                                    } catch (Exception e) {
+                                        try {
+                                            method.invoke(me);
+                                        } catch (Exception e1) {
+                                        }
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -431,7 +461,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         this.onJumpResponseListener = onJumpResponseListener;
         ParameterCache.getInstance().set(baseFragment.getClass().getName(),
-                jumpParameter.put("needResponse", true).put("responseClassName", this.getClass().getName())
+                jumpParameter.put("needResponse", true).put("responseClassName", getInstanceKey())
         );
         me.changeFragment(baseFragment);
     }
@@ -450,7 +480,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         }
         this.onJumpResponseListener = onJumpResponseListener;
         ParameterCache.getInstance().set(me.getFragmentChangeUtil().getFragment(index).getClass().getName(),
-                jumpParameter.put("needResponse", true).put("responseClassName", this.getClass().getName())
+                jumpParameter.put("needResponse", true).put("responseClassName", getInstanceKey())
         );
         me.changeFragment(index);
     }
@@ -460,14 +490,41 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         JumpParameter jumpParameter = new JumpParameter();
         this.onJumpResponseListener = onJumpResponseListener;
         ParameterCache.getInstance().set(me.getFragmentChangeUtil().getFragment(index).getClass().getName(),
-                jumpParameter.put("needResponse", true).put("responseClassName", this.getClass().getName())
+                jumpParameter.put("needResponse", true).put("responseClassName", getInstanceKey())
         );
         me.changeFragment(index);
     }
     
     //目标Fragment：设定要返回的数据
     public void setFragmentResponse(JumpParameter jumpParameter) {
-        ParameterCache.getInstance().setResponse((String) getFragmentParameter().get("responseClassName"), jumpParameter);
+        FragmentChangeUtil fragmentChangeUtil = me.getFragmentChangeUtil();
+        BaseFragment baseFragment = fragmentChangeUtil.getFragment(getFragmentParameter().getString("responseClassName"));
+        if (baseFragment != null) {
+            baseFragment.setResponseMessage(jumpParameter);
+        }
+    }
+    
+    private Runnable waitResponseRunnable;
+    
+    protected void setResponseMessage(JumpParameter jumpParameter) {
+        log(getClass().getName() + ".setResponseMessage: " + jumpParameter);
+        waitResponseRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (onJumpResponseListener != null) {
+                    JumpParameter responseData = jumpParameter;
+                    if (responseData == null) {
+                        responseData = new JumpParameter();
+                    }
+                    onJumpResponseListener.OnResponse(responseData);
+                    onJumpResponseListener = null;
+                }
+            }
+        };
+        if (isActive) {
+            runOnMain(waitResponseRunnable);
+            waitResponseRunnable = null;
+        }
     }
     
     public JumpParameter getFragmentParameter() {
@@ -614,15 +671,11 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
                 if (jumpParameter != null) {
                     onParameterReceived(jumpParameter);
                 }
-                if (onJumpResponseListener != null) {
-                    JumpParameter responseData = ParameterCache.getInstance().getResponse(this.getClass().getName());
-                    if (responseData == null) {
-                        responseData = new JumpParameter();
-                    }
-                    onJumpResponseListener.OnResponse(responseData);
-                    onJumpResponseListener = null;
-                }
             }
+        }
+        if (waitResponseRunnable != null) {
+            runOnMain(waitResponseRunnable);
+            waitResponseRunnable = null;
         }
         isCallShow = false;
         if (lifeCircleListener != null) {
@@ -769,5 +822,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public boolean onBack() {
         return false;
+    }
+    
+    public String getInstanceKey() {
+        return getClass().getName() + "@" + Integer.toHexString(hashCode());
     }
 }

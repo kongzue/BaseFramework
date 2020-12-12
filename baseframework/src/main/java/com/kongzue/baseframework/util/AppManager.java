@@ -224,6 +224,29 @@ public class AppManager {
         return null;
     }
     
+    public BaseActivity getActivityInstance(String instanceKey) {
+        if (activityStack == null) {
+            return null;
+        }
+        if (!activityStack.empty()) {
+            Stack<BaseActivity> reverseList = new Stack<BaseActivity>();
+            reverseList.addAll(activityStack);
+            Collections.reverse(reverseList);
+            Iterator<BaseActivity> iterator = reverseList.iterator();
+            BaseActivity temp = null;
+            while (iterator.hasNext()) {
+                BaseActivity activity = iterator.next();
+                if (activity != null && activity.getInstanceKey().equals(instanceKey)) {
+                    temp = activity;
+                }
+            }
+            if (temp != null) {
+                return temp;
+            }
+        }
+        return null;
+    }
+    
     public void onDestroy() {
         activityStack = new Stack<>();
     }

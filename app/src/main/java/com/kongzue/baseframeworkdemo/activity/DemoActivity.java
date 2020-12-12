@@ -10,6 +10,8 @@ import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
+import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.interfaces.OnFragmentChangeListener;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JumpParameter;
@@ -26,9 +28,9 @@ import java.util.List;
 
 @Layout(R.layout.activity_demo)
 @DarkStatusBarTheme(false)
-@NavigationBarBackgroundColor(a = 255, r = 255, g = 255, b = 255)
+@NavigationBarBackgroundColorRes(R.color.colorWhite)
 @DarkNavigationBarTheme(true)
-@FragmentLayout(R.id.frame)
+@FragmentLayout(R.id.viewPager)
 public class DemoActivity extends BaseActivity {
     
     private IntroductionFragment introductionFragment = new IntroductionFragment();
@@ -41,10 +43,7 @@ public class DemoActivity extends BaseActivity {
     @Override
     public void initViews() {
         tabbar = findViewById(R.id.tabbar);
-    }
     
-    @Override
-    public void initDatas(JumpParameter parameter) {
         List<Tab> tabs = new ArrayList<>();
         tabs.add(new Tab(this, getString(R.string.introduction), R.mipmap.img_tab_introduction));
         tabs.add(new Tab(this, getString(R.string.function), R.mipmap.img_maintab_function));
@@ -53,10 +52,22 @@ public class DemoActivity extends BaseActivity {
     }
     
     @Override
+    public void initDatas(JumpParameter parameter) {
+    }
+    
+    @Override
     public void initFragment(FragmentChangeUtil fragmentChangeUtil) {
         fragmentChangeUtil.addFragment(introductionFragment);
         fragmentChangeUtil.addFragment(functionFragment);
         fragmentChangeUtil.addFragment(aboutFragment);
+    
+        getFragmentChangeUtil().setOnFragmentChangeListener(new OnFragmentChangeListener() {
+            @Override
+            public void onChange(int index, BaseFragment fragment) {
+                log("index:"+index);
+                tabbar.setNormalFocusIndex(index);
+            }
+        });
         
         changeFragment(0);
     }
@@ -67,13 +78,6 @@ public class DemoActivity extends BaseActivity {
             @Override
             public void onTabChanged(View v, int index) {
                 changeFragment(index);
-            }
-        });
-        
-        getFragmentChangeUtil().setOnFragmentChangeListener(new OnFragmentChangeListener() {
-            @Override
-            public void onChange(int index, BaseFragment fragment) {
-                tabbar.setNormalFocusIndex(index);
             }
         });
     }

@@ -5,12 +5,14 @@ import android.widget.Button;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframeworkdemo.R;
 
 @Layout(R.layout.activity_transition)
 @SwipeBack(true)
+@NavigationBarBackgroundColorRes(R.color.colorPrimary)
 public class TransitionActivity extends BaseActivity {
     
     private Button btnTransition;

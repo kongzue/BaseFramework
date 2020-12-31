@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.7-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.8-green.svg" alt="Kongzue BaseFramework">
 </a> 
 <a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.7/link">
-<img src="https://img.shields.io/badge/Maven-6.7.7-blue.svg" alt="Maven">
+<img src="https://img.shields.io/badge/Maven-6.7.8-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -43,7 +43,7 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.7</version>
+  <version>6.7.8</version>
   <type>pom</type>
 </dependency>
 ```
@@ -51,7 +51,7 @@ Gradle：
 在dependencies{}中添加引用：
 
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.7'
+implementation 'com.kongzue.baseframework:baseframework:6.7.8'
 ```
 
 ### AndroidX 版本
@@ -63,31 +63,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.7</version>
+  <version>6.7.8</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.7'
-```
-
-### 测试版本
-
-警告：测试版本可能存在不稳定情况，如果有任何问题请提交 [issues](https://github.com/kongzue/BaseFramework/issues)，并在标题注明测试版本号
-
-```
-implementation 'com.kongzue.baseframework:baseframework:6.7.7.6'
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.7.6'
-```
-
-更新日志：
-
-```
-- 新增了@OnClicks(...)注解可以绑定多个组件的点击事件；
-- 修复了在initDatas()、setEvents()方法中调用jump并设置返回监听器时出现返回监听器直接空值返回的问题。
-- @FragmentLayout(...)新增ViewPager支持；
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.8'
 ```
 
 ## 使用提示
@@ -1267,6 +1250,15 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+
+v6.7.8:
+
+- 新增了@OnClicks(...)注解可以绑定多个组件的点击事件；
+- 修复了在initDatas()、setEvents()方法中调用jump并设置返回监听器时出现返回监听器直接空值返回的问题。
+- @FragmentLayout(...)新增ViewPager支持；
+- FragmentChangeUtil 增加了 show 方法可选参数 `autoHideOldFragment`，现在可以自定义是否隐藏正在显示的 Fragment；
+- 修复了在 API-29 以上时使用 Activity 透明主题可能出现无法透明的问题；
+
 v6.7.7:
 
 - 取消了强制`@Layout`设置布局的形式，现在还可以通过重写`resetLayoutResId()`方法来绑定布局；

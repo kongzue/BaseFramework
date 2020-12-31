@@ -91,7 +91,7 @@ import java.util.TimerTask;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
 /**
- * @Version: 6.7.0
+ * @Version: 6.7.8
  * @Author: Kongzue
  * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
@@ -129,7 +129,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (BaseApp.getPrivateInstance() == null) {
             BaseApp.setPrivateInstance(getApplication());
         }
-        mHelper = new SwipeBackActivityHelper(this);
+        SwipeBack swipeBack = getClass().getAnnotation(SwipeBack.class);
+        if (swipeBack != null) {
+            enableSwipeBack = swipeBack.value();
+        }
+        if (enableSwipeBack) mHelper = new SwipeBackActivityHelper(this);
         this.savedInstanceState = savedInstanceState;
         
         logG("\n" + me.getClass().getSimpleName(), "onCreate");
@@ -321,11 +325,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         this.lifeCircleListener = lifeCircleListener;
     }
     
+    protected boolean enableSwipeBack;
+    
     //加载注解设置
     private void initAttributes() {
         try {
             FullScreen fullScreen = getClass().getAnnotation(FullScreen.class);
-            SwipeBack swipeBack = getClass().getAnnotation(SwipeBack.class);
             Layout layout = getClass().getAnnotation(Layout.class);
             FragmentLayout fragmentLayout = getClass().getAnnotation(FragmentLayout.class);
             DarkNavigationBarTheme darkNavigationBarTheme = getClass().getAnnotation(DarkNavigationBarTheme.class);
@@ -340,11 +345,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                     requestWindowFeature(Window.FEATURE_NO_TITLE);
                 }
             }
-            mHelper.onActivityCreate();
-            if (swipeBack != null) {
-                setSwipeBackEnable(swipeBack.value());
-            } else {
-                setSwipeBackEnable(false);
+            
+            if (enableSwipeBack) {
+                mHelper.onActivityCreate();
+                setSwipeBackEnable(enableSwipeBack);
             }
             if (layout != null) {
                 if (layout.value() != -1) {
@@ -1579,12 +1583,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mHelper.onPostCreate();
+        if (enableSwipeBack) mHelper.onPostCreate();
     }
     
     @Override
     public SwipeBackLayout getSwipeBackLayout() {
-        return mHelper.getSwipeBackLayout();
+        return enableSwipeBack ? mHelper.getSwipeBackLayout() : null;
     }
     
     @Override

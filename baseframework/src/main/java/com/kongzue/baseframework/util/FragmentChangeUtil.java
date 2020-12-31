@@ -112,6 +112,11 @@ public class FragmentChangeUtil {
     }
     
     public FragmentChangeUtil show(BaseFragment fragment) {
+        show(fragment, true);
+        return this;
+    }
+    
+    public FragmentChangeUtil show(BaseFragment fragment, boolean autoHideOldFragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
@@ -128,7 +133,7 @@ public class FragmentChangeUtil {
                 exitAnimResId = 0;
             }
             
-            if (focusFragment != null) {
+            if (autoHideOldFragment && focusFragment != null) {
                 focusFragment.onHide();
                 transaction.hide(focusFragment);
             }
@@ -158,6 +163,11 @@ public class FragmentChangeUtil {
     }
     
     public FragmentChangeUtil show(int index) {
+        show(index, true);
+        return this;
+    }
+    
+    public FragmentChangeUtil show(int index, boolean autoHideOldFragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
@@ -170,7 +180,7 @@ public class FragmentChangeUtil {
                 exitAnimResId = 0;
             }
             
-            if (focusFragment != null) {
+            if (autoHideOldFragment && focusFragment != null) {
                 focusFragment.onHide();
                 transaction.hide(focusFragment);
             }
@@ -319,6 +329,11 @@ public class FragmentChangeUtil {
     
     public BaseFragment getFocusFragment() {
         return focusFragment;
+    }
+    
+    public FragmentChangeUtil setFocusFragment(BaseFragment fragment) {
+        focusFragment = fragment;
+        return this;
     }
     
     public int getFocusFragmentIndex() {

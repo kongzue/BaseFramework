@@ -17,7 +17,7 @@ import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
-import com.kongzue.baseframeworkdemo.AdapterTestActivity;
+import com.kongzue.baseframeworkdemo.activity.AdapterTestActivity;
 import com.kongzue.baseframeworkdemo.activity.DemoActivity;
 import com.kongzue.baseframeworkdemo.activity.JumpActivity;
 import com.kongzue.baseframeworkdemo.R;

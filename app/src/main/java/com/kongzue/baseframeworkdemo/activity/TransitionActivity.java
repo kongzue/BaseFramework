@@ -11,7 +11,6 @@ import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframeworkdemo.R;
 
 @Layout(R.layout.activity_transition)
-@SwipeBack(true)
 @NavigationBarBackgroundColorRes(R.color.colorPrimary)
 public class TransitionActivity extends BaseActivity {
     

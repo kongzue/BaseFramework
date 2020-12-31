@@ -1,4 +1,4 @@
-package com.kongzue.baseframeworkdemo;
+package com.kongzue.baseframeworkdemo.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,12 +17,14 @@ import com.kongzue.baseframework.interfaces.SimpleAdapterSettings;
 import com.kongzue.baseframework.interfaces.SimpleMapAdapterSettings;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframeworkdemo.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Layout(R.layout.activity_adapter_test)
 public class AdapterTestActivity extends BaseActivity {
     
     private TextView txtTitle;

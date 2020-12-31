@@ -28,6 +28,7 @@ import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframeworkdemo.activity.AdapterTestActivity;
 
 import java.io.File;
 import java.util.Locale;

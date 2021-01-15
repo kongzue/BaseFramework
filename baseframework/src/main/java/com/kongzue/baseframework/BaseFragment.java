@@ -681,6 +681,28 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         if (lifeCircleListener != null) {
             lifeCircleListener.onResume();
         }
+        if (resumeRunnableList != null) {
+            for (Runnable runnable : resumeRunnableList) {
+                runOnMain(runnable);
+            }
+        }
+    }
+    
+    private List<Runnable> resumeRunnableList;
+    
+    public void runOnResume(Runnable resumeRunnable) {
+        if (resumeRunnableList == null) {
+            resumeRunnableList = new ArrayList<>();
+        }
+        resumeRunnableList.add(resumeRunnable);
+    }
+    
+    public void cleanResumeRunnable() {
+        resumeRunnableList = new ArrayList<>();
+    }
+    
+    public void deleteResumeRunnable(Runnable resumeRunnable) {
+        if (resumeRunnableList != null) resumeRunnableList.remove(resumeRunnable);
     }
     
     @Override

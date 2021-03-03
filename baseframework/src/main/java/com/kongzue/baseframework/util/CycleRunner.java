@@ -1,4 +1,4 @@
-package com.kongzue.baseframework;
+package com.kongzue.baseframework.util;
 
 import java.util.Date;
 import java.util.Timer;

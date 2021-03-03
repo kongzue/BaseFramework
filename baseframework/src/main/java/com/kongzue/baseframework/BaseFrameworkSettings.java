@@ -19,8 +19,6 @@ import java.util.Locale;
  * Homepage: http://kongzue.com/
  * Mail: myzcxhh@live.cn
  * CreateTime: 2018/9/30 03:22
- *
- * 崩溃监控部分代码借鉴 (@var_rain)https://www.jianshu.com/p/2ebf802f7e78
  */
 public class BaseFrameworkSettings {
     
@@ -105,8 +103,6 @@ public class BaseFrameworkSettings {
                     Log.v(">>>>>>", logStr);
                 }
             }
-            
-            Log.v(">>>>>>", logStr);
         }
     }
     

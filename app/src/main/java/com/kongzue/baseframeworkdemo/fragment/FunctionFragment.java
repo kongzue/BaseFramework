@@ -12,10 +12,10 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.BaseFrameworkSettings;
-import com.kongzue.baseframework.CycleRunner;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;

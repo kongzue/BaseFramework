@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.6-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/BaseFramework-6.7.9-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.6/link">
-<img src="https://img.shields.io/badge/Maven-6.7.6-blue.svg" alt="Maven">
+<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.9/link">
+<img src="https://img.shields.io/badge/Maven-6.7.9-blue.svg" alt="Maven">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">
@@ -43,14 +43,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframework</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.6</version>
+  <version>6.7.9</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframework:baseframework:6.7.6'
+implementation 'com.kongzue.baseframework:baseframework:6.7.9'
 ```
 
 ### AndroidX 版本
@@ -62,14 +62,14 @@ Maven仓库：
 <dependency>
   <groupId>com.kongzue.baseframeworkx</groupId>
   <artifactId>baseframework</artifactId>
-  <version>6.7.6</version>
+  <version>6.7.9</version>
   <type>pom</type>
 </dependency>
 ```
 Gradle：
 在dependencies{}中添加引用：
 ```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.6'
+implementation 'com.kongzue.baseframeworkx:baseframework:6.7.9'
 ```
 
 ## 使用提示
@@ -1243,6 +1243,20 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+v6.7.9:
+- 修复了加载顺序导致的加载逻辑问题；
+- 支持了 @OnClicks 注解，可以绑定多个组件的点击事件；
+- 新增了 onBack() 重写事件，若当前 Activity 正在显示 Fragment，会优先询问正在显示的 Fragment 是否拦截返回事件；
+- 修改了 @SwipeBack 注解的生效时间，当不存在该注解时不增加 SwipeBack 侧滑返回布局；
+- 修改了输入法显示和隐藏相关逻辑，showIME不再强制显示输入法（之前会导致输入法在Activity关闭后无法正常自动关闭）；
+- setResponse 逻辑修改，现在可以更正确的在返回原 Activity 后执行回调逻辑；
+- 新增 lazyInit(JumpParameter) 重写事件，用于在界面渲染完毕后执行的加载逻辑；
+- 新增 runOnResume(Runnable) 方法，可以在 Activity 处于暂停状态时为其设置当该 Activity 恢复显示时执行的逻辑，若该 Activity 当前处于前台，则会直接在主线程执行。另外额外增加了 deleteResumeRunnable(Runnable) 删除指定待执行逻辑以及 cleanResumeRunnable() 清空所有待执行逻辑；
+- 新增 startActivityForResult(Intent, ActivityResultCallback) 方法，调用外部 Intent 时轻松获得回调数据；
+- AppManager 新增 getActivityInstance(instanceKey) 方法以快速获得 BaseActivity 实例，instanceKey 可根据 BaseActivity 的 getInstanceKey() 方法获得；
+- FragmentChangeUtil 新增 getFragment(instanceKey) 方法以快速获得 BaseFragment 实例，instanceKey 可根据 BaseFragment 的 getInstanceKey() 方法获得；
+- @FragmentLayout(...) 注解支持了 ViewPager 布局，使用 ViewPager 布局时 BaseFragment 自动绑定至 ViewPager；
+
 v6.7.6:
 - 为 Demo 项目提供了完整的注释信息；
 - Settings 提供了 JavaBean 的读写支持；

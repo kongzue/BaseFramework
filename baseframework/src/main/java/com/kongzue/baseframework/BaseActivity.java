@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
+import android.app.SharedElementCallback;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -19,12 +21,12 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
+
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.SharedElementCallback;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
@@ -41,9 +43,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.kongzue.baseframework.interfaces.BindViews;
-import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
+import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
@@ -55,10 +57,14 @@ import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorHex;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorInt;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
+import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
+import com.kongzue.baseframework.util.JsonFormat;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.LanguageUtil;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
@@ -86,10 +92,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TimerTask;
 
+import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
 
 /**
- * @Version: 6.7.0
+ * @Version: 6.7.8
  * @Author: Kongzue
  * @github: https://github.com/kongzue/BaseFramework
  * @link: http://kongzue.com/
@@ -114,7 +122,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private boolean darkStatusBarThemeValue = false;
     private boolean darkNavigationBarThemeValue = false;
     private int navigationBarBackgroundColorValue = Color.BLACK;
-    private int layoutResId = 0;
+    private int layoutResId = -1;
     private int fragmentLayoutId = -1;
     
     private Bundle savedInstanceState;
@@ -127,7 +135,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (BaseApp.getPrivateInstance() == null) {
             BaseApp.setPrivateInstance(getApplication());
         }
-        mHelper = new SwipeBackActivityHelper(this);
+        SwipeBack swipeBack = getClass().getAnnotation(SwipeBack.class);
+        if (swipeBack != null) {
+            enableSwipeBack = swipeBack.value();
+        }
+        if (enableSwipeBack) mHelper = new SwipeBackActivityHelper(this);
         this.savedInstanceState = savedInstanceState;
         
         logG("\n" + me.getClass().getSimpleName(), "onCreate");
@@ -140,7 +152,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (!interceptSetContentView()) {
             layoutResId = resetLayoutResId();
             if (layoutResId == 0) {
-                Log.e("警告！", "请在您的Activity的Class上注解：@Layout(你的layout资源id)");
+                errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
             }
             setContentView(layoutResId);
         }
@@ -153,12 +165,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
         AppManager.getInstance().pushActivity(me);
         
+        initBindViewAndFunctions();
         initViews();
         initFragments();
         bindAutoEvent();
-        initBindViewAndFunctions();
         initDatas(getParameter());
         setEvents();
+        getRootView().post(new Runnable() {
+            @Override
+            public void run() {
+                lazyInit(getParameter());
+            }
+        });
         
         if (lifeCircleListener != null) {
             lifeCircleListener.onCreate();
@@ -242,6 +260,34 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         } catch (Exception e) {
             e.printStackTrace();
         }
+        try {
+            Method[] methods = getClass().getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.isAnnotationPresent(OnClicks.class)) {
+                    OnClicks onClicks = method.getAnnotation(OnClicks.class);
+                    if (onClicks != null && onClicks.value().length != 0) {
+                        for (int id : onClicks.value()) {
+                            View v = findViewById(id);
+                            v.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    try {
+                                        method.invoke(me, v);
+                                    } catch (Exception e) {
+                                        try {
+                                            method.invoke(me);
+                                        } catch (Exception e1) {
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     private void bindAutoEvent() {
@@ -256,15 +302,40 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
     }
     
+    /**
+     * 不推荐使用此方法，推荐重写 onBack()，并使用 return 值确定是否拦截返回按键的事件
+     */
+    @Override
+    @Deprecated
+    public void onBackPressed() {
+        if (!onBack()) {
+            super.onBackPressed();
+        }
+    }
+    
+    /**
+     * 根绝 return 值确定是否允许执行返回指令。
+     * 若当前 Activity 正在显示 Fragment，会优先询问正在显示的 Fragment 是否拦截返回事件。
+     *
+     * @return true：拦截返回指令；false：执行返回指令。
+     */
+    public boolean onBack() {
+        if (fragmentChangeUtil != null && fragmentChangeUtil.getFocusFragment() != null) {
+            return fragmentChangeUtil.getFocusFragment().onBack();
+        }
+        return false;
+    }
+    
     public void setLifeCircleListener(LifeCircleListener lifeCircleListener) {
         this.lifeCircleListener = lifeCircleListener;
     }
+    
+    protected boolean enableSwipeBack;
     
     //加载注解设置
     private void initAttributes() {
         try {
             FullScreen fullScreen = getClass().getAnnotation(FullScreen.class);
-            SwipeBack swipeBack = getClass().getAnnotation(SwipeBack.class);
             Layout layout = getClass().getAnnotation(Layout.class);
             FragmentLayout fragmentLayout = getClass().getAnnotation(FragmentLayout.class);
             DarkNavigationBarTheme darkNavigationBarTheme = getClass().getAnnotation(DarkNavigationBarTheme.class);
@@ -279,11 +350,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                     requestWindowFeature(Window.FEATURE_NO_TITLE);
                 }
             }
-            mHelper.onActivityCreate();
-            if (swipeBack != null) {
-                setSwipeBackEnable(swipeBack.value());
-            } else {
-                setSwipeBackEnable(false);
+            
+            if (enableSwipeBack) {
+                mHelper.onActivityCreate();
+                setSwipeBackEnable(enableSwipeBack);
             }
             if (layout != null) {
                 if (layout.value() != -1) {
@@ -727,10 +797,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             editText.requestFocus();
             editText.setFocusableInTouchMode(true);
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+            imm.showSoftInput(editText, InputMethodManager.RESULT_UNCHANGED_SHOWN);
         } else {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
     
@@ -741,18 +811,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         editText.requestFocus();
         editText.setFocusableInTouchMode(true);
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(editText, InputMethodManager.SHOW_FORCED);
+        imm.showSoftInput(editText, InputMethodManager.RESULT_UNCHANGED_SHOWN);
     }
     
     public void hideIME(@Nullable EditText editText) {
         if (editText != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(editText.getWindowToken(),  InputMethodManager.HIDE_NOT_ALWAYS);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         } else {
             View view = getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(),  InputMethodManager.HIDE_NOT_ALWAYS);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }
     }
@@ -897,7 +967,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
      * 显示提示对话框
      */
     private void showTipsDialog() {
-        new android.support.v7.app.AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle("警告")
                 .setMessage("需要必要的权限才可以正常使用该功能，您已拒绝获得该权限。\n如果需要重新授权，您可以点击“允许”按钮进入系统设置进行授权")
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -1069,7 +1139,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             }
             ParameterCache.getInstance().set(cls.getName(), jumpParameter
                     .put("needResponse", true)
-                    .put("responseClassName", me.getClass().getName())
+                    .put("responseClassName", getInstanceKey())
             );
             this.onResponseListener = onResponseListener;
         } catch (Exception e) {
@@ -1220,7 +1290,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             }
             ParameterCache.getInstance().set(cls.getName(), jumpParameter
                     .put("needResponse", true)
-                    .put("responseClassName", me.getClass().getName())
+                    .put("responseClassName", getInstanceKey())
             );
             this.onResponseListener = onResponseListener;
             
@@ -1257,7 +1327,33 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     //目标Activity：设定要返回的数据
     public void setResponse(JumpParameter jumpParameter) {
-        ParameterCache.getInstance().setResponse((String) getParameter().get("responseClassName"), jumpParameter);
+        BaseActivity backResponseActivity = AppManager.getInstance().getActivityInstance(getParameter().getString("responseClassName"));
+        if (backResponseActivity != null) {
+            backResponseActivity.setResponseMessage(jumpParameter);
+        }
+    }
+    
+    private Runnable waitResponseRunnable;
+    
+    protected void setResponseMessage(JumpParameter jumpParameter) {
+        log(getClass().getName() + ".setResponseMessage: " + jumpParameter);
+        waitResponseRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (onResponseListener != null) {
+                    JumpParameter responseData = jumpParameter;
+                    if (responseData == null) {
+                        responseData = new JumpParameter();
+                    }
+                    onResponseListener.OnResponse(responseData);
+                    onResponseListener = null;
+                }
+            }
+        };
+        if (isActive) {
+            runOnMain(waitResponseRunnable);
+            waitResponseRunnable = null;
+        }
     }
     
     //目标Activity：设定要返回的数据，写法2
@@ -1274,19 +1370,18 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return jumpParameter;
     }
     
+    protected void lazyInit(JumpParameter parameter) {
+    }
+    
     @Override
     protected void onResume() {
         isActive = true;
         logG("\n" + me.getClass().getSimpleName(), "onResume");
-        if (onResponseListener != null) {
-            JumpParameter responseData = ParameterCache.getInstance().getResponse(me.getClass().getName());
-            if (responseData == null) {
-                responseData = new JumpParameter();
-            }
-            onResponseListener.OnResponse(responseData);
-            onResponseListener = null;
-        }
         super.onResume();
+        if (waitResponseRunnable != null) {
+            runOnMain(waitResponseRunnable);
+            waitResponseRunnable = null;
+        }
         if (lifeCircleListener != null) {
             lifeCircleListener.onResume();
         }
@@ -1294,6 +1389,28 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             globalLifeCircleListener.onResume(me, me.getClass().getName());
         }
         AppManager.setActiveActivity(this);
+        if (resumeRunnableList != null) {
+            for (Runnable runnable : resumeRunnableList) {
+                runOnMain(runnable);
+            }
+        }
+    }
+    
+    private List<Runnable> resumeRunnableList;
+    
+    public void runOnResume(Runnable resumeRunnable) {
+        if (resumeRunnableList == null) {
+            resumeRunnableList = new ArrayList<>();
+        }
+        resumeRunnableList.add(resumeRunnable);
+    }
+    
+    public void cleanResumeRunnable() {
+        resumeRunnableList = new ArrayList<>();
+    }
+    
+    public void deleteResumeRunnable(Runnable resumeRunnable) {
+        if (resumeRunnableList != null) resumeRunnableList.remove(resumeRunnable);
     }
     
     @Override
@@ -1493,12 +1610,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        mHelper.onPostCreate();
+        if (enableSwipeBack) mHelper.onPostCreate();
     }
     
     @Override
     public SwipeBackLayout getSwipeBackLayout() {
-        return mHelper.getSwipeBackLayout();
+        return enableSwipeBack ? mHelper.getSwipeBackLayout() : null;
     }
     
     @Override
@@ -1578,5 +1695,44 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 return true;
             }
         });
+    }
+    
+    public String getInstanceKey() {
+        return getClass().getName() + "@" + Integer.toHexString(hashCode());
+    }
+    
+    private List<ActivityResultCallback> activityResultCallbackList;
+    
+    public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback) {
+        if (activityResultCallbackList == null) activityResultCallbackList = new ArrayList<>();
+        if (activityResultCallback.getResultId() == 0) {
+            activityResultCallback.setResultId(100000 + activityResultCallbackList.size());
+        }
+        activityResultCallbackList.add(activityResultCallback);
+        super.startActivityForResult(intent, activityResultCallback.getResultId());
+    }
+    
+    public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback, @Nullable Bundle options) {
+        if (activityResultCallbackList == null) activityResultCallbackList = new ArrayList<>();
+        if (activityResultCallback.getResultId() == 0) {
+            activityResultCallback.setResultId(100 + activityResultCallbackList.size());
+        }
+        activityResultCallbackList.add(activityResultCallback);
+        super.startActivityForResult(intent, activityResultCallback.getResultId(), options);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (activityResultCallbackList != null) {
+            List<ActivityResultCallback> runActivityResultCallback = new ArrayList<>();
+            for (ActivityResultCallback callback : activityResultCallbackList) {
+                if (callback.getResultId() == requestCode) {
+                    callback.onActivityResult(requestCode, resultCode, data);
+                    runActivityResultCallback.add(callback);
+                }
+            }
+            activityResultCallbackList.removeAll(runActivityResultCallback);
+        }
     }
 }

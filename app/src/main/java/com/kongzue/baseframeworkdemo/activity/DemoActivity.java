@@ -3,12 +3,15 @@ package com.kongzue.baseframeworkdemo.activity;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.view.View;
+
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
+import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
+import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
@@ -31,12 +34,12 @@ import java.util.List;
 @Layout(R.layout.activity_demo)
 //设置不使用状态栏暗色文字图标样式
 @DarkStatusBarTheme(false)
-//设置底部导航栏背景颜色，此外还可以使用 @NavigationBarBackgroundColorRes 来指定 color 资源颜色
-@NavigationBarBackgroundColor(a = 255, r = 255, g = 255, b = 255)
+//设置底部导航栏背景颜色，此外还可以使用 @NavigationBarBackgroundColor 来指定 argb 颜色
+@NavigationBarBackgroundColorRes(R.color.colorWhite)
 //设置使用底部导航栏暗色图标样式
 @DarkNavigationBarTheme(true)
 //绑定子 Fragment 要显示的容器布局
-@FragmentLayout(R.id.frame)
+@FragmentLayout(R.id.viewPager)
 public class DemoActivity extends BaseActivity {
     
     //三个子 Fragment 布局（简介界面、功能界面、Github关于界面）
@@ -62,6 +65,15 @@ public class DemoActivity extends BaseActivity {
         tabs.add(new Tab(this, getString(R.string.function), R.mipmap.img_maintab_function));
         tabs.add(new Tab(this, getString(R.string.github), R.mipmap.img_maintab_me));
         tabbar.setTab(tabs);
+    }
+    
+    @Override
+    protected void lazyInit(JumpParameter parameter) {
+    
+    }
+    
+    private void doTestError() throws NullPointerException {
+        throw new NullPointerException("This is a exception for test");
     }
     
     @Override

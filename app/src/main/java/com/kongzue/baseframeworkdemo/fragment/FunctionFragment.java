@@ -90,7 +90,6 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     @Override
     //请在此编写初始化操作，例如读取数据等，以及对 UI 组件进行赋值
     public void initDatas() {
-    
     }
     
     private int time;
@@ -362,5 +361,11 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     public void onHide() {
         log("FunctionFragment: onHide");
         super.onHide();
+    }
+    
+    @Override
+    public boolean onBack() {
+        toastS("此界面不允许返回退出\n这个拦截操作是在 BaseFragment 中进行的");
+        return true;
     }
 }

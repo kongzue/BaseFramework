@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
@@ -848,5 +849,13 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     public String getInstanceKey() {
         return getClass().getName() + "@" + Integer.toHexString(hashCode());
+    }
+    
+    public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback) {
+        me.startActivityForResult(intent, activityResultCallback);
+    }
+    
+    public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback, @Nullable Bundle options) {
+        me.startActivityForResult(intent, activityResultCallback, options);
     }
 }

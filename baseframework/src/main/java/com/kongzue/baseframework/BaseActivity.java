@@ -44,6 +44,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
@@ -1700,5 +1701,40 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     public String getInstanceKey() {
         return getClass().getName() + "@" + Integer.toHexString(hashCode());
+    }
+    
+    private List<ActivityResultCallback> activityResultCallbackList;
+    
+    public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback) {
+        if (activityResultCallbackList == null) activityResultCallbackList = new ArrayList<>();
+        if (activityResultCallback.getResultId() == 0) {
+            activityResultCallback.setResultId(100000 + activityResultCallbackList.size());
+        }
+        activityResultCallbackList.add(activityResultCallback);
+        super.startActivityForResult(intent, activityResultCallback.getResultId());
+    }
+    
+    public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback, @Nullable Bundle options) {
+        if (activityResultCallbackList == null) activityResultCallbackList = new ArrayList<>();
+        if (activityResultCallback.getResultId() == 0) {
+            activityResultCallback.setResultId(100 + activityResultCallbackList.size());
+        }
+        activityResultCallbackList.add(activityResultCallback);
+        super.startActivityForResult(intent, activityResultCallback.getResultId(), options);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (activityResultCallbackList != null) {
+            List<ActivityResultCallback> runActivityResultCallback = new ArrayList<>();
+            for (ActivityResultCallback callback : activityResultCallbackList) {
+                if (callback.getResultId() == requestCode) {
+                    callback.onActivityResult(requestCode, resultCode, data);
+                    runActivityResultCallback.add(callback);
+                }
+            }
+            activityResultCallbackList.removeAll(runActivityResultCallback);
+        }
     }
 }

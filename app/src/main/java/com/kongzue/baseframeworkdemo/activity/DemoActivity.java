@@ -1,9 +1,13 @@
 package com.kongzue.baseframeworkdemo.activity;
 
+import android.content.Intent;
 import android.view.View;
+
+import androidx.annotation.Nullable;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
+import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;

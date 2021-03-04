@@ -98,6 +98,8 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.9'
 
 ···· <a href="#1-8">布局绑定和事件绑定</a>
 
+···· <a href="#1-9">对“返回”的改进</a>
+
 · <a href="#2">**BaseFragment功能**</a>
 
 ···· <a href="#2-0">BaseFragment 是什么</a>
@@ -264,6 +266,28 @@ if ((boolean) getParameter().get("needResponse") == true) {
 }
 ```
 
+#### startActivityForResult 的改进
+
+对于可能用到 Intent 对系统功能的跳转并返回数据的情况，在 BaseActivity 中额外提供了带回调接口的方法：
+```
+startActivityForResult(intent, new ActivityResultCallback() {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //在回调中处理返回的 data
+    }
+});
+```
+
+ActivityResultCallback 有一个参数，默认不指定则会使用分配的未使用的 resultCode，你也可以自己指定一个 resultCode：
+```
+startActivityForResult(intent, new ActivityResultCallback(131) {
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //在回调中处理返回的 data
+    }
+});
+```
+
 ### <a name="1-4">权限申请</a>
 要进行权限申请也变得更加简单，只需要实现相应的回调 OnPermissionResponseListener 即可：
 ```
@@ -343,7 +367,12 @@ getNavbarHeight()
 //获取真实的屏幕高度，注意判断非0
 getRootHeight()
 ```
-另外，为方便开发，从 6.7.2 版本起，会自动对布局中使用“back”作为 id 的 View 会自动绑定返回事件（可重写）
+
+### <a name="1-9">对“返回”的改进</a>
+
+为方便开发，BaseActivity 会自动对布局中使用“back”作为 id 的 View 会自动绑定返回事件（可重写）
+
+另外，如果在 BaseActivity 中使用 @FragmentLayout 绑定了 BaseFragment，那么在执行返回时会优先询问当前正在显示的 BaseFragment 是否拦截返回事件，具体请参照 BaseFragment 章节：<a href="#2-5">《对“返回”的改进》</a>
 
 ### <a name="1-6">BaseActivity的生命周期</a>
 
@@ -457,6 +486,8 @@ public void startTest(View btnOk){
     //点击方法
 }
 ```
+
+另外使用注解 @OnClicks(int[] id) 可以方便的对多个 View 进行点击事件绑定。
 
 ## <a name="2">BaseFragment功能</a>
 
@@ -600,9 +631,13 @@ FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addF
 
 另外，为方便开发，从 6.7.2 版本起，会自动对布局中使用“back”作为 id 的 View 会自动绑定返回事件（可重写）
 
-### <a name="2-3">BaseFragment 最佳实践</a>
+额外的，你可以在 BaseFragment 中使用 getInstanceKey() 获得一个 instanceKey（文本类型），在需要时使用以下指令找到对应的实例对象：
 
-⚠ 此章节内容仅限 6.7.1 版本以上使用。
+```
+BaseFragment demoFragment = getFragmentChangeUtil().getFragment(instanceKey);
+```
+
+### <a name="2-3">BaseFragment 最佳实践</a>
 
 Fragment 依赖于 Activity 来进行显示，在 BaseFramework 中，您可以在 BaseActivity 中创建实例化一个 FrameLayout 布局作为存放 Fragment 的容器：
 ```
@@ -625,6 +660,8 @@ public class DemoActivity extends BaseActivity {
     ...
 }
 ```
+
+注：@FragmentLayout 除了支持 FrameLayout 外也支持使用 ViewPager 作为容器布局，使用 ViewPager 时，Adapter 是自动生成的。
 
 在 DemoActivity 中重写方法 initFragment(...)：
 ```
@@ -742,6 +779,24 @@ jump(functionFragment, new JumpParameter()
 setFragmentResponse(JumpParameter parameter);
 ```
 
+### <a name="2-5">对返回的改进</a>
+
+当使用 @FragmentLayout 在 BaseActivity 中绑定并显示 BaseFragment 后，若用户按下返回键，那么事件会优先由当前正在显示的 BaseFragment 进行处理响应。
+
+重写 `onBack` 方法以判断是否拦截返回事件：
+
+```
+/**
+ * 根绝 return 值确定是否允许执行返回指令。
+ * 若当前 Activity 正在显示 Fragment，会优先询问正在显示的 Fragment 是否拦截返回事件。
+ *
+ * @return true：拦截返回指令；false：执行返回指令。
+ */
+public boolean onBack() {
+    return false;
+}
+```
+
 ## <a name="3">设置、属性值的存储读取工具 Settings</a>
 
 如果您编写了 BaseApp 的实现类 App（具体请参考章节<a href="#10">《BaseApp功能》</a>），您可以使用以下方法进行设置的读写：
@@ -827,12 +882,19 @@ AppManager 是 BaseActivity 的管理工具类，原工具是由 @xiaohaibin(<ht
 
 提供如下方法：
 ```
+getActivityInstance(Class)      //以 Class 指定获得正在运行的对应 BaseActivity 的顶端实例
 getActiveActivity()             //获取当前处于活跃的BaseActivity（注意可能为null）
 killActivity(baseActivity)      //结束指定BaseActivity
 killAllActivity()               //结束所有BaseActivity
 AppExit()                       //退出App
 ```
 其他方法，例如 pushActivity 添加Activity到堆栈，都是自动执行的，不需要手动调用。
+
+另外，你可以在 BaseActivity 中使用 getInstanceKey() 获得一个 instanceKey（文本类型），在需要时使用以下指令找到对应的实例对象：
+
+```
+BaseActivity demoActivity = AppManager.getInstance().getActivityInstance(instanceKey);
+```
 
 ## <a name="5">异步或同步</a>
 有时我们需要等待一段时间执行事务，也有时我们需要从异步线程返回主线程进行 UI 等操作，这时往往需要在线程间进行切换进行操作，但偶尔也会因为执行过程中因 Activity 被关闭等问题出现空指针异常。
@@ -858,6 +920,21 @@ runOnMainDelayed(new Runnable(){
 runDelayed(new Runnable(){
     //此处可进行延迟操作（可能在异步线程）
 }, time);       //time 即延迟时间，毫秒单位
+```
+
+4) 活动时执行：
+
+当你在服务（Service）或者其他 Activity 运行时，想在回到某个 BaseActivity 界面时执行某些事物，可以使用此方法：
+
+```
+//获得该 BaseActivity 的实例
+BaseActivity activityInstance = AppManager.getInstance().getActivityInstance(DemoActivity.class);
+
+activityInstance.runOnResume(new Runnable() {
+    @Override
+    public void run() {
+    }
+});
 ```
 
 ## <a name="6">BaseAdapter</a>

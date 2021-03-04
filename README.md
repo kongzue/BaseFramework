@@ -142,7 +142,9 @@ implementation 'com.kongzue.baseframeworkx:baseframework:6.7.9'
 
 ### <a name="1-0">沉浸式</a>
 
-在 BaseActivity 中，您还可以使用以下注解对沉浸式进行控制：
+BaseActivity 会自动对 状态栏沉浸式进行处理，只需要把你的 Activity 继承自 BaseActivity 即可。
+
+另外，在 BaseActivity 中，您还可以使用以下注解对沉浸式进行控制：
 ```
 @DarkStatusBarTheme(true)           //开启顶部状态栏图标、文字暗色模式
 @DarkNavigationBarTheme(true)       //开启底部导航栏按钮暗色模式
@@ -157,7 +159,7 @@ setDarkNavigationBarTheme(true);        //开启底部导航栏按钮暗色模�
 setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底部导航栏背景颜色（a = 0,r = 0,g = 0,b = 0可透明）
 ```
 
-建议直接使用无 ActionBar 的 Activity 样式：
+因为状态栏沉浸式与 ActionBar 存在冲突，建议直接使用无 ActionBar 的 Activity 样式：
 ```
 <!-- 在 res/values/styles.xml 中修改继承关系为：Theme.AppCompat.Light.NoActionBar -->
 <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">

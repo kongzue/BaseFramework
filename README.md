@@ -939,6 +939,8 @@ activityInstance.runOnResume(new Runnable() {
 });
 ```
 
+如果该 BaseActivity 界面处于后台，那么会在其 resume（恢复前台显示）时执行，若当前已经处于前台，会立即在 UI 线程执行。
+
 ## <a name="6">BaseAdapter</a>
 注意，此处的 BaseAdapter 特指 com.kongzue.baseframework.BaseAdapter。
 

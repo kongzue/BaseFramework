@@ -38,7 +38,27 @@ Demo预览图如下：
 
 ### 引入方式
 
+1) 前往 build.gradle(project) 添加 jitpack 仓库：
+```
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+2) 引入 BaseFramework：
 
+最新版本：
+<a href="https://jitpack.io/#kongzue/BaseFramework">
+<img src="https://jitpack.io/v/kongzue/BaseFramework.svg" alt="Jitpack.io">
+</a> 
+
+```
+dependencies {
+        implementation 'com.github.kongzue:BaseFramework:latest.release'
+}
+```
 
 #### Support版本
 

@@ -25,6 +25,7 @@ import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.interfaces.OnClicks;
+import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JumpParameter;
@@ -38,6 +39,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
@@ -236,7 +238,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
             backView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    me.onBackPressed();
+                    if (me != null) me.onBackPressed();
                 }
             });
         }
@@ -303,19 +305,19 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     //简易吐司
     public void toast(final Object obj) {
-        me.toast(obj);
+        if (me != null) me.toast(obj);
     }
     
     public void toastS(final Object obj) {
-        Toaster.build(me).show(obj.toString());
+        if (me != null) Toaster.build(me).show(obj.toString());
     }
     
     public void log(final Object obj) {
-        me.log(obj);
+        if (me != null) me.log(obj);
     }
     
     public void errorLog(final Object obj) {
-        me.errorLog(obj);
+        if (me != null) me.errorLog(obj);
     }
     
     //位移动画
@@ -340,13 +342,13 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     //用于进行dip和px转换
     public int dip2px(float dpValue) {
-        final float scale = me.getResources().getDisplayMetrics().density;
+        final float scale = getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
     
     //用于进行px和dip转换
     public int px2dip(float pxValue) {
-        final float scale = me.getResources().getDisplayMetrics().density;
+        final float scale = getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
     
@@ -359,38 +361,46 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     //更好用的跳转方式
     public boolean jump(Class<?> cls) {
+        if (me == null) return false;
         return me.jump(cls);
     }
     
     //可以传任何类型参数的跳转方式
     public boolean jump(Class<?> cls, JumpParameter jumpParameter) {
+        if (me == null) return false;
         return me.jump(cls, jumpParameter);
     }
     
     //带返回值的跳转
     public boolean jump(Class<?> cls, OnJumpResponseListener onJumpResponseListener) {
+        if (me == null) return false;
         return me.jump(cls, onJumpResponseListener);
     }
     
     //带返回值的跳转
     public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener) {
+        if (me == null) return false;
         return me.jump(cls, jumpParameter, onResponseListener);
     }
     
     //带共享元素的跳转方式
     public boolean jump(Class<?> cls, View transitionView) {
+        if (me == null) return false;
         return me.jump(cls, transitionView);
     }
     
     public boolean jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
+        if (me == null) return false;
         return me.jump(cls, jumpParameter, transitionView);
     }
     
     public boolean jump(Class<?> cls, OnJumpResponseListener onJumpResponseListener, View transitionView) {
+        if (me == null) return false;
         return me.jump(cls, onJumpResponseListener, transitionView);
     }
     
     public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener, View transitionView) {
+        if (me == null) return false;
         return me.jump(cls, jumpParameter, onJumpResponseListener, transitionView);
     }
     
@@ -400,10 +410,12 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      * @param index 角标
      */
     public void jump(int index) {
+        if (me == null) return;
         me.changeFragment(index);
     }
     
     public void jump(int index, int enterAnimResId, int exitAnimResId) {
+        if (me == null) return;
         me.changeFragment(index, enterAnimResId, exitAnimResId);
     }
     
@@ -413,10 +425,12 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      * @param baseFragment 指定的 BaseFragment 对象
      */
     public void jump(BaseFragment baseFragment) {
+        if (me == null) return;
         me.changeFragment(baseFragment);
     }
     
     public void jump(BaseFragment baseFragment, int enterAnimResId, int exitAnimResId) {
+        if (me == null) return;
         me.changeFragment(baseFragment, enterAnimResId, exitAnimResId);
     }
     
@@ -430,7 +444,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         if (parameter != null) {
             ParameterCache.getInstance().set(baseFragment.getClass().getName(), parameter);
         }
-        me.changeFragment(baseFragment);
+        if (me != null) me.changeFragment(baseFragment);
     }
     
     /**
@@ -440,6 +454,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      * @param jumpParameter 要传递参数
      */
     public void jump(int index, JumpParameter jumpParameter) {
+        if (me == null) return;
         if (jumpParameter != null) {
             ParameterCache.getInstance().set(me.getFragmentChangeUtil().getFragment(index).getClass().getName(), jumpParameter);
         }
@@ -456,6 +471,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      * @param onJumpResponseListener 回调
      */
     public void jump(BaseFragment baseFragment, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener) {
+        if (me == null) return;
         ParameterCache.getInstance().cleanResponse(this.getClass().getName());
         if (jumpParameter == null) {
             jumpParameter = new JumpParameter();
@@ -475,6 +491,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      * @param onJumpResponseListener 回调
      */
     public void jump(int index, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener) {
+        if (me == null) return;
         ParameterCache.getInstance().cleanResponse(this.getClass().getName());
         if (jumpParameter == null) {
             jumpParameter = new JumpParameter();
@@ -487,6 +504,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     }
     
     public void jump(int index, OnJumpResponseListener onJumpResponseListener) {
+        if (me == null) return;
         ParameterCache.getInstance().cleanResponse(this.getClass().getName());
         JumpParameter jumpParameter = new JumpParameter();
         this.onJumpResponseListener = onJumpResponseListener;
@@ -498,6 +516,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     //目标Fragment：设定要返回的数据
     public void setFragmentResponse(JumpParameter jumpParameter) {
+        if (me == null) return;
         FragmentChangeUtil fragmentChangeUtil = me.getFragmentChangeUtil();
         BaseFragment baseFragment = fragmentChangeUtil.getFragment(getFragmentParameter().getString("responseClassName"));
         if (baseFragment != null) {
@@ -543,16 +562,17 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     //大型打印使用，Log默认是有字数限制的，如有需要打印更长的文本可以使用此方法
     public void bigLog(String msg) {
-        me.bigLog(msg);
+        if (me != null) me.bigLog(msg);
     }
     
     //目标Activity：设定要返回的数据
     public void setResponse(JumpParameter jumpParameter) {
-        me.setResponse(jumpParameter);
+        if (me != null) me.setResponse(jumpParameter);
     }
     
     //获取跳转参数
     public JumpParameter getParameter() {
+        if (me == null) return new JumpParameter();
         return me.getParameter();
     }
     
@@ -560,35 +580,37 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     public void jumpAnim(int enterAnim, int exitAnim) {
         int version = Integer.valueOf(Build.VERSION.SDK_INT);
         if (version > 5) {
-            me.overridePendingTransition(enterAnim, exitAnim);
+            if (me != null) me.overridePendingTransition(enterAnim, exitAnim);
         }
     }
     
     //权限申请
     public void requestPermission(String[] permissions, OnPermissionResponseListener onPermissionResponseListener) {
-        me.requestPermission(permissions, onPermissionResponseListener);
+        if (me != null) me.requestPermission(permissions, onPermissionResponseListener);
     }
     
     //多权限检查
     public boolean checkPermissions(String[] permissions) {
+        if (me == null) return false;
         return me.checkPermissions(permissions);
     }
     
     //单权限检查
     public boolean checkPermissions(String permission) {
+        if (me == null) return false;
         return me.checkPermissions(permission);
     }
     
     public void runOnMain(Runnable runnable) {
-        me.runOnMain(runnable);
+        if (me != null) me.runOnMain(runnable);
     }
     
     public void runOnMainDelayed(Runnable runnable, long time) {
-        me.runOnMainDelayed(runnable, time);
+        if (me != null) me.runOnMainDelayed(runnable, time);
     }
     
     public void runDelayed(Runnable runnable, long time) {
-        me.runDelayed(runnable, time);
+        if (me != null) me.runDelayed(runnable, time);
     }
     
     private List<CycleRunner> cycleTimerList = new ArrayList<>();
@@ -624,6 +646,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      * @return 是否成功复制
      */
     public boolean copy(String s) {
+        if (me == null) return false;
         return me.copy(s);
     }
     
@@ -634,15 +657,15 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      * @param editText 必须依赖一个 EditText
      */
     public void setIMMStatus(boolean show, EditText editText) {
-        me.showIME(show, editText);
+        if (me != null) me.showIME(show, editText);
     }
     
     public void showIME(@NonNull EditText editText) {
-        me.showIME(editText);
+        if (me != null) me.showIME(editText);
     }
     
     public void hideIME(@Nullable EditText editText) {
-        me.hideIME(editText);
+        if (me != null) me.hideIME(editText);
     }
     
     /**
@@ -683,9 +706,11 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
             lifeCircleListener.onResume();
         }
         if (resumeRunnableList != null) {
-            for (Runnable runnable : resumeRunnableList) {
+            CopyOnWriteArrayList<Runnable> copyOnWriteArrayList = new CopyOnWriteArrayList<>(resumeRunnableList);
+            for (Runnable runnable : copyOnWriteArrayList) {
                 runOnMain(runnable);
             }
+            resumeRunnableList.removeAll(copyOnWriteArrayList);
         }
     }
     
@@ -752,11 +777,13 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     
     //打开指定App
     public boolean openApp(String packageName) {
+        if (me == null) return false;
         return me.openApp(packageName);
     }
     
     //检测App是否已安装
     public boolean isInstallApp(String packageName) {
+        if (me == null) return false;
         return me.isInstallApp(packageName);
     }
     
@@ -765,44 +792,52 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     }
     
     public int getStatusBarHeight() {
+        if (me == null) return 0;
         return me.getStatusBarHeight();
     }
     
     //获取屏幕宽度
     public int getDisplayWidth() {
+        if (me == null) return 0;
         return me.getDisplayWidth();
     }
     
     //获取屏幕可用部分高度（屏幕高度-状态栏高度-屏幕底栏高度）
     public int getDisplayHeight() {
+        if (me == null) return 0;
         return me.getDisplayHeight();
     }
     
     //获取底栏高度
     public int getNavbarHeight() {
+        if (me == null) return 0;
         return me.getNavbarHeight();
     }
     
     //获取真实的屏幕高度，注意判断非0
     public int getRootHeight() {
+        if (me == null) return 0;
         return me.getRootHeight();
     }
     
     public String getIMEI() {
+        if (me == null) return "";
         return me.getIMEI();
     }
     
     public String getAndroidId() {
+        if (me == null) return "";
         return me.getAndroidId();
     }
     
     public String getMacAddress() {
+        if (me == null) return "";
         return me.getMacAddress();
     }
     
     //支持最低SDK的getColor方法
     public int getColorS(@ColorRes int id) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && me != null) {
             return getResources().getColor(id, me.getTheme());
         } else {
             return getResources().getColor(id);
@@ -840,7 +875,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     }
     
     public void click(View v, View.OnClickListener onClickListener) {
-        me.click(v, onClickListener);
+        if (me != null) me.click(v, onClickListener);
     }
     
     public boolean onBack() {
@@ -852,10 +887,11 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     }
     
     public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback) {
-        me.startActivityForResult(intent, activityResultCallback);
+        if (me != null) me.startActivityForResult(intent, activityResultCallback);
     }
     
     public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback, @Nullable Bundle options) {
-        me.startActivityForResult(intent, activityResultCallback, options);
+        if (me != null) me.startActivityForResult(intent, activityResultCallback, options);
     }
+    
 }

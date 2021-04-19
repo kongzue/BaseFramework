@@ -47,7 +47,7 @@ public class DemoActivity extends BaseActivity {
     @Override
     public void initViews() {
         tabbar = findViewById(R.id.tabbar);
-    
+        
         List<Tab> tabs = new ArrayList<>();
         tabs.add(new Tab(this, getString(R.string.introduction), R.mipmap.img_tab_introduction));
         tabs.add(new Tab(this, getString(R.string.function), R.mipmap.img_maintab_function));
@@ -64,11 +64,11 @@ public class DemoActivity extends BaseActivity {
         fragmentChangeUtil.addFragment(introductionFragment);
         fragmentChangeUtil.addFragment(functionFragment);
         fragmentChangeUtil.addFragment(aboutFragment);
-    
+        
         getFragmentChangeUtil().setOnFragmentChangeListener(new OnFragmentChangeListener() {
             @Override
             public void onChange(int index, BaseFragment fragment) {
-                log("index:"+index);
+                log("index:" + index);
                 tabbar.setNormalFocusIndex(index);
             }
         });

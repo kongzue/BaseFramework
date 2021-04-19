@@ -27,6 +27,9 @@ public class BaseFrameworkSettings {
     //是否开启debug模式，此开关影响打印Log日志等行为
     public static boolean DEBUGMODE = true;
     
+    //Debug模式详细版，会打印日志位置
+    public static boolean DEBUG_DETAILS = true;
+    
     //是否开启beta计划，详情请参阅 https://github.com/kongzue/BaseFramework
     public static boolean BETA_PLAN = false;
     

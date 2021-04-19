@@ -5,11 +5,13 @@ import android.content.Context;
 import android.util.Log;
 
 import com.kongzue.baseframework.BaseApp;
+import com.kongzue.baseframework.BaseFrameworkSettings;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,21 +40,43 @@ public class DebugLogG {
         try {
             if (DEBUGMODE) {
                 if (obj instanceof Map) {
-                    Log.v(">>>>>>", "Map: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " {\n");
+                    String logStr = getCodeLineStr() + "Map: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " {\n";
                     Set keySet = ((Map) obj).keySet();
                     for (Object key : keySet) {
                         String keyStr = String.valueOf(key);
                         String valueStr = String.valueOf(((Map) obj).get(key));
-                        Log.v(">>>>>>", "    \"" + keyStr + "\": \"" + valueStr + "\",");
+                        logStr = logStr + "    \"" + keyStr + "\": \"" + valueStr + "\",\n";
                     }
-                    Log.v(">>>>>>", "}");
+                    logStr = logStr + "}";
+                    Log.v(">>>>>>", logStr);
                 } else if (obj instanceof List) {
                     List list = (List) obj;
-                    Log.v(">>>>>>", "List: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " [\n");
+                    String logStr = getCodeLineStr() + "List: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " [\n";
                     for (Object value : list) {
-                        Log.v(">>>>>>", "    " + value + ",");
+                        logStr = logStr + "    " + value + ",\n";
                     }
-                    Log.v(">>>>>>", "]");
+                    logStr = logStr + "]";
+                    Log.v(">>>>>>", logStr);
+                } else if (obj.getClass().isArray()) {
+                    if (obj instanceof int[]) {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(int[]): " + Arrays.toString((int[]) obj));
+                    } else if (obj instanceof boolean[]) {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(boolean[]): " + Arrays.toString((boolean[]) obj));
+                    } else if (obj instanceof byte[]) {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(byte[]): " + Arrays.toString((byte[]) obj));
+                    } else if (obj instanceof char[]) {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(char[]): " + Arrays.toString((char[]) obj));
+                    } else if (obj instanceof double[]) {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(double[]): " + Arrays.toString((double[]) obj));
+                    } else if (obj instanceof float[]) {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(float[]): " + Arrays.toString((float[]) obj));
+                    } else if (obj instanceof long[]) {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(long[]): " + Arrays.toString((long[]) obj));
+                    } else if (obj instanceof short[]) {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(short[]): " + Arrays.toString((short[]) obj));
+                    } else {
+                        Log.v(">>>>>>", getCodeLineStr() + "Array(obj[]): " + Arrays.toString((Object[]) obj));
+                    }
                 } else {
                     String msg = String.valueOf(obj);
                     if (isNull(msg)) {
@@ -63,7 +87,7 @@ public class DebugLogG {
                     } else {
                         LogG(msg);
                         if (!JsonFormat.formatJson(msg)) {
-                            Log.v(">>>>>>", msg);
+                            Log.v(">>>>>>", getCodeLineStr() + msg);
                         }
                     }
                 }
@@ -71,6 +95,26 @@ public class DebugLogG {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public static String getCodeLineStr() {
+        if (!BaseFrameworkSettings.DEBUG_DETAILS) {
+            return "";
+        }
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+        int line = -1;
+        boolean findFrameworkPackage = false;
+        for (int i = 0; i < stackTraceElements.length; i++) {
+            if (stackTraceElements[i].getClassName().startsWith("com.kongzue.baseframework.")) {
+                findFrameworkPackage = true;
+            }
+            if (findFrameworkPackage && !stackTraceElements[i].getClassName().startsWith("com.kongzue.baseframework.")) {
+                line = i;
+                break;
+            }
+        }
+        if (line == -1) return "";
+        return "Log.[" + stackTraceElements[line].getMethodName() + "](" + stackTraceElements[line].getFileName() + ":" + stackTraceElements[line].getLineNumber() + ")\n";
     }
     
     public static void LogE(Object obj) {

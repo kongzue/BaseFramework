@@ -60,6 +60,11 @@ public class App extends BaseApp<App> {
                 return false;
             }
         });
+        
+        int[] a = {1, 3, 5, 7, 9};
+        log(a);
+        CharSequence[] s = {"s", "b", "t", "m"};
+        log(s);
     }
     
     @Override

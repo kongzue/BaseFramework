@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+import static com.kongzue.baseframework.util.DebugLogG.getCodeLineStr;
 
 /**
  * Author: @Kongzue
@@ -37,11 +38,7 @@ public class JsonFormat {
         } catch (JSONException e) {
             return false;
         }
-        
-        String[] lines = message.split(LINE_SEPARATOR);
-        for (String line : lines) {
-            Log.i(">>>>>>", line);
-        }
+        Log.v(">>>>>>", getCodeLineStr() +  message);
         return true;
     }
     

@@ -22,6 +22,7 @@ import android.provider.Settings;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -92,6 +93,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
@@ -1391,10 +1393,13 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             globalLifeCircleListener.onResume(me, me.getClass().getName());
         }
         AppManager.setActiveActivity(this);
+        
         if (resumeRunnableList != null) {
-            for (Runnable runnable : resumeRunnableList) {
+            CopyOnWriteArrayList<Runnable> copyOnWriteArrayList = new CopyOnWriteArrayList<>(resumeRunnableList);
+            for (Runnable runnable : copyOnWriteArrayList) {
                 runOnMain(runnable);
             }
+            resumeRunnableList.removeAll(copyOnWriteArrayList);
         }
     }
     
@@ -1736,5 +1741,13 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             }
             activityResultCallbackList.removeAll(runActivityResultCallback);
         }
+    }
+    
+    public static <B extends BaseActivity> B getActivity(String instanceKey) {
+        return (B) AppManager.getInstance().getActivityInstance(instanceKey);
+    }
+    
+    public static <B extends BaseActivity> B getActivity(Class c) {
+        return (B) AppManager.getInstance().getActivityInstance(c);
     }
 }

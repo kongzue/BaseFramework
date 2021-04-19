@@ -1,7 +1,6 @@
 package com.kongzue.baseframework.util;
 
 import android.graphics.Bitmap;
-import android.support.annotation.Nullable;
 import android.util.Base64;
 
 import com.kongzue.baseframework.BaseApp;
@@ -17,7 +16,7 @@ import java.io.Serializable;
  * @github: https://github.com/kongzue/
  * @homepage: http://kongzue.com/
  * @mail: myzcxhh@live.cn
- * @createTime: 2020/8/18 12:39
+ * @createTime: 2020/9/4 18:49
  */
 public class SettingsUtil {
     public static void init(Preferences.ChangeSharedPreferencesPathCallBack changeSharedPreferencesPathCallBack) {

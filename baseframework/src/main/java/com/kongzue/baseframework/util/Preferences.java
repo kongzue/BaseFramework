@@ -2,17 +2,13 @@ package com.kongzue.baseframework.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 /**
  * 本类采用单例设计模式，请使用getInstance()获取本类对象后进行使用
- * 本类在最新版本已废弃，建议直接使用 BaseApp.Settings 作为数据存储实现
- *
  * Created by Kongzue on 2017/3/28.
- * Version 3.0
- * Update 2020.1.15
+ * Version 2.0
+ * Update 2018.5.27
  */
-
 @Deprecated
 public class Preferences {
     
@@ -314,7 +310,6 @@ public class Preferences {
     }
     
     private SharedPreferences initSharedPreferences(Context context, String path) {
-        Log.w(">>>", "initSharedPreferences: " + context.getClass().getName() + " path=" + path);
         SharedPreferences sp;
         if (changeSharedPreferencesPathCallBack != null) {
             sp = changeSharedPreferencesPathCallBack.onPathChange(path);

@@ -1,17 +1,15 @@
 package com.kongzue.baseframeworkdemo;
 
 import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
-import com.kongzue.baseframework.BaseActivity;
+import androidx.appcompat.app.AlertDialog;
+
 import com.kongzue.baseframework.BaseApp;
 import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
 import com.kongzue.baseframework.util.AppManager;
-import com.kongzue.baseframework.util.SettingsUtil;
-import com.kongzue.baseframeworkdemo.util.User;
 
 import java.io.File;
 
@@ -62,32 +60,11 @@ public class App extends BaseApp<App> {
                 return false;
             }
         });
-
-//        Bitmap bm = null;       //随便写的 Demo
-//        App.cache.set("key","value");
-//        App.cache.set("bitmap",bm);
-//        App.cache.clean();
         
-        User user = new User("张三", 18, "192.168.1.1");
-        App.user.set("userInfo", user);
-    }
-    
-    public static USER user = new USER();
-    
-    public static class USER extends SettingsUtil {
-        
-        public USER() {
-            super("user");
-        }
-    }
-    
-    public static CACHE cache;
-    
-    public static class CACHE extends SettingsUtil {
-        
-        public CACHE() {
-            super("cache");
-        }
+        int[] a = {1, 3, 5, 7, 9};
+        log(a);
+        CharSequence[] s = {"s", "b", "t", "m"};
+        log(s);
     }
     
     @Override

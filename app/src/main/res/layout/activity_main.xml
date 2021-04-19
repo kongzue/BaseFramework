@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.kongzue.baseframeworkdemo.MainActivity">
+
+    <!--此部分为非安全区域，在此处可放置会叠加在状态栏、导航栏下的背景图等内容-->
+
+    <ImageView
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/img_bkg" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <!--此部分是除了状态栏和导航栏外，内容安全区域-->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#0affffff"
+                android:orientation="horizontal">
+
+                <!--这个是我自制的ActionBar，需要的话也可以自定义-->
+
+                <TextView
+                    android:id="@+id/txt_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="55dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:text="@string/app_name"
+                    android:textColor="#ffffff"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#fff">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="15dp"
+                    android:paddingVertical="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/introduction"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:id="@+id/link_home"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/viewOnGithub"
+                        android:textColor="#4472c4"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/introduction_tip"
+                        android:textSize="12dp" />
+
+                    <Button
+                        android:id="@+id/intentToFragment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="查看BaseFragment的Demo" />
+
+                    <Button
+                        android:id="@+id/intentToBaseAdapter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="查看BaseAdapter的Demo" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/other"
+                        android:textSize="20dp" />
+
+                    <Button
+                        android:id="@+id/btn_jump"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="带自定义参数的跳转" />
+
+                    <Button
+                        android:id="@+id/btn_result"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="更简单的跳转后返回数据" />
+
+                    <Button
+                        android:id="@+id/btn_transition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:transitionName="test"
+                        android:text="跳转共享元素动画" />
+
+                    <Button
+                        android:id="@+id/btn_permission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="申请权限（测试用，无实际业务逻辑）" />
+
+                    <Button
+                        android:id="@+id/btn_error"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="触发一个崩溃（请再次打开后查看效果！）" />
+
+                    <Button
+                        android:id="@+id/btn_printJsonLog"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="打印json数据（请使用Logcat查看）" />
+
+                    <Button
+                        android:id="@+id/btn_getImei"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="获取IMEI" />
+
+                    <Button
+                        android:id="@+id/btn_changeLng"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/btn_change_lng" />
+
+                    <Button
+                        android:id="@+id/btn_toast"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="兼容Toast提示" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="请注意"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="· 在BaseActivity中，约定关键词me代替Activity.this，因此您在编写代码时，在异步线程中可以轻松使用me关键字直接引用当前Activity。\n\n· 在BaseActivity以及BaseFramework框架中，我们不推荐重写onCreate()方法，而推荐直接在您的class上使用注解@Layout(您的资源文件布局，例如R.layout.xxx)其余的步骤会自动完成。\n\n· 在BaseActivity中您可以使用多种小工具，包含不限于：\n//简易吐司：\ntoast(Obj);\n//简易Log打印日志：\nlog(Obj);\n//软键盘开关：\nsetIMMStatus(boolean show, EditText editText);\n//dip与像素px转换：\ndip2px(Context context, float dpValue);\n//像素px与dip转换：\ndip2px(Context context, float dpValue);\n//申请权限：\nrequestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {...});\n//属性动画：\nmoveAnimation(Object obj, String perference, float aimValue, long time, long delay);\n//数据判空（适合网络返回值判断处理，即便为字符串“null”也为空）：\nisNull(String);"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="更多"
+                        android:textSize="20dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="BaseFramework框架搭配更多好用易用的封装框架，食用更佳！"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:id="@+id/link_bokhttp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="BaseOkHttp网络请求框架 - 基于OkHttp的二次封装，解决诸多不便，更加好用！"
+                        android:textColor="#4472c4"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:id="@+id/link_bvolley"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="BaseVolley网络请求框架 - 基于Volley的二次封装，解决诸多不便，更加好用！"
+                        android:textColor="#4472c4"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:id="@+id/link_update"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="KongzueUpdateSDK - 无需存储权限的App更新框架"
+                        android:textColor="#4472c4"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:id="@+id/link_dialog"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="Kongzue's Dialog - 多种样式及风格的对话框组件"
+                        android:textColor="#4472c4"
+                        android:textSize="12dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:text="@string/welcome_github"
+                        android:textSize="12dp" />
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></FrameLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

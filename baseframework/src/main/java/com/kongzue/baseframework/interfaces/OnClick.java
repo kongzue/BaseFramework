@@ -1,7 +1,5 @@
 package com.kongzue.baseframework.interfaces;
 
-import android.view.View;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

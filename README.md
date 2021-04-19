@@ -1,4 +1,4 @@
-# BaseFramework
+# BaseFramework(AndroidX)
 
 ## BaseFramework 是什么？
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
@@ -36,42 +36,15 @@ Demo预览图如下：
 
 ## Maven仓库或Gradle的引用方式
 
-### Support 版本
+### 引入方式
 
-Maven仓库：
-```
-<dependency>
-  <groupId>com.kongzue.baseframework</groupId>
-  <artifactId>baseframework</artifactId>
-  <version>6.7.8</version>
-  <type>pom</type>
-</dependency>
-```
-Gradle：
-在dependencies{}中添加引用：
 
-```
-implementation 'com.kongzue.baseframework:baseframework:6.7.8'
-```
 
-### AndroidX 版本
+#### Support版本
 
-⚡ 另外提供 AndroidX 版本，代码详见 [分支](https://github.com/kongzue/BaseFramework/tree/androidx)
+由于 Google Android Support 的支持原因，Support 版本将不再更新，要使用最后的 Support 支持版本，请前往：
 
-Maven仓库：
-```
-<dependency>
-  <groupId>com.kongzue.baseframeworkx</groupId>
-  <artifactId>baseframework</artifactId>
-  <version>6.7.8</version>
-  <type>pom</type>
-</dependency>
-```
-Gradle：
-在dependencies{}中添加引用：
-```
-implementation 'com.kongzue.baseframeworkx:baseframework:6.7.8'
-```
+[Kongzue BaseFramework(Support)](https://github.com/kongzue/BaseFramework-Support)
 
 ## 使用提示
 

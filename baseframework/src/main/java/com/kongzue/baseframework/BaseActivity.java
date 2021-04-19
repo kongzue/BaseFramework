@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -20,14 +19,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.SharedElementCallback;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.SharedElementCallback;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.AppCompatActivity;
+
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -42,9 +45,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.kongzue.baseframework.interfaces.BindViews;
-import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
+import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
@@ -56,11 +59,14 @@ import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorHex;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorInt;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
+import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
+import com.kongzue.baseframework.util.JsonFormat;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.LanguageUtil;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
@@ -87,8 +93,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
 import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
 
 /**
  * @Version: 6.7.8
@@ -1384,6 +1393,31 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             globalLifeCircleListener.onResume(me, me.getClass().getName());
         }
         AppManager.setActiveActivity(this);
+        
+        if (resumeRunnableList != null) {
+            CopyOnWriteArrayList<Runnable> copyOnWriteArrayList = new CopyOnWriteArrayList<>(resumeRunnableList);
+            for (Runnable runnable : copyOnWriteArrayList) {
+                runOnMain(runnable);
+            }
+            resumeRunnableList.removeAll(copyOnWriteArrayList);
+        }
+    }
+    
+    private List<Runnable> resumeRunnableList;
+    
+    public void runOnResume(Runnable resumeRunnable) {
+        if (resumeRunnableList == null) {
+            resumeRunnableList = new ArrayList<>();
+        }
+        resumeRunnableList.add(resumeRunnable);
+    }
+    
+    public void cleanResumeRunnable() {
+        resumeRunnableList = new ArrayList<>();
+    }
+    
+    public void deleteResumeRunnable(Runnable resumeRunnable) {
+        if (resumeRunnableList != null) resumeRunnableList.remove(resumeRunnable);
     }
     
     @Override
@@ -1672,5 +1706,48 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     public String getInstanceKey() {
         return getClass().getName() + "@" + Integer.toHexString(hashCode());
+    }
+    
+    private List<ActivityResultCallback> activityResultCallbackList;
+    
+    public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback) {
+        if (activityResultCallbackList == null) activityResultCallbackList = new ArrayList<>();
+        if (activityResultCallback.getResultId() == 0) {
+            activityResultCallback.setResultId(100000 + activityResultCallbackList.size());
+        }
+        activityResultCallbackList.add(activityResultCallback);
+        super.startActivityForResult(intent, activityResultCallback.getResultId());
+    }
+    
+    public void startActivityForResult(Intent intent, ActivityResultCallback activityResultCallback, @Nullable Bundle options) {
+        if (activityResultCallbackList == null) activityResultCallbackList = new ArrayList<>();
+        if (activityResultCallback.getResultId() == 0) {
+            activityResultCallback.setResultId(100 + activityResultCallbackList.size());
+        }
+        activityResultCallbackList.add(activityResultCallback);
+        super.startActivityForResult(intent, activityResultCallback.getResultId(), options);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (activityResultCallbackList != null) {
+            List<ActivityResultCallback> runActivityResultCallback = new ArrayList<>();
+            for (ActivityResultCallback callback : activityResultCallbackList) {
+                if (callback.getResultId() == requestCode) {
+                    callback.onActivityResult(requestCode, resultCode, data);
+                    runActivityResultCallback.add(callback);
+                }
+            }
+            activityResultCallbackList.removeAll(runActivityResultCallback);
+        }
+    }
+    
+    public static <B extends BaseActivity> B getActivity(String instanceKey) {
+        return (B) AppManager.getInstance().getActivityInstance(instanceKey);
+    }
+    
+    public static <B extends BaseActivity> B getActivity(Class c) {
+        return (B) AppManager.getInstance().getActivityInstance(c);
     }
 }

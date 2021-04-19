@@ -22,7 +22,7 @@ Demo预览图如下：
 
 试用版和使用方法 Demo 可以前往 <http://beta.kongzue.com/basefw> 下载
 
-![Kongzue's BaseFramework](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseframework.png)
+<div align=center><img src="https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseframework.png" alt="Kongzue's BaseFramework" width="250" height="250" /></div>
 
 ## 使用前的约定与须知
 

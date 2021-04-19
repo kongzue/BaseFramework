@@ -4,10 +4,10 @@
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
-<img src="https://img.shields.io/badge/BaseFramework-6.7.8-green.svg" alt="Kongzue BaseFramework">
+<img src="https://img.shields.io/badge/Kongzue-BaseFramework-green.svg" alt="Kongzue BaseFramework">
 </a> 
-<a href="https://bintray.com/myzchh/maven/BaseFramework/6.7.7/link">
-<img src="https://img.shields.io/badge/Maven-6.7.8-blue.svg" alt="Maven">
+<a href="https://jitpack.io/#kongzue/BaseFramework">
+<img src="https://jitpack.io/v/kongzue/BaseFramework.svg" alt="Jitpack.io">
 </a> 
 <a href="http://www.apache.org/licenses/LICENSE-2.0">
 <img src="https://img.shields.io/badge/License-Apache%202.0-red.svg" alt="License">

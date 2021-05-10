@@ -351,7 +351,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (fullScreen != null) {
                 isFullScreen = fullScreen.value();
                 if (isFullScreen) {
-                    requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    requestFeature(Window.FEATURE_NO_TITLE);
                 }
             }
             
@@ -391,6 +391,14 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    
+    private boolean requestFeature(int featureId) {
+        try{
+            return getWindow().requestFeature(featureId);
+        }catch (Exception e){
+            return false;
         }
     }
     
@@ -1750,4 +1758,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public static <B extends BaseActivity> B getActivity(Class c) {
         return (B) AppManager.getInstance().getActivityInstance(c);
     }
+    
+    
 }

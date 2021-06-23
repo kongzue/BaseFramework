@@ -360,7 +360,7 @@ public class FragmentChangeUtil {
         }
     }
     
-    public BaseFragment getFragment(int index) {
+    public <B extends BaseFragment> B getFragment(int index) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
@@ -369,30 +369,30 @@ public class FragmentChangeUtil {
             log("错误：要获取的 index=" + index + " 超出了已添加的列表范围：" + fragmentList.size());
             return null;
         }
-        return fragmentList.get(index);
+        return (B)fragmentList.get(index);
     }
     
-    public BaseFragment getFragment(String instanceKey) {
+    public <B extends BaseFragment> B getFragment(String instanceKey) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
         }
         for (BaseFragment fragment : fragmentList) {
             if (fragment.getInstanceKey().equals(instanceKey)) {
-                return fragment;
+                return (B)fragment;
             }
         }
         return null;
     }
     
-    public BaseFragment getFragment(Class c) {
+    public <B extends BaseFragment> B getFragment(Class c) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return null;
         }
         for (BaseFragment b : fragmentList) {
             if (b.getClass().equals(c)) {
-                return b;
+                return (B)b;
             }
         }
         return null;

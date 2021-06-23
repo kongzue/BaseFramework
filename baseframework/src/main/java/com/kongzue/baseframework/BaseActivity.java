@@ -395,9 +395,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
     
     private boolean requestFeature(int featureId) {
-        try{
+        try {
             return getWindow().requestFeature(featureId);
-        }catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
@@ -1736,15 +1736,23 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         super.startActivityForResult(intent, activityResultCallback.getResultId(), options);
     }
     
+    public void setActivityResultCallbackList(ActivityResultCallback activityResultCallback) {
+        if (activityResultCallbackList == null) activityResultCallbackList = new ArrayList<>();
+        if (activityResultCallback.getResultId() == 0) {
+            activityResultCallback.setResultId(100 + activityResultCallbackList.size());
+        }
+        activityResultCallbackList.add(activityResultCallback);
+    }
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (activityResultCallbackList != null) {
             List<ActivityResultCallback> runActivityResultCallback = new ArrayList<>();
             for (ActivityResultCallback callback : activityResultCallbackList) {
-                if (callback.getResultId() == requestCode) {
+                if (callback.getResultId() == requestCode || callback.getResultId() < 0) {
                     callback.onActivityResult(requestCode, resultCode, data);
-                    runActivityResultCallback.add(callback);
+                    if (callback.getResultId() != -2) runActivityResultCallback.add(callback);
                 }
             }
             activityResultCallbackList.removeAll(runActivityResultCallback);
@@ -1758,6 +1766,4 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public static <B extends BaseActivity> B getActivity(Class c) {
         return (B) AppManager.getInstance().getActivityInstance(c);
     }
-    
-    
 }

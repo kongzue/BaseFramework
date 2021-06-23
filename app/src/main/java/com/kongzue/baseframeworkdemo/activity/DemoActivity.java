@@ -73,7 +73,6 @@ public class DemoActivity extends BaseActivity {
                 tabbar.setNormalFocusIndex(index);
             }
         });
-        
         changeFragment(0);
     }
     

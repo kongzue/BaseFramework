@@ -37,10 +37,14 @@ public class DebugLogG {
     private static FileWriter logWriter;
     
     public static void LogI(Object obj) {
+        LogI(obj, false);
+    }
+    
+    public static void LogI(Object obj, boolean showStack) {
         try {
             if (DEBUGMODE) {
                 if (obj instanceof Map) {
-                    String logStr = getCodeLineStr() + "Map: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " {\n";
+                    String logStr = getCodeLineStr(showStack) + "Map: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " {\n";
                     Set keySet = ((Map) obj).keySet();
                     for (Object key : keySet) {
                         String keyStr = String.valueOf(key);
@@ -51,7 +55,7 @@ public class DebugLogG {
                     Log.v(">>>>>>", logStr);
                 } else if (obj instanceof List) {
                     List list = (List) obj;
-                    String logStr = getCodeLineStr() + "List: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " [\n";
+                    String logStr = getCodeLineStr(showStack) + "List: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " [\n";
                     for (Object value : list) {
                         logStr = logStr + "    " + value + ",\n";
                     }
@@ -59,23 +63,23 @@ public class DebugLogG {
                     Log.v(">>>>>>", logStr);
                 } else if (obj.getClass().isArray()) {
                     if (obj instanceof int[]) {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(int[]): " + Arrays.toString((int[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(int[]): " + Arrays.toString((int[]) obj));
                     } else if (obj instanceof boolean[]) {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(boolean[]): " + Arrays.toString((boolean[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(boolean[]): " + Arrays.toString((boolean[]) obj));
                     } else if (obj instanceof byte[]) {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(byte[]): " + Arrays.toString((byte[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(byte[]): " + Arrays.toString((byte[]) obj));
                     } else if (obj instanceof char[]) {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(char[]): " + Arrays.toString((char[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(char[]): " + Arrays.toString((char[]) obj));
                     } else if (obj instanceof double[]) {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(double[]): " + Arrays.toString((double[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(double[]): " + Arrays.toString((double[]) obj));
                     } else if (obj instanceof float[]) {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(float[]): " + Arrays.toString((float[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(float[]): " + Arrays.toString((float[]) obj));
                     } else if (obj instanceof long[]) {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(long[]): " + Arrays.toString((long[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(long[]): " + Arrays.toString((long[]) obj));
                     } else if (obj instanceof short[]) {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(short[]): " + Arrays.toString((short[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(short[]): " + Arrays.toString((short[]) obj));
                     } else {
-                        Log.v(">>>>>>", getCodeLineStr() + "Array(obj[]): " + Arrays.toString((Object[]) obj));
+                        Log.v(">>>>>>", getCodeLineStr(showStack) + "Array(obj[]): " + Arrays.toString((Object[]) obj));
                     }
                 } else {
                     String msg = String.valueOf(obj);
@@ -87,7 +91,7 @@ public class DebugLogG {
                     } else {
                         LogG(msg);
                         if (!JsonFormat.formatJson(msg)) {
-                            Log.v(">>>>>>", getCodeLineStr() + msg);
+                            Log.v(">>>>>>", getCodeLineStr(showStack) + msg);
                         }
                     }
                 }
@@ -97,13 +101,15 @@ public class DebugLogG {
         }
     }
     
-    public static String getCodeLineStr() {
+    public static String getCodeLineStr(boolean showStack) {
+        String result = "";
         if (!BaseFrameworkSettings.DEBUG_DETAILS) {
-            return "";
+            return result;
         }
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         int line = -1;
         boolean findFrameworkPackage = false;
+        String stackStr = "";
         for (int i = 0; i < stackTraceElements.length; i++) {
             if (stackTraceElements[i].getClassName().startsWith("com.kongzue.baseframework.")) {
                 findFrameworkPackage = true;
@@ -113,8 +119,17 @@ public class DebugLogG {
                 break;
             }
         }
+        if (showStack) {
+            stackStr = "Stack: \n";
+            for (int i = stackTraceElements.length - 1; i > line; i--) {
+                stackStr = stackStr + "[" + stackTraceElements[i].getMethodName() + "](" + stackTraceElements[i].getFileName() + ":" + stackTraceElements[i].getLineNumber() + ")\n";
+            }
+        }
+        result = "Log." +
+                stackStr +
+                "[" + stackTraceElements[line].getMethodName() + "](" + stackTraceElements[line].getFileName() + ":" + stackTraceElements[line].getLineNumber() + ")\n";
         if (line == -1) return "";
-        return "Log.[" + stackTraceElements[line].getMethodName() + "](" + stackTraceElements[line].getFileName() + ":" + stackTraceElements[line].getLineNumber() + ")\n";
+        return result;
     }
     
     public static void LogE(Object obj) {

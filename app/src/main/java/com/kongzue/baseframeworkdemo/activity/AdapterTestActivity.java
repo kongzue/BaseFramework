@@ -24,7 +24,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//使用 @Layout 注解直接绑定要显示的布局
 @Layout(R.layout.activity_adapter_test)
+//支持侧滑返回
+@SwipeBack(true)
+//全屏显示此界面
+@FullScreen(true)
 public class AdapterTestActivity extends BaseActivity {
     
     private TextView txtTitle;
@@ -36,6 +41,7 @@ public class AdapterTestActivity extends BaseActivity {
     private ListView list;
     
     @Override
+    //此处用于绑定布局组件，你也可以使用 @BindView(resId) 来初始化组件
     public void initViews() {
         txtTitle = findViewById(R.id.txt_title);
         btnSimpleBean = findViewById(R.id.btn_simple_bean);
@@ -49,14 +55,18 @@ public class AdapterTestActivity extends BaseActivity {
     private BaseAdapter baseAdapter;
     
     @Override
+    //请在此编写初始化操作，例如读取数据等，以及对 UI 组件进行赋值
     public void initDatas(JumpParameter parameter) {
 //        initMultipleBeanTest();
 //        initMultipleMapTest();
 //        initSimpleMapTest();
-        initSimpleBeanTest();
+//        initSimpleBeanTest();
+        
+        initExperimentalTest();
     }
     
     @Override
+    //此处为组件绑定功能事件、回调等方法
     public void setEvents() {
         btnSimpleBean.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +99,104 @@ public class AdapterTestActivity extends BaseActivity {
                 initMultipleMapTest();
             }
         });
+    }
+    
+    //添加演示数据
+    private void initExperimentalTest() {
+        List<com.kongzue.baseframework.experimental.BaseAdapter.SimpleData> dataList = new ArrayList<>();
+        CustomData customData = new CustomData(R.layout.item_list_layout1,"测试");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout2,"测试2");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout3,"测试3");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout1,"测试1");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout1,"测试1");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout2,"测试2");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout2,"测试2");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout3,"测试3");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout3,"测试3");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout1,"测试1");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout1,"测试1");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout1,"测试1");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout2,"测试2");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout2,"测试2");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout2,"测试2");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout3,"测试3");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout3,"测试3");
+        dataList.add(customData);
+        customData = new CustomData(R.layout.item_list_layout3,"测试3");
+        dataList.add(customData);
+        
+        com.kongzue.baseframework.experimental.BaseAdapter<CustomData> baseAdapter = new com.kongzue.baseframework.experimental.BaseAdapter(me,dataList);
+        baseAdapter.setBindView(new com.kongzue.baseframework.experimental.BaseAdapter.BindView<CustomData>() {
+            @Override
+            public void onBind(View view, CustomData data) {
+                switch (data.layoutResId()){
+                    case R.layout.item_list_layout1:
+                        TextView txtTitle = view.findViewById(R.id.txt_title);
+                        txtTitle.setText(data.getContent());
+                        break;
+                    case R.layout.item_list_layout2:
+                        TextView txtTitle2 = view.findViewById(R.id.txt_title);
+                        txtTitle2.setText(data.getContent());
+                        break;
+                    case R.layout.item_list_layout3:
+                        TextView txtTitle3 = view.findViewById(R.id.txt_title);
+                        txtTitle3.setText(data.getContent());
+                        break;
+                }
+            }
+        });
+        
+        list.setAdapter(baseAdapter);
+    }
+    
+    class CustomData implements com.kongzue.baseframework.experimental.BaseAdapter.SimpleData{
+        
+        private int layoutId;
+        private String content;
+        
+        public CustomData(int layoutId, String content) {
+            this.layoutId = layoutId;
+            this.content = content;
+        }
+        
+        public String getContent() {
+            return content;
+        }
+        
+        public CustomData setContent(String content) {
+            this.content = content;
+            return this;
+        }
+        
+        public int getLayoutId() {
+            return layoutId;
+        }
+        
+        public CustomData setLayoutId(int layoutId) {
+            this.layoutId = layoutId;
+            return this;
+        }
+        
+        @Override
+        public int layoutResId() {
+            return layoutId;
+        }
     }
     
     private void initSimpleMapTest() {
@@ -215,7 +323,6 @@ public class AdapterTestActivity extends BaseActivity {
         datas.add(new CustomDatas().setTitle("我是布局1").setType(0));
         datas.add(new CustomDatas().setTitle("我是布局2").setType(1));
         datas.add(new CustomDatas().setTitle("我是布局3").setType(2));
-        
         
         Map<Integer, Integer> layoutResIdMap = new HashMap<>();
         layoutResIdMap.put(0, R.layout.item_list_layout1);

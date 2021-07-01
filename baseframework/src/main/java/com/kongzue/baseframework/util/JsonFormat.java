@@ -38,7 +38,7 @@ public class JsonFormat {
         } catch (JSONException e) {
             return false;
         }
-        Log.v(">>>>>>", getCodeLineStr() +  message);
+        Log.v(">>>>>>", getCodeLineStr(false) +  message);
         return true;
     }
     

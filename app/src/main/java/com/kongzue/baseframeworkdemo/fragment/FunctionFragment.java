@@ -12,17 +12,21 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.BaseFrameworkSettings;
+import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
+import com.kongzue.baseframeworkdemo.App;
 import com.kongzue.baseframeworkdemo.activity.AdapterTestActivity;
 import com.kongzue.baseframeworkdemo.activity.DemoActivity;
 import com.kongzue.baseframeworkdemo.activity.JumpActivity;
 import com.kongzue.baseframeworkdemo.R;
 import com.kongzue.baseframeworkdemo.activity.ResponseActivity;
 import com.kongzue.baseframeworkdemo.activity.TransitionActivity;
+import com.kongzue.baseframeworkdemo.util.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +41,19 @@ import java.util.Map;
  * @mail: myzcxhh@live.cn
  * @createTime: 2019/8/20 21:57
  */
+
+//使用 @Layout 注解直接绑定要显示的布局
 @Layout(R.layout.fragment_function)
+/**
+ * 此处泛型是用于约束绑定目标 Activity 的，是可选操作，
+ * 如果你指定了目标绑定目标 Activity，则使用“me.”关键词可直接调用该 Activity 中的 public 成员或方法
+ */
 public class FunctionFragment extends BaseFragment<DemoActivity> {
     
+    //使用 @BindView(resId) 来初始化组件
+    @BindView(R.id.textView)
     private TextView textView;
+    
     private Button intentToBaseAdapter;
     private Button btnJump;
     private Button btnResult;
@@ -56,6 +69,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     private Button btnTimer;
     
     @Override
+    //此处用于绑定布局组件，你也可以使用 @BindView(resId) 来初始化组件
     public void initViews() {
         textView = findViewById(R.id.textView);
         intentToBaseAdapter = findViewById(R.id.intentToBaseAdapter);
@@ -74,21 +88,29 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     }
     
     @Override
+    //请在此编写初始化操作，例如读取数据等，以及对 UI 组件进行赋值
     public void initDatas() {
-    
     }
     
     private int time;
+    private CycleRunner runner;
     
-    //此处为组件绑定事件
     @Override
+    //此处为组件绑定功能事件、回调等方法
     public void setEvents() {
+        //功能：主线程计时器
         btnTimer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //此功能将演示在主线程循环执行的计时器，你可以在回调中直接执行 UI 操作，适用于发送验证码倒计时等场景
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
-                runOnMainCycle(new Runnable() {
+                
+                //如果有，先取消之前的计时器
+                if (runner!=null){
+                    runner.cancel();
+                }
+                
+                runner = runOnMainCycle(new Runnable() {
                     @Override
                     public void run() {
                         time++;
@@ -98,20 +120,22 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             }
         });
         
+        //功能：兼容性 Toast 提示，在部分因未开启悬浮窗权限导致无法正常弹出一般 Toast 的情况下会自动使用 PopupWindow 替代
         btnToast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 toastS("test!");
             }
         });
         
+        //功能：切换语言（会重启界面）
         btnChangeLng.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 if (BaseFrameworkSettings.selectLocale == Locale.ENGLISH) {
                     BaseFrameworkSettings.selectLocale = Locale.CHINA;
                 } else {
@@ -121,6 +145,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             }
         });
         
+        //功能：获取 IMEI
         btnGetImei.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,19 +153,20 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             }
         });
         
+        //功能：打印 Map（Json 形式）
         btnPrintMapLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 
-                Map<String,Object> map = new HashMap<>();
-                map.put("name","kongzue");
-                map.put("email","myzcxhh@live.cn");
-                map.put("website","kongzue.com");
-                map.put("times",20);
-                map.put("signed",true);
+                Map<String, Object> map = new HashMap<>();
+                map.put("name", "kongzue");
+                map.put("email", "myzcxhh@live.cn");
+                map.put("website", "kongzue.com");
+                map.put("times", 20);
+                map.put("signed", true);
                 log(map);
-    
+                
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
                 builder.setTitle("提示");
                 builder.setMessage("此功能需要连接Android Studio的Logcat查看输出结果");
@@ -150,11 +176,12 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             }
         });
         
+        //功能：打印 List（Json 形式）
         btnPrintListLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 List list = new ArrayList();
                 list.add("listItem 1");
                 list.add("listItem 2");
@@ -162,7 +189,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
                 list.add(25.6);
                 
                 log(list);
-    
+                
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
                 builder.setTitle("提示");
                 builder.setMessage("此功能需要连接Android Studio的Logcat查看输出结果");
@@ -172,11 +199,12 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             }
         });
         
+        //功能：打印 Json
         btnPrintJsonLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 log("{\"employees\": [{ \"firstName\":\"Bill\" , \"lastName\":\"Gates\" },{ \"firstName\":\"George\" , \"lastName\":\"Bush\" },{ \"firstName\":\"Thomas\" , \"lastName\":\"Carter\" }]}");
                 
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
@@ -188,38 +216,42 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             }
         });
         
+        //功能：触发一次闪退
         btnError.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 doTestError();
             }
         });
         
+        //功能：共享元素跳转
         btnTransition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 jump(TransitionActivity.class, btnTransition);
             }
         });
         
+        //功能：基础适配器演示
         intentToBaseAdapter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 jump(AdapterTestActivity.class);
             }
         });
         
+        //功能：申请权限
         btnPermission.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
                     @Override
                     public void onSuccess(String[] permissions) {
@@ -234,11 +266,12 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             }
         });
         
+        //功能，跳转回调
         btnResult.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 AlertDialog.Builder builder = new AlertDialog.Builder(me);
                 builder.setTitle("提示");
                 builder.setMessage("跳转到下一个界面后，点击“SET返回数据”按钮即可设定返回数据，当返回此界面时会显示该数据");
@@ -279,6 +312,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     }
     
     @OnClick(R.id.btn_jump)
+    //你也可以使用 @OnClick 注解直接绑定点击事件
     public void jumpFunction() {
         setFragmentResponse(new JumpParameter().put("function", btnJump.getText().toString()));
         AlertDialog.Builder builder = new AlertDialog.Builder(me);
@@ -298,6 +332,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         dialog.show();
     }
     
+    //功能：触发一个错误
     private void doTestError() throws NullPointerException {
         throw new NullPointerException("This is a exception for test");
     }
@@ -309,14 +344,28 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     
     
     @Override
+    /**
+     * 进入 Fragment 时调用此方法，isSwitchFragment 标记说明了是否为从别的 Fragment 切换至此 Fragment 的，
+     * 若为 false，则有可能是从后台切换至前台触发
+     */
     public void onShow(boolean isSwitchFragment) {
         log("FunctionFragment: onShow");
         super.onShow(isSwitchFragment);
+        
+        //演示一个从 App 类中写入的序列化对象的读取实现
+        User user = App.user.getObject("userInfo", User.class);
+        log("userLoad: "+user);
     }
     
     @Override
     public void onHide() {
         log("FunctionFragment: onHide");
         super.onHide();
+    }
+    
+    @Override
+    public boolean onBack() {
+        toastS("此界面不允许返回退出\n这个拦截操作是在 BaseFragment 中进行的");
+        return true;
     }
 }

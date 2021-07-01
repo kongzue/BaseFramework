@@ -776,6 +776,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         DebugLogG.LogI(obj);
     }
     
+    public void log(final Object obj,boolean showStack) {
+        DebugLogG.LogI(obj,showStack);
+    }
+    
     public void errorLog(final Object obj) {
         DebugLogG.LogE(obj);
     }

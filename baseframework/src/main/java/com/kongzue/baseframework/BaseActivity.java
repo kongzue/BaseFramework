@@ -9,6 +9,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -134,6 +135,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     @Override
     @Deprecated
     protected void onCreate(Bundle savedInstanceState) {
+        AppManager.getInstance().preCreate(this);
         super.onCreate(savedInstanceState);
         if (BaseApp.getPrivateInstance() == null) {
             BaseApp.setPrivateInstance(getApplication());
@@ -1769,5 +1771,21 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     
     public static <B extends BaseActivity> B getActivity(Class c) {
         return (B) AppManager.getInstance().getActivityInstance(c);
+    }
+    
+    @Override
+    protected void onStart() {
+        if (globalLifeCircleListener != null) {
+            globalLifeCircleListener.onStart(me, me.getClass().getName());
+        }
+        super.onStart();
+    }
+    
+    @Override
+    protected void onStop() {
+        if (globalLifeCircleListener != null) {
+            globalLifeCircleListener.onStop(me, me.getClass().getName());
+        }
+        super.onStop();
     }
 }

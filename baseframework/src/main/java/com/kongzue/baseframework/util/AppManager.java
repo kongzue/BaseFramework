@@ -6,7 +6,6 @@ import android.content.Context;
 
 import com.kongzue.baseframework.BaseActivity;
 
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collections;
@@ -263,12 +262,19 @@ public class AppManager {
         AppManager.onActivityStatusChangeListener = onActivityStatusChangeListener;
     }
     
-    public interface OnActivityStatusChangeListener {
-        void onActivityCreate(BaseActivity activity);
+    public void preCreate(BaseActivity activity) {
+        if (onActivityStatusChangeListener != null) {
+            onActivityStatusChangeListener.onActivityCreate(activity);
+        }
+    }
+    
+    public abstract class OnActivityStatusChangeListener {
         
-        void onActivityDestroy(BaseActivity activity);
+        void onActivityCreate(BaseActivity activity){};
+    
+        void onActivityDestroy(BaseActivity activity){};
         
-        void onAllActivityClose();
+        void onAllActivityClose(){};
     }
     
     public static void setActiveActivity(BaseActivity activeActivity) {

@@ -15,6 +15,7 @@ import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.OnClick;
+import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
@@ -106,7 +107,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
                 
                 //如果有，先取消之前的计时器
-                if (runner!=null){
+                if (runner != null) {
                     runner.cancel();
                 }
                 
@@ -215,16 +216,16 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
                 dialog.show();
             }
         });
-        
-        //功能：触发一次闪退
-        btnError.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-                
-                doTestError();
-            }
-        });
+
+//        //功能：触发一次闪退
+//        btnError.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
+//
+//                doTestError();
+//            }
+//        });
         
         //功能：共享元素跳转
         btnTransition.setOnClickListener(new View.OnClickListener() {
@@ -313,7 +314,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
     
     @OnClick(R.id.btn_jump)
     //你也可以使用 @OnClick 注解直接绑定点击事件
-    public void jumpFunction() {
+    public void jumpFunction(View v) {
         setFragmentResponse(new JumpParameter().put("function", btnJump.getText().toString()));
         AlertDialog.Builder builder = new AlertDialog.Builder(me);
         builder.setTitle("提示");
@@ -354,7 +355,7 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
         
         //演示一个从 App 类中写入的序列化对象的读取实现
         User user = App.user.getObject("userInfo", User.class);
-        log("userLoad: "+user);
+        log("userLoad: " + user);
     }
     
     @Override

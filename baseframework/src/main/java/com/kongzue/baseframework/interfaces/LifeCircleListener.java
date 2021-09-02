@@ -7,14 +7,9 @@ package com.kongzue.baseframework.interfaces;
  * Mail: myzcxhh@live.cn
  * CreateTime: 2018/8/1 01:36
  */
-public interface LifeCircleListener {
-    
-    void onCreate();
-    
-    void onResume();
-    
-    void onPause();
-    
-    void onDestroy();
-    
+public abstract class LifeCircleListener {
+    public void onCreate(){}
+    public void onResume(){}
+    public void onPause(){}
+    public void onDestroy(){}
 }

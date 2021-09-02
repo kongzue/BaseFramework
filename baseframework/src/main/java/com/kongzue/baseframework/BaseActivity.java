@@ -1,5 +1,7 @@
 package com.kongzue.baseframework;
 
+import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -9,7 +11,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,21 +18,8 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.Settings;
-
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.SharedElementCallback;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -46,16 +34,26 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.SharedElementCallback;
+import androidx.core.content.ContextCompat;
+
 import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.BindViews;
+import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
+import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
-import com.kongzue.baseframework.interfaces.LifeCircleListener;
-import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
-import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorHex;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorInt;
@@ -64,14 +62,14 @@ import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.BuildProperties;
 import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
-import com.kongzue.baseframework.util.JsonFormat;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.LanguageUtil;
-import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
+import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityBase;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityHelper;
@@ -79,26 +77,15 @@ import com.kongzue.baseframework.util.swipeback.util.SwipeBackLayout;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackUtil;
 import com.kongzue.baseframework.util.toast.Toaster;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import static com.kongzue.baseframework.BaseFrameworkSettings.BETA_PLAN;
-import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
-import static com.kongzue.baseframework.BaseFrameworkSettings.setNavigationBarHeightZero;
 
 /**
  * @Version: 6.7.8
@@ -618,7 +605,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     //MIUI判断
     public static boolean isMIUI() {
         try {
-            final BuildProperties prop = BuildProperties.newInstance();
+            BuildProperties prop = BuildProperties.newInstance();
             return prop.getProperty(KEY_MIUI_VERSION_CODE, null) != null || prop.getProperty(KEY_MIUI_VERSION_NAME, null) != null || prop.getProperty(KEY_MIUI_INTERNAL_STORAGE, null) != null;
         } catch (final IOException e) {
             return false;
@@ -633,60 +620,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             return method != null;
         } catch (final Exception e) {
             return false;
-        }
-    }
-    
-    public static class BuildProperties {
-        
-        private final Properties properties;
-        
-        private BuildProperties() throws IOException {
-            properties = new Properties();
-            properties.load(new FileInputStream(new File(Environment.getRootDirectory(), "build.prop")));
-        }
-        
-        public boolean containsKey(final Object key) {
-            return properties.containsKey(key);
-        }
-        
-        public boolean containsValue(final Object value) {
-            return properties.containsValue(value);
-        }
-        
-        public Set<Map.Entry<Object, Object>> entrySet() {
-            return properties.entrySet();
-        }
-        
-        public String getProperty(final String name) {
-            return properties.getProperty(name);
-        }
-        
-        public String getProperty(final String name, final String defaultValue) {
-            return properties.getProperty(name, defaultValue);
-        }
-        
-        public boolean isEmpty() {
-            return properties.isEmpty();
-        }
-        
-        public Enumeration<Object> keys() {
-            return properties.keys();
-        }
-        
-        public Set<Object> keySet() {
-            return properties.keySet();
-        }
-        
-        public int size() {
-            return properties.size();
-        }
-        
-        public Collection<Object> values() {
-            return properties.values();
-        }
-        
-        public static BuildProperties newInstance() throws IOException {
-            return new BuildProperties();
         }
     }
     

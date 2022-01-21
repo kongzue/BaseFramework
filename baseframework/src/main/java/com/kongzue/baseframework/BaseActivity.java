@@ -144,10 +144,16 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (!interceptSetContentView()) {
             layoutResId = resetLayoutResId();
             if (layoutResId == -1) {
-                errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
-                return;
+                View contentView = resetContentView();
+                if (contentView == null) {
+                    errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
+                    return;
+                } else {
+                    setContentView(resetContentView());
+                }
+            } else {
+                setContentView(layoutResId);
             }
-            setContentView(layoutResId);
         }
         
         if (isFullScreen) {
@@ -179,6 +185,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
     }
     
+    public View resetContentView() {
+        return null;
+    }
+    
+    //改用 #resetContentView
+    @Deprecated
     public boolean interceptSetContentView() {
         return false;
     }
@@ -711,8 +723,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         DebugLogG.LogI(obj);
     }
     
-    public void log(final Object obj,boolean showStack) {
-        DebugLogG.LogI(obj,showStack);
+    public void log(final Object obj, boolean showStack) {
+        DebugLogG.LogI(obj, showStack);
     }
     
     public void errorLog(final Object obj) {

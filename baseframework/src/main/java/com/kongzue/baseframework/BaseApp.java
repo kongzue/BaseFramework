@@ -359,7 +359,7 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
         BaseFrameworkSettings.exitApp();
     }
     
-    public String getAndroidId() {
+    public static String getAndroidId() {
         return BaseFrameworkSettings.getAndroidId();
     }
 }

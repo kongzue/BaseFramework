@@ -6,7 +6,7 @@ def siteUrl = 'https://github.com/kongzue/BaseFramework' //项目在github主页
 def gitUrl = 'https://github.com/kongzue/BaseFramework.git'   //Git仓库的地址
 
 group = "com.kongzue.baseframeworkx"//发布aar前缀根节点
-version = "6.8.1"//发布aar的库版本
+version = "6.8.2"//发布aar的库版本
 
 android {
     compileSdkVersion 30
@@ -14,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 30
-        versionCode 122
-        versionName "6.8.1"
+        versionCode 123
+        versionName "6.8.2"
     }
 
     buildTypes {

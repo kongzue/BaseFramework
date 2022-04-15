@@ -1533,7 +1533,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return result;
     }
     
-    public String getAndroidId() {
+    public static String getAndroidId() {
         return BaseFrameworkSettings.getAndroidId();
     }
     

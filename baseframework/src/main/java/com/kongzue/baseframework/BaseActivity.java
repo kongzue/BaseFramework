@@ -711,8 +711,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         DebugLogG.LogI(obj);
     }
     
-    public void log(final Object obj,boolean showStack) {
-        DebugLogG.LogI(obj,showStack);
+    public void log(final Object obj, boolean showStack) {
+        DebugLogG.LogI(obj, showStack);
     }
     
     public void errorLog(final Object obj) {
@@ -1522,8 +1522,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
     
     public String getAndroidId() {
-        String androidID = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        return androidID;
+        return BaseFrameworkSettings.getAndroidId();
     }
     
     //获取Mac地址 (请预先在 AndroidManifest.xml 中声明：<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>)

@@ -12,6 +12,7 @@ import com.kongzue.baseframework.util.Preferences;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Author: @Kongzue
@@ -37,6 +38,9 @@ public class BaseFrameworkSettings {
     public static Locale selectLocale;
     
     private static boolean running = true;
+    
+    //隐私权限设置
+    public static boolean PRIVACY_ALLOWED = true;
     
     //设置开启崩溃监听
     public static void turnOnReadErrorInfoPermissions(Context context, OnBugReportListener listener) {
@@ -140,5 +144,30 @@ public class BaseFrameworkSettings {
     
     public static void exitApp() {
         android.os.Process.killProcess(android.os.Process.myPid());
+    }
+    
+    public static String getAndroidId() {
+        if (PRIVACY_ALLOWED){
+            String androidId = "";
+            try {
+                androidId = android.provider.Settings.Secure.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+            } catch (Exception e) {
+            }
+            if (isNull(androidId)) {
+                return createDeviceId();
+            }
+            return androidId;
+        }else{
+            return createDeviceId();
+        }
+    }
+    
+    private static String createDeviceId() {
+        String id = BaseApp.Settings("device").getString("id");
+        if (isNull(id)) {
+            id = UUID.randomUUID().toString();
+            BaseApp.Settings("device").set("id", id);
+        }
+        return id;
     }
 }

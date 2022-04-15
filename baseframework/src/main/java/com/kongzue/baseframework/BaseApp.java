@@ -1,5 +1,7 @@
 package com.kongzue.baseframework;
 
+import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+
 import android.app.Application;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -27,8 +29,6 @@ import com.kongzue.baseframework.util.SettingsUtil;
 import com.kongzue.baseframework.util.toast.Toaster;
 
 import java.lang.reflect.Field;
-
-import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
 /**
  * @author: Kongzue
@@ -357,5 +357,9 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     
     public void exit() {
         BaseFrameworkSettings.exitApp();
+    }
+    
+    public String getAndroidId() {
+        return BaseFrameworkSettings.getAndroidId();
     }
 }

@@ -1,8 +1,5 @@
 apply plugin: 'com.android.library'
 
-group = "com.kongzue.baseframeworkx"//发布aar前缀根节点
-version = "6.8.3"//发布aar的库版本
-
 android {
     compileSdkVersion 30
 
@@ -10,7 +7,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 30
         versionCode 123
-        versionName "6.8.3"
+        versionName "6.8.4"
     }
 
     buildTypes {

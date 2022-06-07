@@ -20,7 +20,7 @@ public class BaseFragmentManager {
     }
     
     public static BaseFragmentManager getInstance() {
-        synchronized (BaseFragmentManager.class){
+        synchronized (BaseFragmentManager.class) {
             if (instance == null) {
                 instance = new BaseFragmentManager();
             }
@@ -92,16 +92,16 @@ public class BaseFragmentManager {
     
     public static abstract class OnFragmentStatusChangeListener {
         
-        void onFragmentCreate(BaseFragment activity) {
+        public void onFragmentCreate(BaseFragment activity) {
         }
         
-        void onFragmentDestroy(BaseFragment activity) {
+        public void onFragmentDestroy(BaseFragment activity) {
         }
         
-        void onFragmentShow(BaseFragment activity) {
+        public void onFragmentShow(BaseFragment activity) {
         }
         
-        void onFragmentHide(BaseFragment activity) {
+        public void onFragmentHide(BaseFragment activity) {
         }
     }
     

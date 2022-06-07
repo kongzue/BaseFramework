@@ -270,11 +270,11 @@ public class AppManager {
     
     public static abstract class OnActivityStatusChangeListener {
         
-        void onActivityCreate(BaseActivity activity){}
+        public void onActivityCreate(BaseActivity activity){}
     
-        void onActivityDestroy(BaseActivity activity){}
+        public void onActivityDestroy(BaseActivity activity){}
         
-        void onAllActivityClose(){}
+        public void onAllActivityClose(){}
     }
     
     public static void setActiveActivity(BaseActivity activeActivity) {

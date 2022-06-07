@@ -1,23 +1,16 @@
 package com.kongzue.baseframeworkdemo.activity;
 
-import android.content.Intent;
 import android.view.View;
-
-import androidx.annotation.Nullable;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
-import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.DarkNavigationBarTheme;
 import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.Layout;
-import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
-import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.interfaces.OnFragmentChangeListener;
-import com.kongzue.baseframework.util.AppManager;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframeworkdemo.R;

@@ -268,13 +268,13 @@ public class AppManager {
         }
     }
     
-    public abstract class OnActivityStatusChangeListener {
+    public static abstract class OnActivityStatusChangeListener {
         
-        void onActivityCreate(BaseActivity activity){};
+        void onActivityCreate(BaseActivity activity){}
     
-        void onActivityDestroy(BaseActivity activity){};
+        void onActivityDestroy(BaseActivity activity){}
         
-        void onAllActivityClose(){};
+        void onAllActivityClose(){}
     }
     
     public static void setActiveActivity(BaseActivity activeActivity) {

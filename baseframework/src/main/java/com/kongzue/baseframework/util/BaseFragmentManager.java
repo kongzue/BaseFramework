@@ -14,6 +14,20 @@ import java.util.Stack;
  */
 public class BaseFragmentManager {
     
+    private static BaseFragmentManager instance;
+    
+    private BaseFragmentManager() {
+    }
+    
+    public static BaseFragmentManager getInstance() {
+        synchronized (BaseFragmentManager.class){
+            if (instance == null) {
+                instance = new BaseFragmentManager();
+            }
+            return instance;
+        }
+    }
+    
     private static OnFragmentStatusChangeListener onFragmentStatusChangeListener;
     private static Stack<BaseFragment> fragmentStack;
     

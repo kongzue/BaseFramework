@@ -1,10 +1,17 @@
 package com.kongzue.baseframework;
 
+import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.IdRes;
@@ -12,25 +19,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.Toast;
-
 import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.BindViews;
-import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.interfaces.OnClicks;
-import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.BaseFragmentManager;
 import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JumpParameter;
-import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
+import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
 import com.kongzue.baseframework.util.toast.Toaster;
 
@@ -40,8 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
 /**
  * @Version: 6.7.0
@@ -131,6 +130,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
                 lazyInit(getParameter());
             }
         });
+    
+        BaseFragmentManager.getInstance().onFragmentCreate(this);
         
         return rootView;
     }
@@ -292,7 +293,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
      * @param isSwitchFragment 是否是从其他 BaseFragment 切换至此界面
      */
     public void onShow(boolean isSwitchFragment) {
-    
+        BaseFragmentManager.getInstance().onFragmentShow(this);
     }
     
     /**
@@ -758,6 +759,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
                 runnable.cancel();
             }
         }
+    
+        BaseFragmentManager.getInstance().onFragmentDestroy(this);
         super.onDestroy();
     }
     
@@ -767,6 +770,8 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     public void onHide() {
         isActive = false;
         ParameterCache.getInstance().cleanParameter(this.getClass().getName());
+    
+        BaseFragmentManager.getInstance().onFragmentHide(this);
     }
     
     //使用默认浏览器打开链接

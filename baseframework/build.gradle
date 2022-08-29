@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 30
-        versionCode 123
-        versionName "6.8.4"
+        versionCode 124
+        versionName "6.8.5"
     }
 
     buildTypes {
@@ -28,5 +28,4 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.0.0+'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 }

@@ -61,7 +61,7 @@ public class BaseFrameworkSettings {
                         DebugLogG.catchException(e);
                         if (onBugReportListener != null) {
                             onBugReportListener.onReporter(new File(reporterFile));
-                            if (onBugReportListener.onCrash(new Exception(e), new File(reporterFile))){
+                            if (onBugReportListener.onCrash(new Exception(e), new File(reporterFile))) {
                                 exitApp();
                             }
                         }
@@ -81,7 +81,7 @@ public class BaseFrameworkSettings {
                         if (onBugReportListener != null) {
                             Looper.prepare();
                             onBugReportListener.onReporter(new File(reporterFile));
-                            if (onBugReportListener.onCrash(new Exception(e), new File(reporterFile))){
+                            if (onBugReportListener.onCrash(new Exception(e), new File(reporterFile))) {
                                 exitApp();
                             }
                             Looper.loop();
@@ -147,8 +147,12 @@ public class BaseFrameworkSettings {
     }
     
     public static String getAndroidId() {
-        if (PRIVACY_ALLOWED){
+        if (PRIVACY_ALLOWED) {
             String androidId = "";
+            androidId = BaseApp.Settings("device").getString("androidId");
+            if (!isNull(androidId)) {
+                return androidId;
+            }
             try {
                 androidId = android.provider.Settings.Secure.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
             } catch (Exception e) {
@@ -156,8 +160,9 @@ public class BaseFrameworkSettings {
             if (isNull(androidId)) {
                 return createDeviceId();
             }
+            BaseApp.Settings("device").set("androidId", androidId);
             return androidId;
-        }else{
+        } else {
             return createDeviceId();
         }
     }

@@ -146,23 +146,34 @@ public class BaseFrameworkSettings {
         android.os.Process.killProcess(android.os.Process.myPid());
     }
     
+    private static String androidId;
+    
+    public static void setAndroidId(String androidId) {
+        BaseFrameworkSettings.androidId = androidId;
+    }
+    
     public static String getAndroidId() {
         if (PRIVACY_ALLOWED) {
-            String androidId = "";
-            androidId = BaseApp.Settings("device").getString("androidId");
             if (!isNull(androidId)) {
                 return androidId;
             }
             try {
-                androidId = android.provider.Settings.Secure.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+                androidId = BaseApp.Settings.getString("device","androidId",
+                        android.provider.Settings.Secure.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID)
+                );
             } catch (Exception e) {
-            }
-            if (isNull(androidId)) {
                 return createDeviceId();
             }
-            BaseApp.Settings("device").set("androidId", androidId);
-            return androidId;
+            if (!isNull(androidId)) {
+                BaseApp.Settings("device").set("androidId", androidId);
+                return androidId;
+            }else{
+                return createDeviceId();
+            }
         } else {
+            if (!isNull(androidId)) {
+                return androidId;
+            }
             return createDeviceId();
         }
     }

@@ -68,6 +68,7 @@ import com.kongzue.baseframework.util.DebugLogG;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.LanguageUtil;
+import com.kongzue.baseframework.util.OnActivityPermissionCallBack;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
@@ -315,6 +316,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void onBackPressed() {
         if (!onBack()) {
             super.onBackPressed();
+            if (BaseFrameworkSettings.defaultActivityExitInAnimRes!=0 && BaseFrameworkSettings.defaultActivityExitOutAnimRes!=0){
+                jumpAnim(BaseFrameworkSettings.defaultActivityExitInAnimRes,BaseFrameworkSettings.defaultActivityExitOutAnimRes);
+            }
         }
     }
     
@@ -828,6 +832,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         this.onPermissionResponseListener = onPermissionResponseListener;
         if (checkPermissions(permissions)) {
             if (onPermissionResponseListener != null) {
+                if (onPermissionResponseListener instanceof OnActivityPermissionCallBack){
+                    ((OnActivityPermissionCallBack)onPermissionResponseListener).setActivity(this);
+                }
                 onPermissionResponseListener.onSuccess(permissions);
             }
         } else {
@@ -898,6 +905,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_PERMISSION) {
+            if (onPermissionResponseListener instanceof OnActivityPermissionCallBack){
+                ((OnActivityPermissionCallBack)onPermissionResponseListener).setActivity(this);
+            }
             if (verifyPermissions(grantResults)) {
                 if (onPermissionResponseListener != null) {
                     onPermissionResponseListener.onSuccess(permissions);
@@ -1062,6 +1072,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public boolean jump(Class<?> cls) {
         try {
             startActivity(new Intent(me, cls));
+            if (BaseFrameworkSettings.defaultActivityEnterInAnimRes!=0 && BaseFrameworkSettings.defaultActivityEnterOutAnimRes!=0){
+                jumpAnim(BaseFrameworkSettings.defaultActivityEnterInAnimRes,BaseFrameworkSettings.defaultActivityEnterOutAnimRes);
+            }
         } catch (Exception e) {
             if (DEBUGMODE) {
                 e.printStackTrace();
@@ -1078,6 +1091,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 ParameterCache.getInstance().set(cls.getName(), jumpParameter);
             }
             startActivity(new Intent(me, cls));
+            if (BaseFrameworkSettings.defaultActivityEnterInAnimRes!=0 && BaseFrameworkSettings.defaultActivityEnterOutAnimRes!=0){
+                jumpAnim(BaseFrameworkSettings.defaultActivityEnterInAnimRes,BaseFrameworkSettings.defaultActivityEnterOutAnimRes);
+            }
         } catch (Exception e) {
             if (DEBUGMODE) {
                 e.printStackTrace();

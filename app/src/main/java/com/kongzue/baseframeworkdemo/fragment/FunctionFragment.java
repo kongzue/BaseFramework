@@ -1,6 +1,5 @@
 package com.kongzue.baseframeworkdemo.fragment;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,16 +14,16 @@ import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.OnClick;
-import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.JumpParameter;
+import com.kongzue.baseframework.util.OnActivityPermissionCallBack;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
-import com.kongzue.baseframework.util.OnPermissionResponseListener;
+import com.kongzue.baseframework.util.Permission;
 import com.kongzue.baseframeworkdemo.App;
+import com.kongzue.baseframeworkdemo.R;
 import com.kongzue.baseframeworkdemo.activity.AdapterTestActivity;
 import com.kongzue.baseframeworkdemo.activity.DemoActivity;
 import com.kongzue.baseframeworkdemo.activity.JumpActivity;
-import com.kongzue.baseframeworkdemo.R;
 import com.kongzue.baseframeworkdemo.activity.ResponseActivity;
 import com.kongzue.baseframeworkdemo.activity.TransitionActivity;
 import com.kongzue.baseframeworkdemo.util.User;
@@ -252,18 +251,31 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-                
-                requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
+    
+                Permission.build().LOCATION().get(new OnActivityPermissionCallBack<DemoActivity>() {
                     @Override
-                    public void onSuccess(String[] permissions) {
+                    public void onSuccess(DemoActivity activity, String[] permissions) {
                         toast("申请权限成功");
                     }
-                    
+    
                     @Override
-                    public void onFail() {
+                    public void onFail(DemoActivity activity) {
                         toast("申请权限失败");
                     }
                 });
+                
+                //陈旧的写法：
+//                requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
+//                    @Override
+//                    public void onSuccess(String[] permissions) {
+//                        toast("申请权限成功");
+//                    }
+//
+//                    @Override
+//                    public void onFail() {
+//                        toast("申请权限失败");
+//                    }
+//                });
             }
         });
         

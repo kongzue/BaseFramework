@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.kongzue.baseframeworkdemo"
         minSdkVersion 15
-        targetSdkVersion 30
-        versionCode 121
-        versionName "6.8.6"
+        targetSdkVersion 33
+        versionCode 122
+        versionName "6.8.7"
     }
     buildTypes {
         release {

@@ -158,8 +158,8 @@ public class BaseFrameworkSettings {
                 return androidId;
             }
             try {
-                androidId = BaseApp.Settings.getString("device","androidId",
-                        android.provider.Settings.Secure.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID)
+                androidId = BaseApp.Settings.getString("device", "androidId",
+                        getSystemAndroidId()
                 );
             } catch (Exception e) {
                 return createDeviceId();
@@ -167,7 +167,7 @@ public class BaseFrameworkSettings {
             if (!isNull(androidId)) {
                 BaseApp.Settings("device").set("androidId", androidId);
                 return androidId;
-            }else{
+            } else {
                 return createDeviceId();
             }
         } else {
@@ -178,6 +178,10 @@ public class BaseFrameworkSettings {
         }
     }
     
+    private static String getSystemAndroidId() {
+        return android.provider.Settings.Secure.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+    }
+    
     private static String createDeviceId() {
         String id = BaseApp.Settings("device").getString("id");
         if (isNull(id)) {
@@ -186,4 +190,12 @@ public class BaseFrameworkSettings {
         }
         return id;
     }
+    
+    //全局 Activity 默认入场动画
+    public static int defaultActivityEnterInAnimRes = 0;
+    public static int defaultActivityEnterOutAnimRes = 0;
+    
+    //全局 Activity 默认退出动画
+    public static int defaultActivityExitInAnimRes = 0;
+    public static int defaultActivityExitOutAnimRes = 0;
 }

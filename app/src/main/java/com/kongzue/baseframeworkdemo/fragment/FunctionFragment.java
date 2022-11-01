@@ -251,13 +251,13 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(View v) {
                 setFragmentResponse(new JumpParameter().put("function", ((Button) v).getText().toString()));
-    
+                
                 Permission.build().LOCATION().get(new OnActivityPermissionCallBack<DemoActivity>() {
                     @Override
                     public void onSuccess(DemoActivity activity, String[] permissions) {
                         toast("申请权限成功");
                     }
-    
+                    
                     @Override
                     public void onFail(DemoActivity activity) {
                         toast("申请权限失败");

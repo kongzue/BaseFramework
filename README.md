@@ -1,6 +1,7 @@
 # BaseFramework(AndroidX)
 
 ## BaseFramework 是什么？
+
 BaseFramework框架包含沉浸式适配、对 Activity、Fragment 以及 Adapter 的封装，并提供了一些诸如权限申请、跳转、延时操作、提示、日志输出等小工具，以方便快速构建 Android App；
 
 <a href="https://github.com/kongzue/BaseFramework/">
@@ -39,6 +40,7 @@ Demo预览图如下：
 ### 引入方式
 
 1) 前往 build.gradle(project) 添加 jitpack 仓库：
+
 ```
 allprojects {
     repositories {
@@ -47,12 +49,13 @@ allprojects {
     }
 }
 ```
+
 2) 引入 BaseFramework：
 
 最新版本：
 <a href="https://jitpack.io/#kongzue/BaseFramework">
 <img src="https://jitpack.io/v/kongzue/BaseFramework.svg" alt="Jitpack.io">
-</a> 
+</a>
 
 ```
 dependencies {
@@ -135,6 +138,7 @@ dependencies {
 ### <a name="1-0">沉浸式</a>
 
 在 BaseActivity 中，您还可以使用以下注解对沉浸式进行控制：
+
 ```
 @DarkStatusBarTheme(true)           //开启顶部状态栏图标、文字暗色模式
 @DarkNavigationBarTheme(true)       //开启底部导航栏按钮暗色模式
@@ -150,6 +154,7 @@ setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底�
 ```
 
 建议直接使用无 ActionBar 的 Activity 样式：
+
 ```
 <!-- 在 res/values/styles.xml 中修改继承关系为：Theme.AppCompat.Light.NoActionBar -->
 <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -162,6 +167,7 @@ setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底�
 ### <a name="1-1">绑定 Layout 布局</a>
 
 BaseActivity 默认使用注解来绑定布局：
+
 ```
 @Layout(R.layout.activity_demo)
 public class DemoActivity extends BaseActivity {
@@ -171,6 +177,7 @@ public class DemoActivity extends BaseActivity {
 不建议重写 onCreate 方法，根据约定，请无需关心绑定布局的过程，你只需要在 initView() 方法中绑定、加载 View 组件，initData() 方法中加载数据，在 setEvents() 方法中绑定事件即可。
 
 除了注解绑定外，你也可以使用 resetLayoutResId() 方法重载布局资源，例如实现自定义主题：
+
 ```
 @Override
 protected int resetLayoutResId() {
@@ -183,6 +190,7 @@ protected int resetLayoutResId() {
 ```
 
 额外的，你还可以拦截绑定过程，暂时不绑定布局（可能会出现错误，仅用于特殊情况）：
+
 ```
 @Override
 public boolean interceptSetContentView() {
@@ -193,9 +201,11 @@ public boolean interceptSetContentView() {
 绑定 View 组件请参考 <a href="#1-8">布局绑定和事件绑定</a> 章节
 
 ### <a name="1-2">跳转、Activity间通讯（带自定义参数的跳转）</a>
+
 Android 默认的 Intent无法支持自定义类型参数的跳转，BaseActivity 通过自有的数据通道允许传输自定义类型的数据给要跳转到的另一个 BaseActivity：
 
 跳转代码范例：
+
 ```
 Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.img_bkg);
 jump(JumpActivity.class, new JumpParameter()
@@ -205,6 +215,7 @@ jump(JumpActivity.class, new JumpParameter()
 ```
 
 接收数据代码范例：
+
 ```
 String parameter1 = (String) getParameter().get("参数1");
 if (!isNull(parameter1)) txtP1.setText("第一个参数读取到的值为：" + parameter1);
@@ -213,9 +224,11 @@ if (parameter2 != null) imgP2.setImageBitmap(parameter2);
 ```
 
 ### <a name="1-3">更简单的跳转后返回数据</a>
+
 以往我们需要通过重写实现 onActivityResult 来实现回传数据，但在 BaseActivity 中，你只需要一个监听器：
 
 跳转代码范例：
+
 ```
 jump(ResponseActivity.class, new OnJumpResponseListener() {
     @Override
@@ -230,6 +243,7 @@ jump(ResponseActivity.class, new OnJumpResponseListener() {
 ```
 
 亦可选用同时带参数+返回值的跳转：
+
 ```
 jump(ResponseActivity.class,new JumpParameter()
                 .put("参数1", "这是一段文字参数")
@@ -247,6 +261,7 @@ jump(ResponseActivity.class,new JumpParameter()
 ```
 
 返回数据范例：
+
 ```
 if ((boolean) getParameter().get("needResponse") == true) {
     setResponse(new Parameter().put("返回数据1", "测试成功"));
@@ -259,7 +274,45 @@ if ((boolean) getParameter().get("needResponse") == true) {
 ```
 
 ### <a name="1-4">权限申请</a>
+
+请注意，申请权限依然需要先在你的 app 的 AndroidManifest.xml 中声明权限，然后使用以下代码可以快捷申请：
+
+要申请权限，可使用以下代码进行：
+
+```java
+Permission.build().LOCATION().get(new OnActivityPermissionCallBack<DemoActivity>() {
+    @Override
+    public void onSuccess(DemoActivity activity, String[] permissions) {
+        toast("申请权限成功");
+    }
+    @Override
+    public void onFail(DemoActivity activity) {
+        toast("申请权限失败");
+    }
+});
+```
+
+Permission 类提供了一些常用的需要申请的权限类型，可连续使用叠加需要的权限，例如：
+
+```java
+Permission.build()
+        .PHONE_STATE()
+        .LOCATION()
+        .EXTERNAL_STORAGE()
+        .get(new OnActivityPermissionCallBack<DemoActivity>() {
+            @Override
+            public void onSuccess(DemoActivity activity, String[] permissions) {
+                
+            }
+        });
+```
+
+回调方法可选用 OnPermissionResponseListener 或者其新的实现 OnActivityPermissionCallBack，新的实现会返回申请权限时处于活跃状态的 BaseActivity，你也可以指定泛型，若指定了泛型，会在当前存在的对应类型的 BaseActivity 实例上申请权限。
+
+#### 过时的老方法：
+
 要进行权限申请也变得更加简单，只需要实现相应的回调 OnPermissionResponseListener 即可：
+
 ```
 requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, new OnPermissionResponseListener() {
     @Override
@@ -274,6 +327,7 @@ requestPermission(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifes
 ```
 
 ### <a name="1-5">BaseActivity提供的小工具</a>
+
 ```
 //快速调用 Toast：
 toast(Obj);
@@ -340,6 +394,7 @@ getRootHeight()
 //返回按键事件拦截（重写此方法，return true为拦截返回按键事件）
 onBack()
 ```
+
 另外，为方便开发，从 6.7.2 版本起，会自动对布局中使用“back”作为 id 的 View 会自动绑定返回事件（可重写）
 
 ### <a name="1-6">BaseActivity的生命周期</a>
@@ -370,6 +425,7 @@ setLifeCircleListener(new LifeCircleListener() {
 ```
 
 如果你要监控所有 BaseActivity 的生命周期，在 6.5.6 版本起新增了 setGlobalLifeCircleListener(GlobalLifeCircleListener globalLifeCircleListener) 用于对所有 BaseActivity 进行统一管理：
+
 ```
 BaseActivity.setGlobalLifeCircleListener(new GlobalLifeCircleListener() {
     @Override
@@ -390,9 +446,11 @@ BaseActivity.setGlobalLifeCircleListener(new GlobalLifeCircleListener() {
     }
 });
 ```
+
 注意此方法为静态的，要使用它建议在 Application 中对它进行管理。
 
 从 6.6.9 版本起新增了 setOnActivityStatusChangeListener(...) 用于监听 Activity 的创建、关闭以及全部 Activity 退出的状态：
+
 ```
 AppManager.setOnActivityStatusChangeListener(new AppManager.OnActivityStatusChangeListener() {
     @Override
@@ -413,6 +471,7 @@ AppManager.setOnActivityStatusChangeListener(new AppManager.OnActivityStatusChan
 ### <a name="1-7">侧滑返回</a>
 
 从 6.5.8 版本起，您可以对 BaseActivity 进行注解，来实现侧滑返回：
+
 ```
 @SwipeBack(true)        //开启侧滑返回
 public class YourActivity extends BaseActivity {
@@ -430,18 +489,21 @@ public class YourActivity extends BaseActivity {
 在 BaseActivity 和 BaseFragment 中均可使用事件绑定
 
 使用注解 @BindView(int id) 以替代 findViewById(int id) 方法：
+
 ```
 @BindView(R.id.btn_ok)
 private Button okButton;
 ```
 
 使用注解 @BindViews(int id) 以替代 findViewById(int id) 方法：
+
 ```
 @BindViews({R.id.key1, R.id.key2, R.id.key3})
 private List<Button> keyboardButtons;
 ```
 
 使用注解 @OnClick(int id) 来代替 setOnClickListener(listener)：
+
 ```
 @OnClick(R.id.btn_ok)
 public void startTest(){
@@ -458,11 +520,13 @@ public void startTest(View btnOk){
 ## <a name="2">BaseFragment功能</a>
 
 ### <a name="2-0">BaseFragment 是什么</a>
+
 BaseFragment 与普通的 Fragment 有什么区别？
 
 首先，创建它变得异常的简单，你只需要在class上注解 `@Layout(你的布局资源文件id，例如R.layout.xxx)` 即可，剩下的事情BaseFragment会自动帮你完成。
 
 在构建 BaseFragment 时，建议直接使用泛型指定你要绑定的 BaseActivity，然后你就可以使用 `me.` 来调用该 BaseActivity 中 public 的方法和元素了，例如：
+
 ```
 @Layout(R.layout.fragment_demo)
 public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约定泛型
@@ -473,6 +537,7 @@ public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约�
     }
 }
 ```
+
 若不想约定，可将泛型设置为 BaseActivity。
 
 除此之外，我们还支持了直接使用 `findViewById` ，而不需要额外的找到根布局 rootView，再 rootView.findViewById(...)，查看代码了解更多
@@ -489,16 +554,19 @@ BaseFragment 也支持生命周期集中管理，您同样可以在 BaseFragment
 ### <a name="2-1">绑定 Layout 布局</a>
 
 BaseFragment 默认使用注解来绑定布局：
+
 ```
 @Layout(R.layout.activity_demo)
 public class FunctionFragment extends BaseFragment<DemoActivity> {
     ...
 ```
+
 BaseFragment 默认有一个泛型（非必需），请传入你要绑定的目标 Activity，这样就可以直接在 BaseFragment 中通过 me. 来直接调用绑定 Activity 的 public 成员或方法。
 
 不建议重写 onCreate 方法，根据约定，请无需关心绑定布局的过程，你只需要在 initView() 方法中绑定、加载 View 组件，initData() 方法中加载数据，在 setEvents() 方法中绑定事件即可。
 
 除了注解绑定外，你也可以使用 resetLayoutResId() 方法重载布局资源，例如实现自定义主题：
+
 ```
 @Override
 protected int resetLayoutResId() {
@@ -511,6 +579,7 @@ protected int resetLayoutResId() {
 ```
 
 额外的，你还可以拦截绑定过程，暂时不绑定布局（可能会出现错误，仅用于特殊情况）：
+
 ```
 @Override
 public boolean interceptSetContentView() {
@@ -527,12 +596,14 @@ public boolean interceptSetContentView() {
 6.6.4 版本起新增 FragmentChangeUtil 工具便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换，使用方法如下：
 
 1) 初始化
+
 ```
 //参数 BaseActivity 为要绑定到的 BaseActivity，参数 frameLayoutResId 为在该 Activity 中显示 Fragment 的容器，一般使用 FrameLayout 即可
 FragmentChangeUtil util = new FragmentChangeUtil(BaseActivity me, int frameLayoutResId);
 ```
 
 2) 添加 Fragment 到管理工具
+
 ```
 //普通添加方式：
 util.addFragment(new HomeFragment());
@@ -546,6 +617,7 @@ util.addFragment(new MeFragment(), true);
 ```
 
 3) 切换到指定 Fragment
+
 ```
 //使用对象
 util.show(fragment);
@@ -553,9 +625,11 @@ util.show(fragment);
 //或使用索引：
 util.show(int index);
 ```
+
 * 索引即已添加的 Fragment 的编号。
 
 4) FragmentChangeUtil 的额外方法：
+
 ```
 //获取目前有几个已添加的 Fragment
 util.getCount();    
@@ -605,6 +679,7 @@ FragmentChangeUtil 现在提供两种 add 方式，一种是默认参数的 addF
 ⚠ 此章节内容仅限 6.7.1 版本以上使用。
 
 Fragment 依赖于 Activity 来进行显示，在 BaseFramework 中，您可以在 BaseActivity 中创建实例化一个 FrameLayout 布局作为存放 Fragment 的容器：
+
 ```
 <FrameLayout
     android:id="@+id/frame"
@@ -613,6 +688,7 @@ Fragment 依赖于 Activity 来进行显示，在 BaseFramework 中，您可以�
 ```
 
 然后在 BaseActivity 上添加注解：
+
 ```
 @FragmentLayout(R.id.frame)
 public class DemoActivity extends BaseActivity {
@@ -627,6 +703,7 @@ public class DemoActivity extends BaseActivity {
 ```
 
 在 DemoActivity 中重写方法 initFragment(...)：
+
 ```
 @Override
 public void initFragment(FragmentChangeUtil fragmentChangeUtil) {
@@ -639,11 +716,13 @@ public void initFragment(FragmentChangeUtil fragmentChangeUtil) {
     changeFragment(0);
 }
 ```
+
 使用 changeFragment(int index) 或 changeFragment(baseFragment) 可以快速完成 Fragment 的切换步骤。
 
 使用 getFragmentChangeUtil() 可以获取已实例化的 fragmentChangeUtil 对象。
 
 添加切换动画：
+
 ```
 //根据指定角标切换到相应 Fragment
 changeFragment(int index, int enterAnimResId, int exitAnimResId);
@@ -657,6 +736,7 @@ changeFragment(BaseFragment fragment, int enterAnimResId, int exitAnimResId);
 ⚠ 此章节内容仅限 6.7.1 版本以上使用，使用此方法的前提请参考 <a href="#2-3">BaseFragment 最佳实践</a>。
 
 在同一个 BaseActivity 中的多个 BaseFragment 实例的场景中，BaseFragment 可以使用自带的 jump(...) 方法实现与其他 BaseFragment 间的跳转和数据传输，具体方法如下：
+
 ```
 //跳转到指定角标的 Fragment，角标即在 BaseActivity 中 fragmentChangeUtil 添加 BaseFragment 时的顺序值
 jump(int index);
@@ -666,6 +746,7 @@ jump(BaseFragment fragment);
 ```
 
 携带参数跳转：
+
 ```
 jump(1, new JumpParameter()
                 .put("参数1", "这是一段文字参数")
@@ -680,6 +761,7 @@ jump(functionFragment, new JumpParameter()
 ```
 
 获得返回值：
+
 ```
 jump(1, new OnJumpResponseListener() {
     @Override
@@ -706,6 +788,7 @@ jump(functionFragment, new OnJumpResponseListener() {
 ```
 
 带参数且获得返回值：
+
 ```
 jump(1, new JumpParameter()
                 .put("参数1", "这是一段文字参数")
@@ -738,6 +821,7 @@ jump(functionFragment, new JumpParameter()
 ```
 
 回传返回值的方法：
+
 ```
 setFragmentResponse(JumpParameter parameter);
 ```
@@ -745,6 +829,7 @@ setFragmentResponse(JumpParameter parameter);
 ## <a name="3">设置、属性值的存储读取工具 Settings</a>
 
 如果您编写了 BaseApp 的实现类 App（具体请参考章节<a href="#10">《BaseApp功能》</a>），您可以使用以下方法进行设置的读写：
+
 ```
 //参数 "path" 为分区名，之后您可以单独清除某个分区的存储信息而不影响其他已存储的信息
 //写设置：
@@ -757,6 +842,7 @@ String value2 = App.Settings.getString("path", "key");
 ```
 
 额外的，您可以直接将 bitmap 进行缓存：
+
 ```
 //图像读写：
 Bitmap bm;      //可直接存储 Bitmap  
@@ -766,6 +852,7 @@ Bitmap readBmp = App.Settings("path").getBitmap("bitmap");
 ```
 
 对分区数据进行清除：
+
 ```
 //数据清除
 App.Settings("path").clean();
@@ -774,6 +861,7 @@ App.Settings("path").clean();
 对于序列化对象，也可以直接使用 Settings 进行存取：
 
 例如，对于序列化对象 User 进行读写即：
+
 ```
 //存储
 User user = new User("张三", 18, "192.168.1.1");
@@ -786,6 +874,7 @@ User user = App.user.getObject("userInfo", User.class);
 为了更容易区分和编写数据存储逻辑，您可以自行编写存储类继承 SettingsUtil 来实现存储读写。
 
 例如 Demo 中，我们编写了用于存储用户信息的 USER 存储类：
+
 ```
 public class USER extends SettingsUtil {
     
@@ -795,22 +884,27 @@ public class USER extends SettingsUtil {
     }
 }
 ```
+
 然后在 App 类中编写了 USER 的实现：
+
 ```
 public static USER user = new USER();
 ```
 
 接下来，即可在应用的任意地方使用 App.user 来访问用户信息的读写操作，无需再次传入分区名作为参数
+
 ```
  App.user.set("userName", "张三");
 ```
 
 ### 自定义存储器实现实例（非必需操作）
+
 SettingsUtil 的底层是 SharedPreferences 的封装，而 SharedPreferences 是可以使用第三方实现的。
 
 默认不设置则使用系统默认的 SharedPreferences 实现方式。
 
 要使用第三方实现，可以在 SettingsUtil.init(...) 回调中给出第三方实现的实例化对象即可：
+
 ```
 //可选：自定义 SharedPreferences 实例（可选，默认不设置即使用系统 SharedPreferences 实例）
 SettingsUtil.init(new Preferences.ChangeSharedPreferencesPathCallBack() {
@@ -823,23 +917,28 @@ SettingsUtil.init(new Preferences.ChangeSharedPreferencesPathCallBack() {
 ```
 
 ## <a name="4">AppManager</a>
+
 AppManager 是 BaseActivity 的管理工具类，原工具是由 @xiaohaibin(<https://github.com/xiaohaibin>) 所开发，经同意集成在 BaseFramework 中，此处略加修改更适合 BaseActivity 的管理工作。
 
 提供如下方法：
+
 ```
 getActiveActivity()             //获取当前处于活跃的BaseActivity（注意可能为null）
 killActivity(baseActivity)      //结束指定BaseActivity
 killAllActivity()               //结束所有BaseActivity
 AppExit()                       //退出App
 ```
+
 其他方法，例如 pushActivity 添加Activity到堆栈，都是自动执行的，不需要手动调用。
 
 ## <a name="5">异步或同步</a>
+
 有时我们需要等待一段时间执行事务，也有时我们需要从异步线程返回主线程进行 UI 等操作，这时往往需要在线程间进行切换进行操作，但偶尔也会因为执行过程中因 Activity 被关闭等问题出现空指针异常。
 
 此时可以使用 BaseFramework 自带的异步同步方法轻松跳跃线程进行操作，此方法包含在 BaseActivity 和 BaseFragment 中：
 
 1) 回到主线程操作：
+
 ```
 runOnMain(new Runnable(){
     //此处可切换回主线程进行操作
@@ -847,6 +946,7 @@ runOnMain(new Runnable(){
 ```
 
 2) 创建延迟在主线程执行操作：
+
 ```
 runOnMainDelayed(new Runnable(){
     //此处可切换回主线程进行延迟操作
@@ -854,6 +954,7 @@ runOnMainDelayed(new Runnable(){
 ```
 
 3) 创建延迟操作（用于代替 new Handler().postDelayed(Runnable, time)）：
+
 ```
 runDelayed(new Runnable(){
     //此处可进行延迟操作（可能在异步线程）
@@ -861,6 +962,7 @@ runDelayed(new Runnable(){
 ```
 
 ## <a name="6">BaseAdapter</a>
+
 注意，此处的 BaseAdapter 特指 com.kongzue.baseframework.BaseAdapter。
 
 ![Kongzue's BaseAdapter](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/download_baseadapter.png)
@@ -872,13 +974,16 @@ runDelayed(new Runnable(){
 ### <a name="6-1">JavaBean 适配方式</a>
 
 使用此方式需要先创建继承自 BaseAdapter.BaseDataBean 的 JavaBean 数据集合来封装数据，例如在我们 Demo 中的：
+
 ```
 List<CustomDatas> datas = new ArrayList();
 datas.add(new CustomDatas().setTitle("我是布局1"));
 datas.add(new CustomDatas().setTitle("我是布局2"));
 datas.add(new CustomDatas().setTitle("我是布局3"));
 ```
+
 其中 CustomDatas 的具体代码为：
+
 ```
 private class CustomDatas extends BaseAdapter.BaseDataBean {
     String title;
@@ -899,9 +1004,11 @@ private class CustomDatas extends BaseAdapter.BaseDataBean {
     }
 }
 ```
+
 它是一个典型的 JavaBean，其中所有属性请根据实际业务需求添加，并建议生成相应的 get、set 方法。
 
 接下来创建适配器并绑定在相应组件上：
+
 ```
 baseAdapter = new BaseAdapter(me, datas, R.layout.item_list_layout1, new SimpleAdapterSettings() {
     @Override
@@ -920,12 +1027,14 @@ baseAdapter = new BaseAdapter(me, datas, R.layout.item_list_layout1, new SimpleA
 });
 list.setAdapter(baseAdapter);
 ```
+
 SimpleAdapterSettings 是一个适配器控制器的回调接口，在其中重写 setViewHolder 和 setData方法，其中 setViewHolder 需要您在此处根据父布局 convertView 创建布局管理组件 ViewHolder，并回传您的 ViewHolder。接下来会在 setData 中将 ViewHolder 和 相对应的数据 dataBean给出，请在此方法中对组件进行赋值和事件绑定。
 注意在此方法中您可以将 dataBean 强转为您的 JavaBean 类，viewHolder 也可以强转为您的 ViewHolder。
 
 ### <a name="6-2">Map 适配方式</a>
 
 应对复杂多变的数据我们可能会选择使用 Map 来存储我们的需要展现的数据，BaseAdapter 亦支持此方式的数据，与上述方法类似，您可以轻松完成数据的绑定和组件的展现：
+
 ```
 List<Map<String, Object>> datas = new ArrayList<>();
 Map<String, Object> map = new HashMap<>();
@@ -957,24 +1066,29 @@ list.setAdapter(baseAdapter);
 ### <a name="6-3">多种布局的绑定方式</a>
 
 根据实际业务需求，我们可能需要在一个组件中展现多种布局，此时您首先需要对您的布局进行编号，从0开始，依次往后，并将他们添加为一个 Map 集合，其中键值对：id对应布局资源id（LayoutResId）：
+
 ```
 Map<Integer, Integer> layoutResIdMap = new HashMap<>();
 layoutResIdMap.put(0, R.layout.item_list_layout1);
 layoutResIdMap.put(1, R.layout.item_list_layout2);
 layoutResIdMap.put(2, R.layout.item_list_layout3);
 ```
+
 接下来，您需要将数据存储为一个集合，此处展示的是 JavaBean 形式的存储方式，您亦可以使用 Map 作为数据的存储器，最后将它打包为一个 List即可：
+
 ```
 List<CustomDatas> datas = new ArrayList();
 datas.add(new CustomDatas().setTitle("我是布局1").setType(0));
 datas.add(new CustomDatas().setTitle("我是布局2").setType(1));
 datas.add(new CustomDatas().setTitle("我是布局3").setType(2));
 ```
+
 需要注意的是，之前提到过，您的 JavaBean（CustomDatas）需要继承自 BaseAdapter.BaseDataBean，而在 BaseAdapter.BaseDataBean 中，我们默认实现了一个属性“type”，它是 int 整数型，用于存储与布局对应的编号 id。
 
 如果您默认使用 Map 的方式存储数据，您需要手动 put("type", 对应布局编号id ) 以保证能够和布局资源相匹配。
 
 最后，创建适配器和绑定展示组件：
+
 ```
 baseAdapter = new BaseAdapter(me, datas, layoutResIdMap, new MultipleAdapterSettings() {
     @Override
@@ -1018,6 +1132,7 @@ baseAdapter = new BaseAdapter(me, datas, layoutResIdMap, new MultipleAdapterSett
 });
 list.setAdapter(baseAdapter);
 ```
+
 从上述代码中可以看到，回调函数中出现了一个 type 的值，在这里您可以根据不同的值绑定不同的布局，设置不同的数据和事件。
 
 以上就是关于 BaseAdapter 的简单介绍了。您还可以通过文档前半部分的二维码下载 Demo ，其中会为您展现关于 BaseAdapter 全部的绑定方式。
@@ -1027,6 +1142,7 @@ list.setAdapter(baseAdapter);
 从 v6.5.4 版本起，我们添加了 refreshDataChanged(...) 用于代替 notifyDataSetChanged() 刷新数据，该方法主要目的为解决 notifyDataSetChanged() 对于某些内容变化不敏感的问题。
 
 使用方法为：
+
 ```
 baseAdapter.refreshDataChanged(List<Map<String, Object>> newDatas);
 //或
@@ -1048,6 +1164,7 @@ D/>>>: MainActivity:onCreate
 ...
 D/>>>: MainActivity:onDestroy
 ```
+
 您可以在 Android Studio 的 File -> Settings 的 Editor -> Color Scheme -> Android Logcat 中调整各类型的 log 颜色，我们推荐如下图方式设置颜色：
 
 ![Kongzue's log settings](https://github.com/kongzue/Res/raw/master/app/src/main/res/mipmap-xxxhdpi/baseframework_logsettings.png)
@@ -1085,6 +1202,7 @@ setOnCrashListener(new OnBugReportListener() {
     }
 });
 ```
+
 通过 OnBugReportListener 的 onCrash(...) 方法返回值，可拦截 App 运行过程中的异常，而不让 App 闪退。
 
 您可以在这里弹出一个对话框用于提示用户是否反馈错误信息，并选择继续保持 App 的运行，具体请参考代码：<a href="https://github.com/kongzue/BaseFramework/blob/master/app/src/main/java/com/kongzue/baseframeworkdemo/App.java">BaseApp Demo</a>
@@ -1092,11 +1210,13 @@ setOnCrashListener(new OnBugReportListener() {
 ### 开启功能
 
 开启所有日志记录功能，包含 Activity 基本生命周期、使用 log(...) 语句输出的、使用 toast(...) 输出的信息：
+
 ```
 BaseFrameworkSettings.BETA_PLAN = true;
 ```
 
 开启崩溃日志监控功能：
+
 ```
 //除了可以在 BaseApp 中开启此功能外，也可通过 BaseFrameworkSettings 单独设置：
 BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportListener() {
@@ -1109,6 +1229,7 @@ BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportLis
     }
 });
 ```
+
 当发生崩溃时，会执行此回调，此监听器中返回错误信息及发生崩溃的整个 App 运行周期的日志文件（含崩溃信息）
 
 崩溃日志监控功能可以在不开启 BETA_PLAN 的情况下单独使用。
@@ -1116,6 +1237,7 @@ BaseFrameworkSettings.turnOnReadErrorInfoPermissions(context, new OnBugReportLis
 注：获取的日志文件为 .bfl 格式的文本文件，可通过任意文本编辑器打开。
 
 ### 建议
+
 建议在 OnBugReportListener 中接收到日志文件后，显示对话框提示用户是否愿意帮助改进App，并在用户同意后上传文件到您的服务器。
 
 ## <a name="9">语言变更工具</a>
@@ -1147,6 +1269,7 @@ BaseApp 除了提供类似于 BaseActivity 以及 BaseFragment 的 log(...)、to
 init() 会在主线程执行，用于取代 onCreate() 方法，initSDKs() 则会在异步线程执行，用于初始化可能耗时较大的 SDK，且可以通过 setOnSDKInitializedCallBack(OnSDKInitializedCallBack) 方法获得SDK 初始化完成后的回调。
 
 以下代码是 BaseApp 的实现范例：
+
 ```
 public class App extends BaseApp<App> {     //此处泛型 App 是用于将 关键词 me 映射成您的 App 类，以方便通过 me 关键词使用和访问 App 中的公开方法及成员变量。
     
@@ -1172,18 +1295,20 @@ public class App extends BaseApp<App> {     //此处泛型 App 是用于将 关�
 }
 ```
 
-运行后可查看结果，App 启动不会受 initSDKs() 时等待的 8 秒影响，另外也可通过 isInitializedSDKs() 方法判断 SDK 是否已经加载完毕。 
+运行后可查看结果，App 启动不会受 initSDKs() 时等待的 8 秒影响，另外也可通过 isInitializedSDKs() 方法判断 SDK 是否已经加载完毕。
 
 另外，OnSDKInitializedCallBack 回调方法 onInitialized() 是自动回到主线程执行的，无需额外处理。
 
 从 6.7.5 版本起，新增 Settings 方法/静态类用于直接取代设置、属性值的存储读取工具 Preferences，具体请参考 <a href="#3">**设置、属性值的存储读取工具 Preferences**</a> 章节。
 
 额外的，可通过如下方法直接关闭 App：
+
 ```
 .exit();    //退出 App
 ```
 
 ### <a name="10-1">BaseApp功能提供的小工具</a>
+
 ```
 //快速调用 Toast：
 toast(Obj);
@@ -1226,6 +1351,7 @@ getRootHeight()
 ```
 
 ## 开源协议
+
 ```
 Copyright BaseFramework
 
@@ -1243,6 +1369,12 @@ limitations under the License.
 ```
 
 ## <a name="about">更新日志</a>：
+
+**最新版本：** <a href="https://github.com/kongzue/BaseFramework/releases">
+<img src="https://img.shields.io/github/v/release/kongzue/BaseFramework?color=green" alt="Maven">
+</a>
+
+最新的更新日志请前往 [Releases · kongzue/BaseFramework (github.com)](https://github.com/kongzue/BaseFramework/releases) 查看
 
 v6.7.8:
 
@@ -1272,6 +1404,7 @@ v6.7.6:
 - 修复调用 AppManager.getActiveActivity() 的空指针问题；
 
 v6.7.5:
+
 - LogG 统一日志打印流程；
 - BaseActivity 和 BaseFragment 提供可重写的方法 interceptSetContentView() 可阻止默认初始化布局的流程；
 - BaseActivity 和 BaseFragment 提供可重写的方法 resetLayoutResId() 用于重定向布局资源 id（可用于主题换服等操作）；
@@ -1281,6 +1414,7 @@ v6.7.5:
 - 修复可能因系统资源回收导致 Fragment 切换失效的bug；
 
 v6.7.4:
+
 - AppManager 新增方法 getActiveActivity() 方法获取当前活跃的 BaseActivity 对象；
 - 修复 AppManager 的 getActivityInstance(...)、deleteActivity(...)、killActivity(...)、finishActivity()、currentActivity()方法可能引发的空指针异常；
 - 修改 FragmentChangeUtil 默认 getFocusFragment() 方法返回 BaseFragment()；
@@ -1289,6 +1423,7 @@ v6.7.4:
 - BaseActivity 和 BaseFragment 的 error(...) 输出错误日志的方法被修改为 errorLog(...)；
 
 v6.7.3:
+
 - 新增 @NavigationBarBackgroundColorHex 直接设置HEX颜色值设置底栏背景颜色；
 - @NavigationBarBackgroundColorInt 和 @NavigationBarBackgroundColorRes 设置时取消 key；
 - 新增注解 @OnClick 和 @BindView、@BindViews 注解以绑定布局和点击事件；
@@ -1299,6 +1434,7 @@ v6.7.3:
 - BaseActivity 更新获取底栏高度方法；
 
 v6.7.2:
+
 - 新增 BaseApp，详情请查看 <a href="#10">BaseApp功能</a>；
 - BaseActivity 和 BaseFragment 中布局使用“back”作为 id 的 View 会自动绑定返回事件（可重写）；
 - BaseActivity 新增注解 @NavigationBarBackgroundColorInt(colorInt) 以及 @NavigationBarBackgroundColorRes(colorResId) 可使用 ColorInt 以及颜色资源 ID 设置底部导航栏背景颜色；
@@ -1307,6 +1443,7 @@ v6.7.2:
 - 修复非处于活动状态的 BaseFragment 的 onShow 事件在 BaseActivity 的 resume 过程中被触发的问题；
 
 v6.7.1:
+
 - BaseActivity 默认集成 FragmentChangeUtil，可使用 @FragmentLayout(layoutId) 注解，方便一键绑定 Fragment 布局和 FragmentChangeUtil 管理器；
 - FragmentChangeUtil 新增 getFragment(index) 方法可获取已添加的 BaseFragment；
 - FragmentChangeUtil 新增 OnFragmentChangeListener 可设置 BaseFragment 显示时监听器；
@@ -1319,59 +1456,72 @@ v6.7.1:
 - 更新 Demo APP；
 
 v6.7.0:
+
 - 代码规范化提升；
 - 修复了 AppManager 中可能存在的空指针问题；
 - Preferences 提供 commit 方法与 set 方法并存存储属性值，前者会立即保存，而后者更节省资源；
 
 v6.6.9:
+
 - 提升代码规范化；
 - AppManager 新增 setOnActivityStatusChangeListener(...) 用于监听 Activity 的创建、关闭以及全部 Activity 退出的状态；
 
 v6.6.8:
+
 - FragmentChangeUtil 新增 hideNow() 方法与 remove(fragment) 方法；
 - FragmentChangeUtil 提供普通添加方式和预加载方式；
 - BaseFragment 提供可重写方法 onShow 用于取代 onResume；
 
 v6.6.7:
+
 - 新增 error(...) 以代替快速调用 Log.e(...) ;
 - BaseFragment 新增方法 onLoad 以处理只在首次显示时执行的事务。
 - FragmentChangeUtil 新增 hide(...) 方法用于隐藏显示的 Fragment；
 
 v6.6.6:
-- BaseFragment 现已可使用泛型，来直接访问父 Activity 中的 public 方法和元素； 
+
+- BaseFragment 现已可使用泛型，来直接访问父 Activity 中的 public 方法和元素；
 - 尝试性的提供了 Toast 的兼容模式，兼容解决部分设备因关闭“悬浮窗权限”导致 Toast 无法正常使用的问题，请使用 toastS(Object) 来调用此功能，或者使用 Toaster 类相关方法提供更多功能和可玩性。
 - BaseActivity 新增 getRootView() 方法可直接获取根布局；
 - 修复了 FragmentChangeUtil 在切换时错误调用未初始化状态的子 Fragment.onResume() 的问题；
 
 v6.6.5:
+
 - AppManager 新增排除结束方法 killOtherActivityExclude(class) 可排除指定 Activity 并结束之外的所有 Activity；
 - BaseActivity 以及 BaseFragment 新增 getColorS(resId) 以替代系统提供且不让修改的半残方法 getColor(resId)；
 
 v6.6.4:
+
 - 修复了属性动画存在的bug；
 - BaseAdapter 新增泛型功能；
 - 修复了 BaseFragment 重复加载导致组件指针绑定问题；
 - 新增 FragmentChangeUtil 管理工具，以便于在 BaseActivity 中轻松进行 Fragment 的绑定和切换；
 
 v6.6.3:
+
 - 修复了获取导航栏高度值错误的问题；
 - BaseFragment 中属性动画方法更新；
 
 v6.6.2:
+
 - 新增语言变更工具，具体请参照<a href="#9">语言变更工具</a>；
 
 v6.6.1:
+
 - BaseActivity 新增方法：获取设备IMEI：getIMEI()、获取设备AndroidID：getAndroidId()、获取Mac地址：getMacAddress()；
 - BaseFragment 新增方法 getStatusBarHeight()、getDisplayWidth()、getDisplayHeight()、getNavbarHeight()、getRootHeight()、getIMEI()、getAndroidId()、getMacAddress()；
 
 v6.6.0:
+
 - 组件升级至兼容 API-28；
 
 v6.5.9:
+
 - 修复了全屏注解 @FullScreen(true) 和侧滑返回可能存在冲突的问题；
 - BaseActivity 和 BaseFragment 新增成员变量 savedInstanceState 即 onCreate 发生时传递的 Bundle；
 
 v6.5.8:
+
 - BaseActivity、BaseFramework 新增 openUrl(...) 可直接打开使用默认浏览器打开 url 地址；
 - BaseActivity、BaseFramework 新增 openApp(...) 可直接打开指定包名的 App；
 - BaseActivity、BaseFramework 新增 isInstallApp(...) 可直接判断指定包名的 App 是否已安装；
@@ -1380,33 +1530,41 @@ v6.5.8:
 - BaseActivity 新增注解 @SwipeBack(true) 可标记当前 Activity 支持侧滑返回；
 
 v6.5.7.2:
+
 - 新增判空规则，支持iOS可能传递的“(null)”文本；
 
 v6.5.7.1:
+
 - 修复无法引用的bug；
 
 v6.5.7:
+
 - 修复了 AppManager 中 killActivity(Class) 可能引发崩溃的bug；
 - 修改，将 BaseActivity.DEBUGMODE 移动到了 BaseFrameworkSettings.DEBUGMODE，原 BaseActivity.DEBUGMODE 不再使用；
 - 新增<a href="#7">行为与日志监听</a>功能；
 
 v6.5.6.1:
+
 - 修复 JumpParameter 空指针问题；
 
 v6.5.6:
+
 - BaseActivity 新增全局生命周期管理 GlobalLifeCircleListener；
 - 回传数据方法 setResponse(...) 现新增更符合直觉的 returnParameter(...)；
 - JumpParameter 可直接解析更多数据类型，例如 double、float、long、short 等；
 - initDatas(JumpParameter parameter) 中的参数 parameter 不再需要非空校验了；
 
 v6.5.5.3:
+
 - 修复遗留问题，BaseFragment的dip2px和px2dip将无需context参数；
 - 修复遗留问题，getDisplayWidth()函数名已被修改正确；
 
 v6.5.5.2:
+
 - 修复 lifeCircleListener.onCreate() 无效的问题；
 
 v6.5.5.1:
+
 - 警告：因命名冲突，6.5.5版本起，跳转回调参数 OnResponseListener 改名为 OnJumpResponseListener；
 - 可以使用bigLog(...)打印更长的日志了；
 - dip2px和px2dip不再需要context参数；
@@ -1420,51 +1578,65 @@ v6.5.5.1:
 详细的更新说明请阅读：《BaseFramework 6.5.5.1版本更新报告》：<https://www.jianshu.com/p/9c2e0039aca1>
 
 v6.5.4:
+
 - 增加 BaseActivity 与 BaseFragment 一键管理生命周期监听器，可在 BaseActivity 的子类中使用 setLifeCircleListener(LifeCircleListener);
 - BaseAdapter 增加了 refreshDataChanged(...) 用于代替 notifyDataSetChanged() 刷新数据，新方法对于内容的变化也很敏感；
 
 v6.5.3:
+
 - 可以使用 runOnMain(Runnable) 来执行需要在主线程执行的事务，该方法与 runOnUiThread() 的不同点在于会自动判断当前 BaseActivity 是否处于存活状态，无须担心因此出现的空指针问题；
 - 可以使用 runOnMainDelayed(Runnable, time) 来执行需要在主线程延迟执行的事务；
 - 可以使用 runDelayed(Runnable, time) 来替代 new Handler().postDelayed(Runnable, time) 执行延迟事务；
 
 v6.5.2:
+
 - 修复 setIMMStatus(boolean, Edittext) 开关输入法方法中，Edittext 可能为 NULL 导致空指针的问题；
 - 跳转到应用设置方法 startAppSettings() 不再是私有的，他现在可以公开调用；
 
 v6.5.1:
+
 - 修复 bug；
 
 v6.5.0:
+
 - 修复 BaseFragment 中日志 log 打印不受 BaseActivity.DEBUGMODE 控制的问题；
 
 v6.5.0:
+
 - 跳转参数 JumpParameter 新增 getBoolean、getInt 和 getString 三个基础方法，从此方法获取数据不需要判断是否为空（null）以及进行强转类型；
 
 v6.4.9:
+
 - 为避免与 BaseOkHttp 框架冲突修改 com.kongzue.baseframework.util.Parameter 类名为 com.kongzue.baseframework.util.JumpParameter;
 - initDatas() 现已改为携带参数的 initDatas(JumpParameter paramer); 可以直接获取使用jump方法跳转时所携带的跳转参数，请注意非空判断；
 
 v6.4.8:
+
 - 新增BaseAdapter；
 
 v6.4.7:
+
 - 修复一些bug；
 
 v6.4.6:
+
 - 新增AppManager管理器；
 - 新增DarkNavigationBarTheme、DarkStatusBarTheme、NavigationBarBackgroundColor注解；
 
 v6.4.0:
+
 - 集成Preferences（SharedPreferences的封装，仅使用简单的get、set方法即可）
 
 v6.3.0:
+
 - 直接使用注解的方式绑定布局资源（@Layout）
 - 为BaseFragment增添支持新的jump(...)跳转方法；
 
 v6.2.0:
+
 - 支持新的jump(...)跳转方法；
 - 更新BaseFragment；
 
 v6.1.0:
+
 - 合并 BaseActivity 与 BaseFragment 为 BaseFramework 总框架；

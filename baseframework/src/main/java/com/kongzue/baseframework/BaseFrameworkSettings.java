@@ -45,7 +45,7 @@ public class BaseFrameworkSettings {
     //设置开启崩溃监听
     public static void turnOnReadErrorInfoPermissions(Context context, OnBugReportListener listener) {
         onBugReportListener = listener;
-        String reporterFile = Preferences.getInstance().getString(context, "cache", "bugReporterFile");
+        final String reporterFile = Preferences.getInstance().getString(context, "cache", "bugReporterFile");
         if (reporterFile != null && !reporterFile.isEmpty()) {
             onBugReportListener.onReporter(new File(reporterFile));
             Preferences.getInstance().commit(context, "cache", "bugReporterFile", "");
@@ -72,7 +72,7 @@ public class BaseFrameworkSettings {
         
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
-            public void uncaughtException(Thread t, Throwable e) {
+            public void uncaughtException(Thread t, final Throwable e) {
                 new Thread() {
                     @Override
                     public void run() {

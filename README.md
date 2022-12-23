@@ -39,9 +39,34 @@ Demo预览图如下：
 
 ### 引入方式
 
+#### MavenCentral 源
+
 1) 前往 build.gradle(project) 添加 jitpack 仓库：
 
+```geadle
+allprojects {
+    repositories {
+        ...
+        mavenCentral()
+    }
+}
 ```
+2) 引入 BaseFramework：
+
+<div>
+最新版本：
+<a href="https://github.com/kongzue/BaseFramework/releases"><img src="https://img.shields.io/badge/MavenCentral%20Release-6.8.7-green.svg" alt="BaseFramework Release"></a></div>
+
+```geadle
+dependencies {
+    implementation "com.kongzue.baseframework:BaseFramework:6.8.7"
+```
+
+#### Jitpack 源
+
+1) 前往 build.gradle(project) 添加 jitpack 仓库：
+
+```geadle
 allprojects {
     repositories {
         ...
@@ -57,7 +82,7 @@ allprojects {
 <img src="https://jitpack.io/v/kongzue/BaseFramework.svg" alt="Jitpack.io">
 </a>
 
-```
+```geadle
 dependencies {
         implementation 'com.github.kongzue:BaseFramework:latest.release'
 }

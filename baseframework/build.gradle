@@ -1,5 +1,12 @@
 apply plugin: 'com.android.library'
 
+ext {
+    PUBLISH_GROUP_ID = "com.kongzue.baseframework"		//项目包名
+    PUBLISH_ARTIFACT_ID = 'BaseFramework'			//项目名
+    PUBLISH_VERSION = "6.8.7"					//版本号
+}
+apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
+
 android {
     compileSdkVersion 30
 
@@ -27,5 +34,5 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.0.0+'
+    implementation 'androidx.appcompat:appcompat:1.0.0'
 }

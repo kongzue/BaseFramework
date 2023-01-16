@@ -7,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.interfaces.EnterAnim;
+import com.kongzue.baseframework.interfaces.ExitAnim;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
 import com.kongzue.baseframework.interfaces.SwipeBack;
@@ -19,6 +21,10 @@ import com.kongzue.baseframeworkdemo.R;
 @SwipeBack(true)
 //设置底部导航栏背景颜色，此外还可以使用 @NavigationBarBackgroundColor 来指定 argb 颜色
 @NavigationBarBackgroundColorRes(R.color.colorPrimary)
+//入场动画
+@EnterAnim(enterAnimResId = R.anim.fade, holdAnimResId = R.anim.hold)
+//出场动画
+@ExitAnim(holdAnimResId = R.anim.hold, exitAnimResId = R.anim.back)
 public class JumpActivity extends BaseActivity {
     
     private TextView txtP1;

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseAdapter;
+import com.kongzue.baseframework.interfaces.EnterAnim;
+import com.kongzue.baseframework.interfaces.ExitAnim;
 import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.MultipleAdapterSettings;
@@ -30,6 +32,10 @@ import java.util.Map;
 @SwipeBack(true)
 //全屏显示此界面
 @FullScreen(true)
+//入场动画
+@EnterAnim(enterAnimResId = R.anim.fade, holdAnimResId = R.anim.hold)
+//出场动画
+@ExitAnim(holdAnimResId = R.anim.hold, exitAnimResId = R.anim.back)
 public class AdapterTestActivity extends BaseActivity {
     
     private TextView txtTitle;

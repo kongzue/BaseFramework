@@ -119,10 +119,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private int layoutResId = -1;
     private int fragmentLayoutId = -1;
 
-    private int enterAnimResId;
-    private int enterHoldAnimResId;
-    private int exitAnimResId;
-    private int exitHoldAnimResId;
+    private int enterAnimResId = -1;
+    private int enterHoldAnimResId = -1;
+    private int exitAnimResId = -1;
+    private int exitHoldAnimResId = -1;
 
     private Bundle savedInstanceState;
     private SwipeBackActivityHelper mHelper;
@@ -428,7 +428,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     @Override
     public void finish() {
         AppManager.getInstance().killActivity(me);
-        jumpAnim(exitHoldAnimResId, exitAnimResId);
+        if (exitHoldAnimResId != -1 && exitAnimResId != -1) {
+            jumpAnim(exitHoldAnimResId, exitAnimResId);
+        }
     }
 
     public void finishActivity() {
@@ -1081,7 +1083,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
 
     //网络传输文本判空规则
     public static boolean isNull(String s) {
-        if (s == null || s.trim().isEmpty() || "null".equals(s) || "(null)".equals(s)) {
+        if (s == null || s.trim().isEmpty() || "null".equals(s) || "(null)".equals(s) || "{}".equals(s) || "[]".equals(s)) {
             return true;
         }
         return false;
@@ -1094,7 +1096,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (BaseFrameworkSettings.defaultActivityEnterInAnimRes != 0 && BaseFrameworkSettings.defaultActivityEnterOutAnimRes != 0) {
                 jumpAnim(BaseFrameworkSettings.defaultActivityEnterInAnimRes, BaseFrameworkSettings.defaultActivityEnterOutAnimRes);
             }
-            jumpAnim(enterAnimResId, enterHoldAnimResId);
+            if (enterAnimResId != -1 && enterHoldAnimResId != -1) {
+                jumpAnim(enterAnimResId, enterHoldAnimResId);
+            }
         } catch (Exception e) {
             if (DEBUGMODE) {
                 e.printStackTrace();
@@ -1114,7 +1118,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (BaseFrameworkSettings.defaultActivityEnterInAnimRes != 0 && BaseFrameworkSettings.defaultActivityEnterOutAnimRes != 0) {
                 jumpAnim(BaseFrameworkSettings.defaultActivityEnterInAnimRes, BaseFrameworkSettings.defaultActivityEnterOutAnimRes);
             }
-            jumpAnim(enterAnimResId, enterHoldAnimResId);
+            if (enterAnimResId != -1 && enterHoldAnimResId != -1) {
+                jumpAnim(enterAnimResId, enterHoldAnimResId);
+            }
         } catch (Exception e) {
             if (DEBUGMODE) {
                 e.printStackTrace();
@@ -1136,7 +1142,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (BaseFrameworkSettings.defaultActivityEnterInAnimRes != 0 && BaseFrameworkSettings.defaultActivityEnterOutAnimRes != 0) {
                 jumpAnim(BaseFrameworkSettings.defaultActivityEnterInAnimRes, BaseFrameworkSettings.defaultActivityEnterOutAnimRes);
             }
-            jumpAnim(enterAnimResId, enterHoldAnimResId);
+            if (enterAnimResId != -1 && enterHoldAnimResId != -1) {
+                jumpAnim(enterAnimResId, enterHoldAnimResId);
+            }
             ParameterCache.getInstance().cleanResponse(me.getClass().getName());
             if (jumpParameter == null) {
                 jumpParameter = new JumpParameter();

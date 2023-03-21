@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface EnterAnim {
-    int enterAnimResId() default 0;
-    int holdAnimResId() default 0;
+    int enterAnimResId() default -1;
+    int holdAnimResId() default -1;
 }

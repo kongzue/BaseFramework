@@ -275,7 +275,7 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
     }
     
     public static boolean isNull(String s) {
-        if (s == null || s.trim().isEmpty() || "null".equals(s) || "(null)".equals(s)) {
+        if (s == null || s.trim().isEmpty() || "null".equals(s) || "(null)".equals(s) || "{}".equals(s) || "[]".equals(s)) {
             return true;
         }
         return false;

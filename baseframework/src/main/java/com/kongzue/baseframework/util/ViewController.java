@@ -1,10 +1,12 @@
 package com.kongzue.baseframework.util;
 
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class ViewController {
@@ -12,7 +14,7 @@ public class ViewController {
     View view;
     ViewGroup.LayoutParams lp;
 
-    public static ViewController of(View v){
+    public static ViewController of(View v) {
         return new ViewController(v);
     }
 
@@ -38,6 +40,10 @@ public class ViewController {
                 view.setLayoutParams(lp);
             }
         }
+    }
+
+    public <T extends ViewGroup.LayoutParams> T getLayoutParams() {
+        return (T) lp;
     }
 
     public ViewController setWidth(int width) {
@@ -211,5 +217,86 @@ public class ViewController {
             view.requestLayout();
         }
         return this;
+    }
+
+    public ViewController setMargin(int left, int top, int right, int bottom) {
+        if (lp instanceof ViewGroup.MarginLayoutParams) {
+            ((ViewGroup.MarginLayoutParams) lp).leftMargin = left;
+            ((ViewGroup.MarginLayoutParams) lp).topMargin = top;
+            ((ViewGroup.MarginLayoutParams) lp).rightMargin = right;
+            ((ViewGroup.MarginLayoutParams) lp).bottomMargin = bottom;
+            view.requestLayout();
+        }
+        return this;
+    }
+
+    public ViewController setWeight(float weight) {
+        if (lp instanceof LinearLayout.LayoutParams) {
+            ((LinearLayout.LayoutParams) lp).weight = weight;
+            view.requestLayout();
+        }
+        return this;
+    }
+
+    public float getWeight() {
+        if (lp instanceof LinearLayout.LayoutParams) {
+            return ((LinearLayout.LayoutParams) lp).weight;
+        }
+        return 0;
+    }
+
+    public ViewController setGravity(int gravity) {
+        if (lp instanceof LinearLayout.LayoutParams) {
+            ((LinearLayout.LayoutParams) lp).gravity = gravity;
+            view.requestLayout();
+        }
+        return this;
+    }
+
+    public int getGravity() {
+        if (lp instanceof LinearLayout.LayoutParams) {
+            return ((LinearLayout.LayoutParams) lp).gravity;
+        }
+        return 0;
+    }
+
+    public ViewController setWidthAndHeight(int width, int height) {
+        setWidth(width);
+        setHeight(height);
+        return this;
+    }
+
+    public ViewController addRule(int relativeLayoutRule) {
+        if (lp instanceof RelativeLayout.LayoutParams) {
+            ((RelativeLayout.LayoutParams) lp).addRule(relativeLayoutRule);
+            view.requestLayout();
+        }
+        return this;
+    }
+
+    public ViewController addRule(int relativeLayoutRule, int subject) {
+        if (lp instanceof RelativeLayout.LayoutParams) {
+            ((RelativeLayout.LayoutParams) lp).addRule(relativeLayoutRule, subject);
+            view.requestLayout();
+        }
+        return this;
+    }
+
+    public int getRule(int relativeLayoutRule) {
+        if (lp instanceof RelativeLayout.LayoutParams) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return ((RelativeLayout.LayoutParams) lp).getRule(relativeLayoutRule);
+            }
+        }
+        return 0;
+    }
+
+    public int[] getRules(){
+        if (lp instanceof RelativeLayout.LayoutParams) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                return ((RelativeLayout.LayoutParams) lp).getRules();
+            }
+        }
+        return null;
     }
 }

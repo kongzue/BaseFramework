@@ -1,6 +1,13 @@
 package com.kongzue.baseframework.util;
 
+import android.util.Log;
+
+import com.kongzue.baseframework.BaseFrameworkSettings;
+
+import org.json.JSONObject;
+
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -11,128 +18,155 @@ import java.util.Map;
  */
 
 public class JumpParameter {
-    
-    private Map<String, Object> datas;
-    
-    public JumpParameter put(String key, Object value) {
-        if (datas == null) {
-            datas = new HashMap<>();
+
+    private Map<String, Object> dataMap;
+
+    public JumpParameter(Map<String, Object> dataMap) {
+        this.dataMap = dataMap;
+    }
+
+    public JumpParameter() {
+    }
+
+    public JumpParameter(String jsonStr) {
+        try {
+            JSONObject jsonObject = new JSONObject(jsonStr);
+            Iterator keys = jsonObject.keys();
+            while (keys.hasNext()) {
+                String key = keys.next() + "";
+                String value = jsonObject.optString(key);
+                put(key, value);
+            }
+        } catch (Exception e) {
+            if (BaseFrameworkSettings.DEBUGMODE) {
+                Log.e(">>>", "JumpParameter.create: Error json: " + jsonStr);
+            }
         }
-        datas.put(key, value);
+    }
+
+    public JumpParameter put(String key, Object value) {
+        if (dataMap == null) {
+            dataMap = new HashMap<>();
+        }
+        dataMap.put(key, value);
         return this;
     }
-    
+
     public JumpParameter cleanAll() {
-        datas = new HashMap<>();
+        dataMap = new HashMap<>();
         return this;
     }
-    
-    public Object get(String key) {
-        if (datas == null) {
+
+    public <T> T get(String key) {
+        if (dataMap == null) {
             return null;
         }
-        return datas.get(key);
+        return (T) dataMap.get(key);
     }
-    
+
     public boolean getBoolean(String key) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return false;
         }
-        return (boolean) datas.get(key);
+        return (boolean) dataMap.get(key);
     }
-    
+
     public boolean getBoolean(String key, boolean defaultValue) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return defaultValue;
         }
-        return (boolean) datas.get(key);
+        return (boolean) dataMap.get(key);
     }
-    
+
     public int getInt(String key) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return 0;
         }
-        return (int) datas.get(key);
+        return (int) dataMap.get(key);
     }
-    
+
     public int getInt(String key, int defaultValue) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return defaultValue;
         }
-        return (int) datas.get(key);
+        return (int) dataMap.get(key);
     }
-    
+
     public String getString(String key) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return "";
         }
-        return (String) datas.get(key);
+        return (String) dataMap.get(key);
     }
-    
+
     public String getString(String key, String defaultValue) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return defaultValue;
         }
-        return (String) datas.get(key);
+        return (String) dataMap.get(key);
     }
-    
+
     public double getDouble(String key) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return 0;
         }
-        return (double) datas.get(key);
+        return (double) dataMap.get(key);
     }
-    
+
     public double getDouble(String key, double defaultValue) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return defaultValue;
         }
-        return (double) datas.get(key);
+        return (double) dataMap.get(key);
     }
-    
+
     public long getLong(String key) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return 0;
         }
-        return (long) datas.get(key);
+        return (long) dataMap.get(key);
     }
-    
+
     public long getLong(String key, long defaultValue) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return defaultValue;
         }
-        return (long) datas.get(key);
+        return (long) dataMap.get(key);
     }
-    
+
     public short getShort(String key) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return 0;
         }
-        return (short) datas.get(key);
+        return (short) dataMap.get(key);
     }
-    
+
     public short getShort(String key, short defaultValue) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return defaultValue;
         }
-        return (short) datas.get(key);
+        return (short) dataMap.get(key);
     }
-    
+
     public float getFloat(String key) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return 0;
         }
-        return (float) datas.get(key);
+        return (float) dataMap.get(key);
     }
-    
+
     public float getFloat(String key, float defaultValue) {
-        if (datas == null || datas.get(key) == null) {
+        if (dataMap == null || dataMap.get(key) == null) {
             return defaultValue;
         }
-        return (float) datas.get(key);
+        return (float) dataMap.get(key);
     }
-    
+
     public Map<String, Object> getAll() {
-        return datas;
+        return dataMap;
+    }
+
+    public String toJsonString() {
+        return new JSONObject(dataMap).toString();
     }
 }

@@ -42,10 +42,10 @@ public class JumpActivity extends BaseActivity {
     @Override
     //请在此编写初始化操作，例如读取数据等，以及对 UI 组件进行赋值
     public void initDatas(JumpParameter parameter) {
-        String parameter1 = (String) getParameter().get("参数1");
+        String parameter1 = parameter.get("参数1");
         if (!isNull(parameter1)) txtP1.setText("第一个参数读取到的值为：\n" + parameter1);
         
-        Bitmap parameter2 = (Bitmap) getParameter().get("参数2");
+        Bitmap parameter2 = parameter.get("参数2");
         if (parameter2 != null) imgP2.setImageBitmap(parameter2);
     }
     

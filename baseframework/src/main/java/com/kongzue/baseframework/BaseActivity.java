@@ -25,6 +25,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Pair;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -1780,5 +1781,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             globalLifeCircleListener.onStop(me, me.getClass().getName());
         }
         super.onStop();
+    }
+
+    public <T extends View> T createView(int layoutResId) {
+        return (T) LayoutInflater.from(me).inflate(layoutResId, null, false);
     }
 }

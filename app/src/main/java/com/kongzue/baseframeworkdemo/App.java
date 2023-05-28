@@ -10,7 +10,16 @@ import com.kongzue.baseframework.BaseFrameworkSettings;
 import com.kongzue.baseframework.interfaces.OnBugReportListener;
 import com.kongzue.baseframework.interfaces.OnSDKInitializedCallBack;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.AsyncActivityLayoutLoader;
 import com.kongzue.baseframework.util.SettingsUtil;
+import com.kongzue.baseframeworkdemo.activity.AdapterTestActivity;
+import com.kongzue.baseframeworkdemo.activity.DemoActivity;
+import com.kongzue.baseframeworkdemo.activity.JumpActivity;
+import com.kongzue.baseframeworkdemo.activity.ResponseActivity;
+import com.kongzue.baseframeworkdemo.activity.TransitionActivity;
+import com.kongzue.baseframeworkdemo.fragment.AboutFragment;
+import com.kongzue.baseframeworkdemo.fragment.FunctionFragment;
+import com.kongzue.baseframeworkdemo.fragment.IntroductionFragment;
 import com.kongzue.baseframeworkdemo.util.User;
 
 import java.io.File;
@@ -26,6 +35,20 @@ public class App extends BaseApp<App> {
     
     @Override
     public void init() {
+        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(AdapterTestActivity.class);
+        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(DemoActivity.class);
+        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(JumpActivity.class);
+        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(ResponseActivity.class);
+        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(TransitionActivity.class);
+        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(AboutFragment.class);
+        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(FunctionFragment.class);
+        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(IntroductionFragment.class);
+
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         setOnSDKInitializedCallBack(new OnSDKInitializedCallBack() {
             @Override
             public void onInitialized() {

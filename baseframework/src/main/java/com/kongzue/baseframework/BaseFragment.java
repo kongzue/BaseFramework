@@ -26,6 +26,7 @@ import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.interfaces.OnClicks;
+import com.kongzue.baseframework.util.AsyncActivityLayoutLoader;
 import com.kongzue.baseframework.util.BaseFragmentManager;
 import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
@@ -91,25 +92,28 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         THIS = this;
         this.savedInstanceState = savedInstanceState;
 
-        rootView = resetContentView();
+        rootView = AsyncActivityLayoutLoader.getActivityLayout(getClass().getName());
         if (rootView == null) {
-            rootView = interceptSetContentView();
+            rootView = resetContentView();
             if (rootView == null) {
-                try {
-                    Layout layout = getClass().getAnnotation(Layout.class);
-                    if (layout != null && layout.value() != -1) {
-                        layoutResId = layout.value();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                layoutResId = resetLayoutResId();
-                if (layoutResId == -1) {
-                    errorLog("请在您的Fragment的Class上注解：@Layout(你的layout资源id)，或重写resetLayoutResId()方法以设置布局");
-                    return null;
-                }
+                rootView = interceptSetContentView();
                 if (rootView == null) {
-                    rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+                    try {
+                        Layout layout = getClass().getAnnotation(Layout.class);
+                        if (layout != null && layout.value() != -1) {
+                            layoutResId = layout.value();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    layoutResId = resetLayoutResId();
+                    if (layoutResId == -1) {
+                        errorLog("请在您的Fragment的Class上注解：@Layout(你的layout资源id)，或重写resetLayoutResId()方法以设置布局");
+                        return null;
+                    }
+                    if (rootView == null) {
+                        rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+                    }
                 }
             }
         }
@@ -419,9 +423,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         return me.jump(cls, transitionViews);
     }
 
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter,View... transitionViews) {
+    public boolean jump(Class<?> cls, JumpParameter jumpParameter, View... transitionViews) {
         if (me == null) return false;
-        return me.jump(cls,jumpParameter, transitionViews);
+        return me.jump(cls, jumpParameter, transitionViews);
     }
 
     /**

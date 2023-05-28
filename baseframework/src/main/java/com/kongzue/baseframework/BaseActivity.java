@@ -65,6 +65,7 @@ import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.interfaces.OnClicks;
 import com.kongzue.baseframework.interfaces.SwipeBack;
 import com.kongzue.baseframework.util.AppManager;
+import com.kongzue.baseframework.util.AsyncActivityLayoutLoader;
 import com.kongzue.baseframework.util.BuildProperties;
 import com.kongzue.baseframework.util.CycleRunner;
 import com.kongzue.baseframework.util.DebugLogG;
@@ -151,17 +152,22 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         initAttributes();
 
         if (!interceptSetContentView()) {
-            layoutResId = resetLayoutResId();
-            if (layoutResId == -1) {
-                View contentView = resetContentView();
-                if (contentView == null) {
-                    errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
-                    return;
+            View view = AsyncActivityLayoutLoader.getActivityLayout(me.getClass().getName());
+            if (view != null) {
+                setContentView(view);
+            }else{
+                layoutResId = resetLayoutResId();
+                if (layoutResId == -1) {
+                    View contentView = resetContentView();
+                    if (contentView == null) {
+                        errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
+                        return;
+                    } else {
+                        setContentView(resetContentView());
+                    }
                 } else {
-                    setContentView(resetContentView());
+                    setContentView(layoutResId);
                 }
-            } else {
-                setContentView(layoutResId);
             }
         }
 

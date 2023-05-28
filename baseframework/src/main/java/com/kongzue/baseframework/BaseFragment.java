@@ -92,7 +92,7 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         THIS = this;
         this.savedInstanceState = savedInstanceState;
 
-        rootView = AsyncActivityLayoutLoader.getActivityLayout(getClass().getName());
+        rootView = AsyncActivityLayoutLoader.getActivityLayout(me, getClass().getName());
         if (rootView == null) {
             rootView = resetContentView();
             if (rootView == null) {

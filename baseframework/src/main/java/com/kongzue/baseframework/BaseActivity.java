@@ -152,7 +152,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         initAttributes();
 
         if (!interceptSetContentView()) {
-            View view = AsyncActivityLayoutLoader.getActivityLayout(me.getClass().getName());
+            View view = AsyncActivityLayoutLoader.getActivityLayout(me,me.getClass().getName());
             if (view != null) {
                 setContentView(view);
             }else{

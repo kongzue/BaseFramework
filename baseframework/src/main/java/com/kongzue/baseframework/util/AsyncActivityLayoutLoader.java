@@ -2,16 +2,14 @@ package com.kongzue.baseframework.util;
 
 import static com.kongzue.baseframework.BaseApp.isNull;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 
-import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseApp;
-import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.interfaces.Layout;
 
 import java.util.HashMap;
@@ -20,14 +18,14 @@ import java.util.Map;
 public class AsyncActivityLayoutLoader {
     static Map<String, ViewPackage> cachedView;
 
-    private static void preCreateActivityLayoutCache(String baseActivityName, int layoutId) {
+    private static void preCreateActivityLayoutCache(Context context, String baseActivityName, int layoutId) {
         if (layoutId == 0 || isNull(baseActivityName)) {
             return;
         }
         if (cachedView == null) {
             cachedView = new HashMap<>();
         }
-        new AsyncLayoutInflater(BaseApp.getPrivateInstance()).inflate(layoutId, null, new AsyncLayoutInflater.OnInflateFinishedListener() {
+        new AsyncLayoutInflater(context).inflate(layoutId, null, new AsyncLayoutInflater.OnInflateFinishedListener() {
             @Override
             public void onInflateFinished(@NonNull View view, int resId, @Nullable ViewGroup parent) {
                 cachedView.put(baseActivityName, new ViewPackage(view, resId));
@@ -35,17 +33,27 @@ public class AsyncActivityLayoutLoader {
         });
     }
 
+    public static void preCreateActivityLayoutCache(Context context, Class baseActivityClass) {
+        String baseActivityName = baseActivityClass.getName();
+        Layout layout = (Layout) baseActivityClass.getAnnotation(Layout.class);
+        if (layout != null) {
+            if (layout.value() != -1) {
+                preCreateActivityLayoutCache(context, baseActivityName, layout.value());
+            }
+        }
+    }
+
     public static void preCreateActivityLayoutCache(Class baseActivityClass) {
         String baseActivityName = baseActivityClass.getName();
         Layout layout = (Layout) baseActivityClass.getAnnotation(Layout.class);
         if (layout != null) {
             if (layout.value() != -1) {
-                preCreateActivityLayoutCache(baseActivityName, layout.value());
+                preCreateActivityLayoutCache(BaseApp.getPrivateInstance(), baseActivityName, layout.value());
             }
         }
     }
 
-    public static View getActivityLayout(String baseActivityName) {
+    public static View getActivityLayout(Context context,String baseActivityName) {
         if (cachedView == null) {
             return null;
         }
@@ -53,7 +61,7 @@ public class AsyncActivityLayoutLoader {
         if (pkg != null && pkg.getView() != null) {
             View view = pkg.getView();
             cachedView.remove(baseActivityName);
-            preCreateActivityLayoutCache(baseActivityName, pkg.resId);
+            preCreateActivityLayoutCache(context,baseActivityName, pkg.resId);
             pkg.cleanAll();
             return view;
         }

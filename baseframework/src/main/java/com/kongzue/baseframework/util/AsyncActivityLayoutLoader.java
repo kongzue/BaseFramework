@@ -46,6 +46,9 @@ public class AsyncActivityLayoutLoader {
     }
 
     public static View getActivityLayout(String baseActivityName) {
+        if (cachedView == null) {
+            return null;
+        }
         ViewPackage pkg = cachedView.get(baseActivityName);
         if (pkg != null && pkg.getView() != null) {
             View view = pkg.getView();

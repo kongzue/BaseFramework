@@ -44,11 +44,12 @@ public class App extends BaseApp<App> {
         AsyncActivityLayoutLoader.preCreateActivityLayoutCache(FunctionFragment.class);
         AsyncActivityLayoutLoader.preCreateActivityLayoutCache(IntroductionFragment.class);
 
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            Thread.sleep(2000);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+
         setOnSDKInitializedCallBack(new OnSDKInitializedCallBack() {
             @Override
             public void onInitialized() {

@@ -103,7 +103,7 @@ public class AsyncLayoutInflater {
             private final AtomicInteger mCount = new AtomicInteger(1);
 
             public Thread newThread(Runnable r) {
-                return new Thread(r, "AsyncLayoutInflatePlus #" + mCount.getAndIncrement());
+                return new Thread(r, "AsyncLayoutInflate" + mCount.getAndIncrement());
             }
         };
 
@@ -111,9 +111,6 @@ public class AsyncLayoutInflater {
         private static final BlockingQueue<Runnable> sPoolWorkQueue =
                 new LinkedBlockingQueue<Runnable>();
 
-        /**
-         * An {@link Executor} that can be used to execute tasks in parallel.
-         */
         public static final ThreadPoolExecutor THREAD_POOL_EXECUTOR;
 
         static {

@@ -3,6 +3,7 @@ package com.kongzue.baseframework.util;
 import static com.kongzue.baseframework.BaseApp.isNull;
 
 import android.content.Context;
+import android.content.MutableContextWrapper;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AsyncActivityLayoutLoader {
+
     static Map<String, ViewPackage> cachedView;
 
     private static void preCreateActivityLayoutCache(Context context, String baseActivityName, int layoutId) {
@@ -48,7 +50,7 @@ public class AsyncActivityLayoutLoader {
         Layout layout = (Layout) baseActivityClass.getAnnotation(Layout.class);
         if (layout != null) {
             if (layout.value() != -1) {
-                preCreateActivityLayoutCache(BaseApp.getPrivateInstance(), baseActivityName, layout.value());
+                preCreateActivityLayoutCache(new MutableContextWrapper(BaseApp.getPrivateInstance()), baseActivityName, layout.value());
             }
         }
     }
@@ -60,6 +62,8 @@ public class AsyncActivityLayoutLoader {
         ViewPackage pkg = cachedView.get(baseActivityName);
         if (pkg != null && pkg.getView() != null) {
             View view = pkg.getView();
+            MutableContextWrapper contextWrapper = (MutableContextWrapper) view.getContext();
+            contextWrapper.setBaseContext(context);
             cachedView.remove(baseActivityName);
             preCreateActivityLayoutCache(context,baseActivityName, pkg.resId);
             pkg.cleanAll();

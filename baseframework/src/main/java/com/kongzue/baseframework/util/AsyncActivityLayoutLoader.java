@@ -4,6 +4,7 @@ import static com.kongzue.baseframework.BaseApp.isNull;
 
 import android.content.Context;
 import android.content.MutableContextWrapper;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,7 +19,8 @@ import java.util.Map;
 
 public class AsyncActivityLayoutLoader {
 
-    static Map<String, ViewPackage> cachedView;
+    static Map<String, ViewWrapper> cachedView;
+    public static boolean showDebugLog = true;
 
     private static void preCreateActivityLayoutCache(Context context, String baseActivityName, int layoutId) {
         if (layoutId == 0 || isNull(baseActivityName)) {
@@ -30,7 +32,9 @@ public class AsyncActivityLayoutLoader {
         new AsyncLayoutInflater(context).inflate(layoutId, null, new AsyncLayoutInflater.OnInflateFinishedListener() {
             @Override
             public void onInflateFinished(@NonNull View view, int resId, @Nullable ViewGroup parent) {
-                cachedView.put(baseActivityName, new ViewPackage(view, resId));
+                cachedView.put(baseActivityName, new ViewWrapper(view, resId));
+                if (showDebugLog)
+                    Log.w(">>>", "AsyncActivityLayoutLoader: " + baseActivityName + " is already cached");
             }
         });
     }
@@ -55,17 +59,21 @@ public class AsyncActivityLayoutLoader {
         }
     }
 
-    public static View getActivityLayout(Context context,String baseActivityName) {
+    public static View getActivityLayout(Context context, String baseActivityName) {
         if (cachedView == null) {
             return null;
         }
-        ViewPackage pkg = cachedView.get(baseActivityName);
+        ViewWrapper pkg = cachedView.get(baseActivityName);
         if (pkg != null && pkg.getView() != null) {
             View view = pkg.getView();
-            MutableContextWrapper contextWrapper = (MutableContextWrapper) view.getContext();
-            contextWrapper.setBaseContext(context);
+            if (view.getContext() instanceof MutableContextWrapper) {
+                MutableContextWrapper contextWrapper = (MutableContextWrapper) view.getContext();
+                contextWrapper.setBaseContext(context);
+            }
+            if (showDebugLog)
+                Log.w(">>>", "AsyncActivityLayoutLoader: " + baseActivityName + " is used from cache");
             cachedView.remove(baseActivityName);
-            preCreateActivityLayoutCache(context,baseActivityName, pkg.resId);
+            preCreateActivityLayoutCache(context, baseActivityName, pkg.resId);
             pkg.cleanAll();
             return view;
         }
@@ -77,11 +85,11 @@ public class AsyncActivityLayoutLoader {
         cachedView = null;
     }
 
-    static class ViewPackage {
+    static class ViewWrapper {
         View view;
         int resId;
 
-        ViewPackage(View view, int resId) {
+        ViewWrapper(View view, int resId) {
             this.view = view;
             this.resId = resId;
         }

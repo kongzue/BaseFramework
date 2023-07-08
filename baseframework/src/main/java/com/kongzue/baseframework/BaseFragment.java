@@ -23,6 +23,7 @@ import com.kongzue.baseframework.interfaces.ActivityResultCallback;
 import com.kongzue.baseframework.interfaces.BindView;
 import com.kongzue.baseframework.interfaces.BindViews;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.LayoutName;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.interfaces.OnClicks;
@@ -40,6 +41,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -53,6 +55,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
 
     public int layoutResId = -1;
+    public String layoutResName;
     public boolean isActive = false;                                        //当前Fragment是否处于前台
     public int fromFragmentId = -1;
 
@@ -103,13 +106,32 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
                         if (layout != null && layout.value() != -1) {
                             layoutResId = layout.value();
                         }
+
+                        LayoutName layoutName = getClass().getAnnotation(LayoutName.class);
+                        if (layoutName != null) {
+                            if (!isNull(layoutName.value())) {
+                                layoutResName = layoutName.value();
+                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     layoutResId = resetLayoutResId();
                     if (layoutResId == -1) {
-                        errorLog("请在您的Fragment的Class上注解：@Layout(你的layout资源id)，或重写resetLayoutResId()方法以设置布局");
-                        return null;
+                        if (!isNull(layoutResName)){
+                            layoutResId = getResources().getIdentifier(layoutResName, "layout", me.getPackageName());
+                            if (layoutResId != 0) {
+                                rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+                            }
+                        }else{
+                            layoutResId = getResources().getIdentifier(guessNameOfLayoutResId(), "layout", me.getPackageName());
+                            if (layoutResId != 0) {
+                                rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
+                            } else {
+                                errorLog("请在您的Fragment的Class上注解：@Layout(你的layout资源id)，或重写resetLayoutResId()方法以设置布局");
+                                return null;
+                            }
+                        }
                     }
                     if (rootView == null) {
                         rootView = LayoutInflater.from(getActivity()).inflate(layoutResId, container, false);
@@ -908,6 +930,16 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
 
     public boolean onBack() {
         return false;
+    }
+
+    private String guessNameOfLayoutResId() {
+        String[] words = getClass().getSimpleName().split("(?<!^)(?=[A-Z])");
+        StringBuffer stringBuffer = new StringBuffer(words.length);
+        for (int i = words.length - 1; i >= 0; i--) {
+            stringBuffer.append(words[i].toLowerCase(Locale.ROOT));
+            if (i != 0) stringBuffer.append("_");
+        }
+        return stringBuffer.toString();
     }
 
     public String getInstanceKey() {

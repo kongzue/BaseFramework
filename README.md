@@ -194,11 +194,23 @@ setNavigationBarBackgroundColor(Color.argb(255,255,255,255));       //设置底�
 
 BaseActivity 默认使用注解来绑定布局：
 
-```
+```java
 @Layout(R.layout.activity_demo)
 public class DemoActivity extends BaseActivity {
     ...
 ```
+
+⚠️ 新版本 Android Studio 默认将资源 id 编译为“抽象的（abstract）”，无法直接在注解使用，此时可以尝试：
+
+```java
+@LayoutName("activity_demo")
+public class DemoActivity extends BaseActivity {
+    ...
+```
+
+另外，如果你的布局资源名是与 Activity 名称反转相互对应的，例如 “DemoActivity” 的资源名是 “activity_demo” 此时也可以直接不设置，BaseActivity 会自动识别对应布局资源（限不开启资源名混淆的情况下使用）
+
+此方法效率略低，如果介意可以尝试以下重写方法设置的方案：
 
 不建议重写 onCreate 方法，根据约定，请无需关心绑定布局的过程，你只需要在 initView() 方法中绑定、加载 View 组件，initData() 方法中加载数据，在 setEvents() 方法中绑定事件即可。
 
@@ -553,9 +565,9 @@ BaseFragment 与普通的 Fragment 有什么区别？
 
 在构建 BaseFragment 时，建议直接使用泛型指定你要绑定的 BaseActivity，然后你就可以使用 `me.` 来调用该 BaseActivity 中 public 的方法和元素了，例如：
 
-```
-@Layout(R.layout.fragment_demo)
-public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约定泛型
+```java
+@Layout(R.layout.fragment_introduction)
+public class IntroductionFragment extends BaseFragment<MainActivity> {      //此处约定泛型
    
     @Override
     public void setEvents() {
@@ -563,6 +575,23 @@ public class FragmentDemo extends BaseFragment<MainActivity> {      //此处约�
     }
 }
 ```
+
+⚠️ 新版本 Android Studio 默认将资源 id 编译为“抽象的（abstract）”，无法直接在注解使用，此时可以尝试：
+
+```java
+@LayoutName("fragment_introduction")
+public class IntroductionFragment extends BaseFragment<MainActivity> {      //此处约定泛型
+
+    @Override
+    public void setEvents() {
+        me.changeFragment(settingFragment);             //此处 me 代替已实例化的 MainActivity，且 changeFragment(...) 是 MainActivity 中的方法。
+    }
+}
+```
+
+另外，如果你的布局资源名是与 Fragment 名称相互对应的，例如 “IntroductionFragment” 的资源名是 “fragment_introduction” 此时也可以直接不设置，BaseFragment 会自动识别对应布局资源（限不开启资源名混淆的情况下使用）
+
+此方法效率略低，如果介意可以尝试以下重写方法设置的方案：
 
 若不想约定，可将泛型设置为 BaseActivity。
 

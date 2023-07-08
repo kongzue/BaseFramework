@@ -56,6 +56,7 @@ import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.GlobalLifeCircleListener;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.LayoutName;
 import com.kongzue.baseframework.interfaces.LifeCircleListener;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColor;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorHex;
@@ -89,6 +90,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -119,6 +121,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     private boolean darkNavigationBarThemeValue = false;
     private int navigationBarBackgroundColorValue = Color.BLACK;
     private int layoutResId = -1;
+    private String layoutResName;
     private int fragmentLayoutId = -1;
 
     private int enterAnimResId = -1;
@@ -152,16 +155,26 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         initAttributes();
 
         if (!interceptSetContentView()) {
-            View view = AsyncActivityLayoutLoader.getActivityLayout(me,me.getClass().getName());
+            View view = AsyncActivityLayoutLoader.getActivityLayout(me, me.getClass().getName());
             if (view != null) {
                 setContentView(view);
-            }else{
+            } else {
                 layoutResId = resetLayoutResId();
                 if (layoutResId == -1) {
                     View contentView = resetContentView();
                     if (contentView == null) {
-                        errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
-                        return;
+                        if (!isNull(layoutResName)) {
+                            layoutResId = getResources().getIdentifier(layoutResName, "layout", getPackageName());
+                            setContentView(layoutResId);
+                        } else {
+                            layoutResId = getResources().getIdentifier(guessNameOfLayoutResId(), "layout", getPackageName());
+                            if (layoutResId != 0) {
+                                setContentView(layoutResId);
+                            } else {
+                                errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
+                                return;
+                            }
+                        }
                     } else {
                         setContentView(resetContentView());
                     }
@@ -198,6 +211,16 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onCreate(me, me.getClass().getName());
         }
+    }
+
+    private String guessNameOfLayoutResId() {
+        String[] words = getClass().getSimpleName().split("(?<!^)(?=[A-Z])");
+        StringBuffer stringBuffer = new StringBuffer(words.length);
+        for (int i = words.length - 1; i >= 0; i--) {
+            stringBuffer.append(words[i].toLowerCase(Locale.ROOT));
+            if (i != 0) stringBuffer.append("_");
+        }
+        return stringBuffer.toString();
     }
 
     public View resetContentView() {
@@ -360,6 +383,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         try {
             FullScreen fullScreen = getClass().getAnnotation(FullScreen.class);
             Layout layout = getClass().getAnnotation(Layout.class);
+            LayoutName layoutName = getClass().getAnnotation(LayoutName.class);
             FragmentLayout fragmentLayout = getClass().getAnnotation(FragmentLayout.class);
             DarkNavigationBarTheme darkNavigationBarTheme = getClass().getAnnotation(DarkNavigationBarTheme.class);
             DarkStatusBarTheme darkStatusBarTheme = getClass().getAnnotation(DarkStatusBarTheme.class);
@@ -384,6 +408,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (layout != null) {
                 if (layout.value() != -1) {
                     layoutResId = layout.value();
+                }
+            }
+            if (layoutName != null) {
+                if (!isNull(layoutName.value())) {
+                    layoutResName = layoutName.value();
                 }
             }
             if (enterAnim != null) {

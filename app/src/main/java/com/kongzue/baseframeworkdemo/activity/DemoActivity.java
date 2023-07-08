@@ -11,6 +11,7 @@ import com.kongzue.baseframework.interfaces.EnterAnim;
 import com.kongzue.baseframework.interfaces.ExitAnim;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.Layout;
+import com.kongzue.baseframework.interfaces.LayoutName;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;
 import com.kongzue.baseframework.interfaces.OnFragmentChangeListener;
 import com.kongzue.baseframework.util.FragmentChangeUtil;
@@ -27,7 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 //使用 @Layout 注解直接绑定要显示的布局
-@Layout(R.layout.activity_demo)
+//@Layout(R.layout.activity_demo)
+//使用 @LayoutName 注解按照布局名称绑定布局
+@LayoutName("activity_demo")
 //设置不使用状态栏暗色文字图标样式
 @DarkStatusBarTheme(false)
 //设置底部导航栏背景颜色，此外还可以使用 @NavigationBarBackgroundColor 来指定 argb 颜色

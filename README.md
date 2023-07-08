@@ -200,7 +200,18 @@ public class DemoActivity extends BaseActivity {
     ...
 ```
 
-⚠️ 新版本 Android Studio 默认将资源 id 编译为“抽象的（abstract）”，无法直接在注解使用，此时可以尝试：
+⚠️ 新版本 Android Studio 默认将资源 id 不是 final 的导致无法直接在注解使用，此时可以尝试：
+
+#### 方案1:将资源 ID 编译为 final
+
+前往 gradle.properties(Project Properties) 添加：
+
+```
+android.nonFinalResIds=false
+```
+Sync Project 即可。
+
+#### 方案2:使用资源名关联布局
 
 ```java
 @LayoutName("activity_demo")
@@ -576,7 +587,19 @@ public class IntroductionFragment extends BaseFragment<MainActivity> {      //�
 }
 ```
 
-⚠️ 新版本 Android Studio 默认将资源 id 编译为“抽象的（abstract）”，无法直接在注解使用，此时可以尝试：
+
+⚠️ 新版本 Android Studio 默认将资源 id 不是 final 的导致无法直接在注解使用，此时可以尝试：
+
+#### 方案1:将资源 ID 编译为 final
+
+前往 gradle.properties(Project Properties) 添加：
+
+```
+android.nonFinalResIds=false
+```
+Sync Project 即可。
+
+#### 方案2:使用资源名关联布局
 
 ```java
 @LayoutName("fragment_introduction")

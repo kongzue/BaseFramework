@@ -208,6 +208,18 @@ public class DemoActivity extends BaseActivity {
     ...
 ```
 
+或者使用 set 方法设置：
+```java
+public DemoActivity() {
+    setLayout(R.layout.activity_demo);
+    setFragmentLayout(R.id.viewPager);
+    setDarkStatusAndNavBarTheme(true);
+    setNavigationBarBackgroundRes(R.color.colorWhite);
+    setEnterAnim(R.anim.fade,R.anim.hold);
+    setExitAnim(R.anim.hold,R.anim.back);
+}
+```
+
 另外，如果你的布局资源名是与 Activity 名称反转相互对应的，例如 “DemoActivity” 的资源名是 “activity_demo” 此时也可以直接不设置，BaseActivity 会自动识别对应布局资源（限不开启资源名混淆的情况下使用）
 
 此方法效率略低，如果介意可以尝试以下重写方法设置的方案：
@@ -586,6 +598,13 @@ public class IntroductionFragment extends BaseFragment<MainActivity> {      //�
     public void setEvents() {
         me.changeFragment(settingFragment);             //此处 me 代替已实例化的 MainActivity，且 changeFragment(...) 是 MainActivity 中的方法。
     }
+}
+```
+
+或者使用 set 方法设置：
+```java
+public IntroductionFragment() {
+    setLayout(R.layout.fragment_introduction);
 }
 ```
 

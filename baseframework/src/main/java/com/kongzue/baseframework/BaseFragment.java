@@ -957,4 +957,9 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     public <T extends View> T createView(int layoutResId) {
         return (T) LayoutInflater.from(me).inflate(layoutResId, null, false);
     }
+
+    public BaseFragment<ME> setLayout(int layoutResId) {
+        this.layoutResId = layoutResId;
+        return this;
+    }
 }

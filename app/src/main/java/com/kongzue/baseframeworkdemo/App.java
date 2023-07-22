@@ -35,14 +35,14 @@ public class App extends BaseApp<App> {
     
     @Override
     public void init() {
-        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(AdapterTestActivity.class);
-        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(DemoActivity.class);
-        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(JumpActivity.class);
-        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(ResponseActivity.class);
-        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(TransitionActivity.class);
-        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(AboutFragment.class);
-        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(FunctionFragment.class);
-        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(IntroductionFragment.class);
+//        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(AdapterTestActivity.class);
+//        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(DemoActivity.class);
+//        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(JumpActivity.class);
+//        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(ResponseActivity.class);
+//        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(TransitionActivity.class);
+//        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(AboutFragment.class);
+//        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(FunctionFragment.class);
+//        AsyncActivityLayoutLoader.preCreateActivityLayoutCache(IntroductionFragment.class);
 
 //        try {
 //            Thread.sleep(2000);

@@ -2,11 +2,14 @@ package com.kongzue.baseframework.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 
 import com.kongzue.baseframework.BaseActivity;
+import com.kongzue.baseframework.BaseApp;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -21,15 +24,15 @@ import java.util.Stack;
  * @describe: Activity管理工具类
  */
 public class AppManager {
-    
+
     private static OnActivityStatusChangeListener onActivityStatusChangeListener;
     private static Stack<BaseActivity> activityStack;
     private static AppManager instance;
     private static WeakReference<BaseActivity> activeActivity;
-    
+
     private AppManager() {
     }
-    
+
     /**
      * @return 获取activity管理实例
      */
@@ -39,7 +42,7 @@ public class AppManager {
         }
         return instance;
     }
-    
+
     /**
      * 添加Activity到堆栈
      */
@@ -52,7 +55,7 @@ public class AppManager {
             onActivityStatusChangeListener.onActivityCreate(activity);
         }
     }
-    
+
     /**
      * 获取当前Activity（堆栈中最后一个压入的）
      */
@@ -66,7 +69,7 @@ public class AppManager {
         }
         return activity;
     }
-    
+
     /**
      * 获取当前处于活动状态的Activity
      *
@@ -78,7 +81,7 @@ public class AppManager {
         }
         return activeActivity.get();
     }
-    
+
     /**
      * 结束当前Activity（堆栈中最后一个压入的）
      */
@@ -89,7 +92,7 @@ public class AppManager {
         BaseActivity activity = activityStack.lastElement();
         killActivity(activity);
     }
-    
+
     /**
      * 结束指定的Activity
      */
@@ -102,7 +105,7 @@ public class AppManager {
             activity = null;
         }
     }
-    
+
     /**
      * 结束指定类名的Activity
      */
@@ -122,7 +125,7 @@ public class AppManager {
             temp.finish();
         }
     }
-    
+
     /**
      * 结束所有Activity
      */
@@ -135,7 +138,7 @@ public class AppManager {
             activityStack.clear();
         }
     }
-    
+
     /**
      * 退出应用程序
      */
@@ -149,12 +152,12 @@ public class AppManager {
         } catch (Exception e) {
         }
     }
-    
+
     @Deprecated
     public void AppExit(Context context) {
         exit(context);
     }
-    
+
     public void deleteActivity(BaseActivity activity) {
         try {
             if (activity != null && activityStack != null) {
@@ -167,10 +170,10 @@ public class AppManager {
                 }
             }
         } catch (Exception e) {
-        
+
         }
     }
-    
+
     /**
      * 关闭所有 {@link Activity},排除指定的 {@link Activity}
      *
@@ -194,7 +197,7 @@ public class AppManager {
             }
         }
     }
-    
+
     /**
      * 根据类名获取堆栈中最后一个 activity 实例
      *
@@ -222,7 +225,7 @@ public class AppManager {
         }
         return null;
     }
-    
+
     public BaseActivity getActivityInstance(String instanceKey) {
         if (activityStack == null) {
             return null;
@@ -245,39 +248,71 @@ public class AppManager {
         }
         return null;
     }
-    
+
     public void onDestroy() {
         activityStack = new Stack<>();
     }
-    
+
     public static Stack<BaseActivity> getActivityStack() {
         return activityStack;
     }
-    
+
     public static OnActivityStatusChangeListener getOnActivityStatusChangeListener() {
         return onActivityStatusChangeListener;
     }
-    
+
     public static void setOnActivityStatusChangeListener(OnActivityStatusChangeListener onActivityStatusChangeListener) {
         AppManager.onActivityStatusChangeListener = onActivityStatusChangeListener;
     }
-    
+
     public void preCreate(BaseActivity activity) {
         if (onActivityStatusChangeListener != null) {
             onActivityStatusChangeListener.onActivityCreate(activity);
         }
     }
-    
+
     public static abstract class OnActivityStatusChangeListener {
-        
-        public void onActivityCreate(BaseActivity activity){}
-    
-        public void onActivityDestroy(BaseActivity activity){}
-        
-        public void onAllActivityClose(){}
+
+        public void onActivityCreate(BaseActivity activity) {
+        }
+
+        public void onActivityDestroy(BaseActivity activity) {
+        }
+
+        public void onAllActivityClose() {
+        }
     }
-    
+
     public static void setActiveActivity(BaseActivity activeActivity) {
         AppManager.activeActivity = new WeakReference<>(activeActivity);
+    }
+
+    public static Application getApplication() {
+        if (BaseApp.getPrivateInstance() != null) {
+            return BaseApp.getPrivateInstance();
+        }
+        return getApplicationContext();
+    }
+
+    private static Application getApplicationContext() {
+        try {
+            Application application = (Application) Class.forName("android.app.ActivityThread").getMethod("currentApplication").invoke(null, (Object[]) null);
+            return application;
+        } catch (Exception e) {
+        }
+        try {
+            Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
+            Object activityThread = activityThreadClass.getDeclaredMethod("currentActivityThread").invoke(null);
+            Method getApplicationMethod = activityThreadClass.getDeclaredMethod("getApplication");
+            Application application = (Application) getApplicationMethod.invoke(activityThread);
+            return application;
+        } catch (Exception e) {
+        }
+        try {
+            Application application = (Application) Class.forName("android.app.AppGlobals").getMethod("getInitialApplication").invoke(null, (Object[]) null);
+            return application;
+        } catch (Exception e) {
+        }
+        return null;
     }
 }

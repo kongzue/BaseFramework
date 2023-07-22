@@ -45,6 +45,15 @@ import java.util.List;
 @ExitAnim(holdAnimResId = R.anim.hold, exitAnimResId = R.anim.back)
 public class DemoActivity extends BaseActivity {
 
+//    public DemoActivity() {
+//        setLayout(R.layout.activity_demo);
+//        setFragmentLayout(R.id.viewPager);
+//        setDarkStatusAndNavBarTheme(true);
+//        setNavigationBarBackgroundRes(R.color.colorWhite);
+//        setEnterAnim(R.anim.fade,R.anim.hold);
+//        setExitAnim(R.anim.hold,R.anim.back);
+//    }
+
     //三个子 Fragment 布局（简介界面、功能界面、Github关于界面）
     private IntroductionFragment introductionFragment = new IntroductionFragment();
     private FunctionFragment functionFragment = new FunctionFragment();

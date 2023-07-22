@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -37,6 +38,7 @@ import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -559,16 +561,25 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
 
     public void setNavigationBarBackgroundColor(@ColorInt int color) {
         navigationBarBackgroundColorValue = color;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(navigationBarBackgroundColorValue);
+        applyNavBarBkgColor();
+    }
+
+    private void applyNavBarBkgColor() {
+        if (isAlive) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().setNavigationBarColor(navigationBarBackgroundColorValue);
+            }
         }
+    }
+
+    public void setNavigationBarBackgroundRes(@ColorRes int colorResId) {
+        navigationBarBackgroundColorValue = isAlive ? getColorS(colorResId) : AppManager.getApplication().getResources().getColor(colorResId);
+        applyNavBarBkgColor();
     }
 
     public void setNavigationBarBackgroundColor(int a, int r, int g, int b) {
         navigationBarBackgroundColorValue = Color.argb(a, r, g, b);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setNavigationBarColor(navigationBarBackgroundColorValue);
-        }
+        applyNavBarBkgColor();
     }
 
     //状态栏主题
@@ -1687,7 +1698,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     //支持最低SDK的getColor方法
     public int getColorS(@ColorRes int id) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            return getResources().getColor(id, getTheme());
+            return getResources().getColor(id,
+                    getTheme());
         } else {
             return getResources().getColor(id);
         }
@@ -1820,5 +1832,38 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
 
     public <T extends View> T createView(int layoutResId) {
         return (T) LayoutInflater.from(me).inflate(layoutResId, null, false);
+    }
+
+    public BaseActivity setLayout(int layoutResId) {
+        this.layoutResId = layoutResId;
+        return this;
+    }
+
+    public BaseActivity setEnableSwipeBack(boolean enable) {
+        this.enableSwipeBack = enable;
+        return this;
+    }
+
+    public BaseActivity setEnterAnim(int enterAnimResId, int enterHoldAnimResId) {
+        this.enterAnimResId = enterAnimResId;
+        this.enterHoldAnimResId = enterHoldAnimResId;
+        return this;
+    }
+
+    public BaseActivity setExitAnim(int exitAnimResId, int exitHoldAnimResId) {
+        this.exitAnimResId = exitAnimResId;
+        this.exitHoldAnimResId = exitHoldAnimResId;
+        return this;
+    }
+
+    public BaseActivity setFragmentLayout(int fragmentLayoutResId) {
+        this.fragmentLayoutId = fragmentLayoutResId;
+        return this;
+    }
+
+    public BaseActivity setDarkStatusAndNavBarTheme(boolean dark) {
+        this.darkStatusBarThemeValue = dark;
+        this.darkNavigationBarThemeValue = dark;
+        return this;
     }
 }

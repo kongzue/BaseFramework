@@ -335,10 +335,9 @@ public class FunctionFragment extends BaseFragment<DemoActivity> {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.mipmap.img_bkg);
-                jump(JumpActivity.class, new JumpParameter()
+                jump(JumpActivity.class)
                         .put("参数1", "这是一段文字参数")
-                        .put("参数2", bmp)
-                );
+                        .put("参数2", bmp);
             }
         });
         AlertDialog dialog = builder.create();

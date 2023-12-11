@@ -85,12 +85,7 @@ public class FragmentChangeUtil {
             } else {
                 fragmentPagerAdapter.notifyDataSetChanged();
             }
-            viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                @Override
-                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                
-                }
-                
+            viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
                 @Override
                 public void onPageSelected(int position) {
                     if (focusFragment != null) {
@@ -101,11 +96,6 @@ public class FragmentChangeUtil {
                     }
                     fragmentList.get(position).callShow();
                     focusFragment = fragmentList.get(position);
-                }
-                
-                @Override
-                public void onPageScrollStateChanged(int state) {
-                
                 }
             });
         }

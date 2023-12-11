@@ -1137,26 +1137,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
 
     //更好用的跳转方式
-    public boolean jump(Class<?> cls) {
-        try {
-            startActivity(new Intent(me, cls));
-            if (BaseFrameworkSettings.defaultActivityEnterInAnimRes != 0 && BaseFrameworkSettings.defaultActivityEnterOutAnimRes != 0) {
-                jumpAnim(BaseFrameworkSettings.defaultActivityEnterInAnimRes, BaseFrameworkSettings.defaultActivityEnterOutAnimRes);
-            }
-            if (enterAnimResId != -1 && enterHoldAnimResId != -1) {
-                jumpAnim(enterAnimResId, enterHoldAnimResId);
-            }
-        } catch (Exception e) {
-            if (DEBUGMODE) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-        return true;
+    public JumpParameter jump(Class<?> cls) {
+        return jump(cls, new JumpParameter());
     }
 
     //可以传任何类型参数的跳转方式
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter) {
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter) {
         try {
             if (jumpParameter != null) {
                 ParameterCache.getInstance().set(cls.getName(), jumpParameter);
@@ -1172,18 +1158,17 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (DEBUGMODE) {
                 e.printStackTrace();
             }
-            return false;
         }
-        return true;
+        return jumpParameter;
     }
 
     //带返回值的跳转
-    public boolean jump(Class<?> cls, OnJumpResponseListener onResponseListener) {
-        return jump(cls, null, onResponseListener);
+    public JumpParameter jump(Class<?> cls, OnJumpResponseListener onResponseListener) {
+        return jump(cls, new JumpParameter(), onResponseListener);
     }
 
     //带参数和返回值跳转
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener) {
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener) {
         try {
             startActivity(new Intent(me, cls));
             if (BaseFrameworkSettings.defaultActivityEnterInAnimRes != 0 && BaseFrameworkSettings.defaultActivityEnterOutAnimRes != 0) {
@@ -1205,72 +1190,21 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (DEBUGMODE) {
                 e.printStackTrace();
             }
-            return false;
         }
-        return true;
+        return jumpParameter;
     }
 
     //可使用共享元素的跳转方式
-    public boolean jump(Class<?> cls, View transitionView) {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                me.setExitSharedElementCallback(new SharedElementCallback() {
-                    @Override
-                    public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                        super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
-                        for (View view : sharedElements) {
-                            view.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
-                startActivity(new Intent(me, cls), ActivityOptions.makeSceneTransitionAnimation(me, transitionView, transitionView.getTransitionName()).toBundle());
-            } else {
-                startActivity(new Intent(me, cls));
-            }
-        } catch (Exception e) {
-            if (DEBUGMODE) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-        return true;
+    public JumpParameter jump(Class<?> cls, View transitionView) {
+        return jump(cls, new JumpParameter(), transitionView);
     }
 
-    public boolean jump(Class<?> cls, View... transitionViews) {
-        try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                me.setExitSharedElementCallback(new SharedElementCallback() {
-                    @Override
-                    public void onSharedElementEnd(List<String> sharedElementNames, List<View> sharedElements, List<View> sharedElementSnapshots) {
-                        super.onSharedElementEnd(sharedElementNames, sharedElements, sharedElementSnapshots);
-                        for (View view : sharedElements) {
-                            view.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
-
-                Pair<View, String>[] pairs = new Pair[transitionViews.length];
-                int i = 0;
-                for (View tv : transitionViews) {
-                    Pair<View, String> pair = new Pair<>(tv, tv.getTransitionName());
-                    pairs[i] = pair;
-                    i++;
-                }
-                startActivity(new Intent(me, cls), ActivityOptions.makeSceneTransitionAnimation(me, pairs).toBundle());
-            } else {
-                startActivity(new Intent(me, cls));
-            }
-        } catch (Exception e) {
-            if (DEBUGMODE) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-        return true;
+    public JumpParameter jump(Class<?> cls, View... transitionViews) {
+        return jump(cls, new JumpParameter(), transitionViews);
     }
 
     //可使用共享元素的带参数跳转方式
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
         try {
             if (jumpParameter != null) {
                 ParameterCache.getInstance().set(cls.getName(), jumpParameter);
@@ -1293,12 +1227,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (DEBUGMODE) {
                 e.printStackTrace();
             }
-            return false;
         }
-        return true;
+        return jumpParameter;
     }
 
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, View... transitionViews) {
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter, View... transitionViews) {
         try {
             if (jumpParameter != null) {
                 ParameterCache.getInstance().set(cls.getName(), jumpParameter);
@@ -1330,18 +1263,17 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (DEBUGMODE) {
                 e.printStackTrace();
             }
-            return false;
         }
-        return true;
+        return jumpParameter;
     }
 
     //可使用共享元素的带返回值的跳转
-    public boolean jump(Class<?> cls, OnJumpResponseListener onResponseListener, View transitionView) {
-        return jump(cls, null, onResponseListener, transitionView);
+    public JumpParameter jump(Class<?> cls, OnJumpResponseListener onResponseListener, View transitionView) {
+        return jump(cls, new JumpParameter(), onResponseListener, transitionView);
     }
 
     //可使用共享元素的带参数和返回值跳转
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener, View transitionView) {
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener, View transitionView) {
         try {
             ParameterCache.getInstance().cleanResponse(me.getClass().getName());
             if (jumpParameter == null) {
@@ -1372,9 +1304,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             if (DEBUGMODE) {
                 e.printStackTrace();
             }
-            return false;
         }
-        return true;
+        return jumpParameter;
     }
 
     public void jumpAnim(int enterAnim, int exitAnim) {

@@ -52,6 +52,14 @@ public class JumpParameter {
         return this;
     }
 
+    public JumpParameter set(String key, Object value) {
+        if (dataMap == null) {
+            dataMap = new HashMap<>();
+        }
+        dataMap.put(key, value);
+        return this;
+    }
+
     public JumpParameter cleanAll() {
         dataMap = new HashMap<>();
         return this;

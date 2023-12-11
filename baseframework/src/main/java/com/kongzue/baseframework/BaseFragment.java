@@ -396,57 +396,57 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
     }
 
     //更好用的跳转方式
-    public boolean jump(Class<?> cls) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls);
     }
 
     //可以传任何类型参数的跳转方式
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, jumpParameter);
     }
 
     //带返回值的跳转
-    public boolean jump(Class<?> cls, OnJumpResponseListener onJumpResponseListener) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, OnJumpResponseListener onJumpResponseListener) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, onJumpResponseListener);
     }
 
     //带返回值的跳转
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onResponseListener) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, jumpParameter, onResponseListener);
     }
 
     //带共享元素的跳转方式
-    public boolean jump(Class<?> cls, View transitionView) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, View transitionView) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, transitionView);
     }
 
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter, View transitionView) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, jumpParameter, transitionView);
     }
 
-    public boolean jump(Class<?> cls, OnJumpResponseListener onJumpResponseListener, View transitionView) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, OnJumpResponseListener onJumpResponseListener, View transitionView) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, onJumpResponseListener, transitionView);
     }
 
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener, View transitionView) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter, OnJumpResponseListener onJumpResponseListener, View transitionView) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, jumpParameter, onJumpResponseListener, transitionView);
     }
 
-    public boolean jump(Class<?> cls, View... transitionViews) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, View... transitionViews) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, transitionViews);
     }
 
-    public boolean jump(Class<?> cls, JumpParameter jumpParameter, View... transitionViews) {
-        if (me == null) return false;
+    public JumpParameter jump(Class<?> cls, JumpParameter jumpParameter, View... transitionViews) {
+        if (me == null) return new JumpParameter();
         return me.jump(cls, jumpParameter, transitionViews);
     }
 

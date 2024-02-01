@@ -7,6 +7,7 @@ import com.kongzue.baseframework.BaseActivity;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -68,6 +69,12 @@ public class Permission {
     public Permission STORAGE() {
         permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        return this;
+    }
+
+    public Permission MEDIA() {
+        permissions.add(Manifest.permission.READ_MEDIA_IMAGES);
+        permissions.add(Manifest.permission.READ_MEDIA_VIDEO);
         return this;
     }
     
@@ -162,6 +169,11 @@ public class Permission {
     
     public Permission RECEIVE_MMS() {
         permissions.add(Manifest.permission.RECEIVE_MMS);
+        return this;
+    }
+
+    public Permission add(String... p) {
+        permissions.addAll(Arrays.asList(p));
         return this;
     }
 }

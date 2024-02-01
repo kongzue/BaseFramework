@@ -198,4 +198,7 @@ public class BaseFrameworkSettings {
     //全局 Activity 默认退出动画
     public static int defaultActivityExitInAnimRes = 0;
     public static int defaultActivityExitOutAnimRes = 0;
+
+    //使用DataBinding
+    public static boolean useDataBinding = false;
 }

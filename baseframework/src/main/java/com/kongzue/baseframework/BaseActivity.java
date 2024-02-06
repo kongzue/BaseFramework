@@ -105,7 +105,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @link: http://kongzue.com/
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
-public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActivity implements SwipeBackActivityBase {
+public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActivity implements SwipeBackActivityBase {
 
     private LifeCircleListener lifeCircleListener;                          //快速管理生命周期
     private static GlobalLifeCircleListener globalLifeCircleListener;       //全局生命周期
@@ -136,7 +136,7 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
     private Bundle savedInstanceState;
     private SwipeBackActivityHelper mHelper;
 
-    protected T binding;
+    protected VB binding;
 
     @Override
     @Deprecated
@@ -243,7 +243,7 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
             // 通过反射实例化Binding对象
             Class<?> bindingClass = Class.forName(bindingClassName);
             Method inflateMethod = bindingClass.getMethod("inflate", LayoutInflater.class);
-            binding = (T) inflateMethod.invoke(null, getLayoutInflater());
+            binding = (VB) inflateMethod.invoke(null, getLayoutInflater());
 
             return binding.getRoot();
         } catch (Exception e) {
@@ -517,7 +517,7 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
     /**
      * initViews会在启动时首先执行，建议在此方法内进行布局绑定、View初始化等操作
      */
-    public abstract void initViews();
+    public void initViews(){};
 
     /**
      * initDatas会在布局加载后执行，建议在此方法内加载数据和处理布局显示数据
@@ -1832,6 +1832,11 @@ public abstract class BaseActivity<T extends ViewBinding> extends AppCompatActiv
     public BaseActivity setDarkStatusAndNavBarTheme(boolean dark) {
         this.darkStatusBarThemeValue = dark;
         this.darkNavigationBarThemeValue = dark;
+        return this;
+    }
+
+    public BaseActivity setTranslucentNavBarBackground(){
+        setNavigationBarBackgroundRes(R.color.transparentNavigationBackgroundColor);
         return this;
     }
 }

@@ -26,4 +26,6 @@
     <color name="white25">#40ffffff</color>
     <color name="white20">#33ffffff</color>
     <color name="white10">#1Affffff</color>
+
+    <color name="transparentNavigationBackgroundColor">#01000000</color>
 </resources>

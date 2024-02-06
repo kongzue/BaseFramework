@@ -6,8 +6,8 @@ android {
         applicationId "com.kongzue.baseframeworkdemo"
         minSdkVersion 15
         targetSdkVersion 30
-        versionCode 132
-        versionName "6.9.3"
+        versionCode 134
+        versionName "6.9.5"
     }
     buildTypes {
         release {

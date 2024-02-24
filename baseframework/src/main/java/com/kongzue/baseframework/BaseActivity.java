@@ -13,7 +13,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.net.Uri;
@@ -38,7 +37,6 @@ import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -85,8 +83,6 @@ import com.kongzue.baseframework.util.swipeback.util.SwipeBackLayout;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackUtil;
 import com.kongzue.baseframework.util.toast.Toaster;
 
-import androidx.viewbinding.ViewBinding;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -105,7 +101,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @link: http://kongzue.com/
  * @describe: 自动化代码流水线作业，以及对原生安卓、MIUI、flyme的透明状态栏显示灰色图标文字的支持，同时提供一些小工具简化开发难度，详细说明文档：https://github.com/kongzue/BaseFramework
  */
-public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActivity implements SwipeBackActivityBase {
+public abstract class BaseActivity extends AppCompatActivity implements SwipeBackActivityBase {
 
     private LifeCircleListener lifeCircleListener;                          //快速管理生命周期
     private static GlobalLifeCircleListener globalLifeCircleListener;       //全局生命周期
@@ -135,8 +131,6 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 
     private Bundle savedInstanceState;
     private SwipeBackActivityHelper mHelper;
-
-    protected VB binding;
 
     @Override
     @Deprecated
@@ -169,17 +163,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
                 if (layoutResId == -1) {
                     View contentView = resetContentView();
                     if (contentView == null) {
-                        if (BaseFrameworkSettings.useDataBinding) {
-                            View rootView = userDataBindingCreateLayout();
-                            if (rootView != null) {
-                                setContentView(rootView);
-                            } else {
-                                guessLayoutResToSetContentView();
-                            }
-                        } else {
-                            guessLayoutResToSetContentView();
-                        }
-
+                        guessLayoutResToSetContentView();
                     } else {
                         setContentView(resetContentView());
                     }
@@ -230,26 +214,6 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
                 errorLog("请在您的Activity的Class上注解：@Layout(你的layout资源id)或重写resetLayoutResId()方法以设置布局");
             }
         }
-    }
-
-    private View userDataBindingCreateLayout() {
-        String className = getClass().getSimpleName();
-        if (className.endsWith("Activity")) {
-            className = className.substring(0, className.length() - 8);
-        }
-        String bindingClassName = getPackageName() + ".databinding.Activity" + className + "Binding";
-
-        try {
-            // 通过反射实例化Binding对象
-            Class<?> bindingClass = Class.forName(bindingClassName);
-            Method inflateMethod = bindingClass.getMethod("inflate", LayoutInflater.class);
-            binding = (VB) inflateMethod.invoke(null, getLayoutInflater());
-
-            return binding.getRoot();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private String guessNameOfLayoutResId() {
@@ -517,7 +481,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     /**
      * initViews会在启动时首先执行，建议在此方法内进行布局绑定、View初始化等操作
      */
-    public void initViews(){};
+    public abstract void initViews();
 
     /**
      * initDatas会在布局加载后执行，建议在此方法内加载数据和处理布局显示数据

@@ -200,5 +200,6 @@ public class BaseFrameworkSettings {
     public static int defaultActivityExitOutAnimRes = 0;
 
     //使用DataBinding
+    @Deprecated
     public static boolean useDataBinding = false;
 }

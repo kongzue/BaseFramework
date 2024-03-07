@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseApp;
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.interfaces.Layout;
@@ -14,9 +15,11 @@ import com.kongzue.baseframework.interfaces.OnClick;
 import com.kongzue.baseframework.util.JumpParameter;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.Preferences;
+import com.kongzue.baseframework.util.QueueWorks;
 import com.kongzue.baseframeworkdemo.App;
 import com.kongzue.baseframeworkdemo.activity.DemoActivity;
 import com.kongzue.baseframeworkdemo.R;
+import com.kongzue.baseframeworkdemo.activity.JumpActivity;
 
 /**
  * @author: Kongzue

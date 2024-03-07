@@ -77,6 +77,7 @@ import com.kongzue.baseframework.util.OnActivityPermissionCallBack;
 import com.kongzue.baseframework.util.OnJumpResponseListener;
 import com.kongzue.baseframework.util.OnPermissionResponseListener;
 import com.kongzue.baseframework.util.ParameterCache;
+import com.kongzue.baseframework.util.QueueWorks;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityBase;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackActivityHelper;
 import com.kongzue.baseframework.util.swipeback.util.SwipeBackLayout;
@@ -200,6 +201,8 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         if (globalLifeCircleListener != null) {
             globalLifeCircleListener.onCreate(me, me.getClass().getName());
         }
+
+        QueueWorks.doNextWork(this.getClass());
     }
 
     private void guessLayoutResToSetContentView() {
@@ -1799,8 +1802,12 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         return this;
     }
 
-    public BaseActivity setTranslucentNavBarBackground(){
+    public BaseActivity setTranslucentNavBarBackground() {
         setNavigationBarBackgroundRes(R.color.transparentNavigationBackgroundColor);
         return this;
+    }
+
+    public static void runWork(Class<? extends BaseActivity> runOnWhatActivity, QueueWorks works) {
+        QueueWorks.addWork(runOnWhatActivity, works);
     }
 }

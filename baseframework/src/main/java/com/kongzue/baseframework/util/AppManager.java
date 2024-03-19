@@ -10,6 +10,7 @@ import com.kongzue.baseframework.BaseApp;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -139,6 +140,17 @@ public class AppManager {
         }
     }
 
+    public void killAllActivity(Runnable whenAllActivityDestroyedRunnable) {
+        addWhenAllActivityDestroyedRunnable(whenAllActivityDestroyedRunnable);
+        if (activityStack != null) {
+            while (!activityStack.empty()) {
+                BaseActivity activity = currentActivity();
+                killActivity(activity);
+            }
+            activityStack.clear();
+        }
+    }
+
     /**
      * 退出应用程序
      */
@@ -171,6 +183,12 @@ public class AppManager {
             }
         } catch (Exception e) {
 
+        }
+        if (activityStack!=null && activityStack.isEmpty()){
+            for (Runnable runnable :whenAllActivityDestroyedRunnable){
+                runnable.run();
+            }
+            whenAllActivityDestroyedRunnable.clear();
         }
     }
 
@@ -314,5 +332,11 @@ public class AppManager {
         } catch (Exception e) {
         }
         return null;
+    }
+
+    List<Runnable> whenAllActivityDestroyedRunnable = new ArrayList<Runnable>();
+
+    public void addWhenAllActivityDestroyedRunnable(Runnable runnable){
+        whenAllActivityDestroyedRunnable.add(runnable);
     }
 }

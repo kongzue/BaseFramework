@@ -10,6 +10,7 @@ import com.kongzue.baseframework.interfaces.DarkStatusBarTheme;
 import com.kongzue.baseframework.interfaces.EnterAnim;
 import com.kongzue.baseframework.interfaces.ExitAnim;
 import com.kongzue.baseframework.interfaces.FragmentLayout;
+import com.kongzue.baseframework.interfaces.FullScreen;
 import com.kongzue.baseframework.interfaces.Layout;
 import com.kongzue.baseframework.interfaces.LayoutName;
 import com.kongzue.baseframework.interfaces.NavigationBarBackgroundColorRes;

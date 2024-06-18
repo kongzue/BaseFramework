@@ -251,10 +251,10 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
                                 @Override
                                 public void onClick(View v) {
                                     try {
-                                        method.invoke(me, v);
+                                        method.invoke(THIS, v);
                                     } catch (Exception e) {
                                         try {
-                                            method.invoke(me);
+                                            method.invoke(THIS);
                                         } catch (Exception e1) {
                                         }
                                     }

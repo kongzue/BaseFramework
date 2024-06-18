@@ -14,7 +14,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 34
         versionCode 134
-        versionName "6.9.5"
+        versionName "6.9.5.1"
     }
 
     buildTypes {

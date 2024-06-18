@@ -37,7 +37,7 @@ public abstract class QueueWorks<A extends BaseActivity> {
     }
 
     public static void doNextWork(Class<? extends BaseActivity> clazz) {
-        log("doNextWork: " + clazz.getSimpleName());
+        log("callNextWork: " + clazz.getSimpleName());
         BaseActivity activity = AppManager.getInstance().getActivityInstance(clazz);
         List<QueueWorks> worksList = workBag.get(clazz.getName());
         if (activity != null && worksList != null && !worksList.isEmpty()) {
@@ -53,6 +53,7 @@ public abstract class QueueWorks<A extends BaseActivity> {
                 activity.runOnMain(new Runnable() {
                     @Override
                     public void run() {
+                        log("doNextWork: run: " + clazz.getSimpleName() + " ,running works=" + works);
                         works.callRun(activity);
                     }
                 });
@@ -61,6 +62,7 @@ public abstract class QueueWorks<A extends BaseActivity> {
                 activity.runOnResume(new Runnable() {
                     @Override
                     public void run() {
+                        log("doNextWork: run: " + clazz.getSimpleName() + " ,running works=" + works);
                         works.callRun(activity);
                     }
                 });

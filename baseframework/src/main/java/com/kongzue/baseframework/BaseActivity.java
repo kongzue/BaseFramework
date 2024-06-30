@@ -359,9 +359,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void onBackPressed() {
         if (!onBack()) {
             super.onBackPressed();
-            if (BaseFrameworkSettings.defaultActivityExitInAnimRes != 0 && BaseFrameworkSettings.defaultActivityExitOutAnimRes != 0) {
-                jumpAnim(BaseFrameworkSettings.defaultActivityExitInAnimRes, BaseFrameworkSettings.defaultActivityExitOutAnimRes);
-            }
         }
     }
 
@@ -471,7 +468,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void finish() {
         AppManager.getInstance().killActivity(me);
         if (exitHoldAnimResId != -1 && exitAnimResId != -1) {
-            jumpAnim(exitHoldAnimResId, exitAnimResId);
+            jumpAnim(exitHoldAnimResId, exitAnimResId,true);
+        }else{
+            if (BaseFrameworkSettings.defaultActivityExitInAnimRes != 0 && BaseFrameworkSettings.defaultActivityExitOutAnimRes != 0) {
+                jumpAnim(BaseFrameworkSettings.defaultActivityExitInAnimRes, BaseFrameworkSettings.defaultActivityExitOutAnimRes,true);
+            }
         }
     }
 
@@ -1313,9 +1314,17 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
 
     public void jumpAnim(int enterAnim, int exitAnim) {
+        jumpAnim(enterAnim, exitAnim, false);
+    }
+
+    public void jumpAnim(int enterAnim, int exitAnim, boolean isExit) {
         int version = Integer.valueOf(Build.VERSION.SDK_INT);
         if (version > 5) {
-            overridePendingTransition(enterAnim, exitAnim);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(isExit ? OVERRIDE_TRANSITION_CLOSE : OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim);
+            } else {
+                overridePendingTransition(enterAnim, exitAnim);
+            }
         }
     }
 

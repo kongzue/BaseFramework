@@ -1,24 +1,23 @@
 package com.kongzue.baseframework.util;
 
+import static com.kongzue.baseframework.BaseActivity.isNull;
+import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
+
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
-import com.kongzue.baseframework.interfaces.FragmentLayout;
 import com.kongzue.baseframework.interfaces.OnFragmentChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.kongzue.baseframework.BaseActivity.isNull;
-import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
 
 /**
  * Author: @Kongzue
@@ -40,7 +39,7 @@ public class FragmentChangeUtil {
     private int frameLayoutResId;
     private View containerView;
     
-    private FragmentPagerAdapter fragmentPagerAdapter;
+    private PagerAdapter fragmentPagerAdapter;
     
     public FragmentChangeUtil(BaseActivity me, int frameLayoutResId) {
         build(me, frameLayoutResId);
@@ -54,7 +53,7 @@ public class FragmentChangeUtil {
         return this;
     }
     
-    public FragmentPagerAdapter getFragmentPagerAdapter() {
+    public PagerAdapter getFragmentPagerAdapter() {
         return fragmentPagerAdapter;
     }
     
@@ -281,6 +280,11 @@ public class FragmentChangeUtil {
         }
         return this;
     }
+
+    public FragmentChangeUtil remove(int fragmentIndex) {
+        remove(getFragment(fragmentIndex));
+        return this;
+    }
     
     public FragmentChangeUtil remove(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
@@ -318,8 +322,8 @@ public class FragmentChangeUtil {
         return fragmentList.size();
     }
     
-    public BaseFragment getFocusFragment() {
-        return focusFragment;
+    public <B extends BaseFragment> B getFocusFragment() {
+        return (B) focusFragment;
     }
     
     public FragmentChangeUtil setFocusFragment(BaseFragment fragment) {
@@ -408,6 +412,15 @@ public class FragmentChangeUtil {
     public FragmentChangeUtil anim(int enterAnimResId, int exitAnimResId) {
         this.enterAnimResId = enterAnimResId;
         this.exitAnimResId = exitAnimResId;
+        return this;
+    }
+
+    public List<BaseFragment> getFragmentList() {
+        return fragmentList;
+    }
+
+    public FragmentChangeUtil setFragmentPagerAdapter(FragmentPagerAdapter fragmentPagerAdapter) {
+        this.fragmentPagerAdapter = fragmentPagerAdapter;
         return this;
     }
 }

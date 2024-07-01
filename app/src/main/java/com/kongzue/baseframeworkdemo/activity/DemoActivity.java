@@ -2,6 +2,8 @@ package com.kongzue.baseframeworkdemo.activity;
 
 import android.view.View;
 
+import androidx.fragment.app.Fragment;
+
 import com.kongzue.baseframework.BaseActivity;
 import com.kongzue.baseframework.BaseFragment;
 import com.kongzue.baseframework.interfaces.BindView;
@@ -106,7 +108,10 @@ public class DemoActivity extends BaseActivity {
         tabbar.setOnTabChangeListener(new OnTabChangeListener() {
             @Override
             public boolean onTabChanged(View v, int index) {
-                changeFragment(index);
+                getFragmentChangeUtil().remove(index);
+                for (Fragment fg:getFragmentChangeUtil().getFragmentList()){
+                    log(fg);
+                }
                 return false;
             }
         });

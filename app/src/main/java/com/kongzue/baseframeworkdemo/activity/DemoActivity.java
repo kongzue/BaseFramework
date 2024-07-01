@@ -108,10 +108,7 @@ public class DemoActivity extends BaseActivity {
         tabbar.setOnTabChangeListener(new OnTabChangeListener() {
             @Override
             public boolean onTabChanged(View v, int index) {
-                getFragmentChangeUtil().remove(index);
-                for (Fragment fg:getFragmentChangeUtil().getFragmentList()){
-                    log(fg);
-                }
+                changeFragment(index);
                 return false;
             }
         });

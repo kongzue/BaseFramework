@@ -468,7 +468,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void finish() {
         AppManager.getInstance().killActivity(me);
         if (exitHoldAnimResId != -1 && exitAnimResId != -1) {
-            jumpAnim(exitHoldAnimResId, exitAnimResId,true);
+            jumpAnim(exitAnimResId, exitHoldAnimResId,true);
         }else{
             if (BaseFrameworkSettings.defaultActivityExitInAnimRes != 0 && BaseFrameworkSettings.defaultActivityExitOutAnimRes != 0) {
                 jumpAnim(BaseFrameworkSettings.defaultActivityExitInAnimRes, BaseFrameworkSettings.defaultActivityExitOutAnimRes,true);

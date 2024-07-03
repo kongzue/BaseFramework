@@ -1320,7 +1320,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     public void jumpAnim(int enterAnim, int exitAnim, boolean isExit) {
         int version = Integer.valueOf(Build.VERSION.SDK_INT);
         if (version > 5) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && BaseFrameworkSettings.supportOverrideActivityTransition) {
                 overrideActivityTransition(isExit ? OVERRIDE_TRANSITION_CLOSE : OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim);
             } else {
                 overridePendingTransition(enterAnim, exitAnim);

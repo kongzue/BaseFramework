@@ -27,24 +27,24 @@ import java.util.List;
  * CreateTime: 2019/2/20 18:17
  */
 public class FragmentChangeUtil {
-    
+
     private OnFragmentChangeListener onFragmentChangeListener;
-    
+
     private BaseActivity me;
     private List<BaseFragment> fragmentList;
     private BaseFragment focusFragment;
     private int enterAnimResId;
     private int exitAnimResId;
-    
+
     private int frameLayoutResId;
     private View containerView;
-    
+
     private PagerAdapter fragmentPagerAdapter;
-    
+
     public FragmentChangeUtil(BaseActivity me, int frameLayoutResId) {
         build(me, frameLayoutResId);
     }
-    
+
     public FragmentChangeUtil build(BaseActivity me, int frameLayoutResId) {
         this.me = me;
         this.frameLayoutResId = frameLayoutResId;
@@ -52,16 +52,16 @@ public class FragmentChangeUtil {
         fragmentList = new ArrayList<>();
         return this;
     }
-    
+
     public PagerAdapter getFragmentPagerAdapter() {
         return fragmentPagerAdapter;
     }
-    
+
     public FragmentChangeUtil addFragment(BaseFragment fragment) {
         addFragment(fragment, true);
         return this;
     }
-    
+
     public FragmentChangeUtil addFragment(BaseFragment fragment, boolean isPreload) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行 build(...) 方法初始化 FragmentChangeUtil");
@@ -84,7 +84,7 @@ public class FragmentChangeUtil {
             } else {
                 fragmentPagerAdapter.notifyDataSetChanged();
             }
-            viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener(){
+            viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageSelected(int position) {
                     if (focusFragment != null) {
@@ -100,12 +100,12 @@ public class FragmentChangeUtil {
         }
         return this;
     }
-    
+
     public FragmentChangeUtil show(BaseFragment fragment) {
         show(fragment, true);
         return this;
     }
-    
+
     public FragmentChangeUtil show(BaseFragment fragment, boolean autoHideOldFragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -122,12 +122,12 @@ public class FragmentChangeUtil {
                 enterAnimResId = 0;
                 exitAnimResId = 0;
             }
-            
+
             if (autoHideOldFragment && focusFragment != null) {
                 focusFragment.onHide();
                 transaction.hide(focusFragment);
             }
-            
+
             if (!fragment.isAddedCompat()) {
                 transaction.add(frameLayoutResId, fragment);
             } else {
@@ -151,12 +151,12 @@ public class FragmentChangeUtil {
         }
         return this;
     }
-    
+
     public FragmentChangeUtil show(int index) {
         show(index, true);
         return this;
     }
-    
+
     public FragmentChangeUtil show(int index, boolean autoHideOldFragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -169,12 +169,12 @@ public class FragmentChangeUtil {
                 enterAnimResId = 0;
                 exitAnimResId = 0;
             }
-            
+
             if (autoHideOldFragment && focusFragment != null) {
                 focusFragment.onHide();
                 transaction.hide(focusFragment);
             }
-            
+
             if (!fragmentList.get(index).isAddedCompat()) {
                 transaction.add(frameLayoutResId, fragmentList.get(index));
             } else {
@@ -183,7 +183,7 @@ public class FragmentChangeUtil {
                 }
                 transaction.show(fragmentList.get(index));
             }
-            
+
             transaction.commit();
             fragmentList.get(index).callShow();
             focusFragment = fragmentList.get(index);
@@ -199,7 +199,7 @@ public class FragmentChangeUtil {
         }
         return this;
     }
-    
+
     public FragmentChangeUtil hide(int index) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -212,13 +212,13 @@ public class FragmentChangeUtil {
                 enterAnimResId = 0;
                 exitAnimResId = 0;
             }
-            
+
             if (!fragmentList.get(index).isAddedCompat()) {
                 transaction.add(frameLayoutResId, fragmentList.get(index));
             }
             fragmentList.get(index).onHide();
             transaction.hide(fragmentList.get(index));
-            
+
             transaction.commit();
         }
         if (containerView instanceof ViewPager) {
@@ -227,7 +227,7 @@ public class FragmentChangeUtil {
         }
         return this;
     }
-    
+
     public FragmentChangeUtil hideNow() {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -240,10 +240,10 @@ public class FragmentChangeUtil {
                 enterAnimResId = 0;
                 exitAnimResId = 0;
             }
-            
+
             focusFragment.onHide();
             transaction.hide(focusFragment);
-            
+
             transaction.commit();
         }
         if (containerView instanceof ViewPager) {
@@ -252,7 +252,7 @@ public class FragmentChangeUtil {
         }
         return this;
     }
-    
+
     public FragmentChangeUtil hide(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -265,13 +265,13 @@ public class FragmentChangeUtil {
                 enterAnimResId = 0;
                 exitAnimResId = 0;
             }
-            
+
             if (!fragment.isAddedCompat()) {
                 transaction.add(frameLayoutResId, fragment);
             }
             fragment.onHide();
             transaction.hide(fragment);
-            
+
             transaction.commit();
         }
         if (containerView instanceof ViewPager) {
@@ -285,7 +285,7 @@ public class FragmentChangeUtil {
         remove(getFragment(fragmentIndex));
         return this;
     }
-    
+
     public FragmentChangeUtil remove(BaseFragment fragment) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -298,22 +298,25 @@ public class FragmentChangeUtil {
                 enterAnimResId = 0;
                 exitAnimResId = 0;
             }
-            
+
             if (fragment.isAddedCompat()) {
                 transaction.remove(fragment);
             }
             fragment.setAdded(false);
             fragmentList.remove(fragment);
-            
+
             transaction.commit();
         }
         if (containerView instanceof ViewPager) {
             fragmentList.remove(fragment);
             fragmentPagerAdapter.notifyDataSetChanged();
+            if (focusFragment == fragment) {
+                focusFragment = fragmentList.get(((ViewPager) containerView).getCurrentItem());
+            }
         }
         return this;
     }
-    
+
     public int getCount() {
         if (fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -321,16 +324,16 @@ public class FragmentChangeUtil {
         }
         return fragmentList.size();
     }
-    
+
     public <B extends BaseFragment> B getFocusFragment() {
         return (B) focusFragment;
     }
-    
+
     public FragmentChangeUtil setFocusFragment(BaseFragment fragment) {
         focusFragment = fragment;
         return this;
     }
-    
+
     public int getFocusFragmentIndex() {
         if (fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -338,7 +341,7 @@ public class FragmentChangeUtil {
         }
         return fragmentList.indexOf(focusFragment);
     }
-    
+
     //简易Log
     public void log(final Object obj) {
         try {
@@ -353,7 +356,7 @@ public class FragmentChangeUtil {
             e.printStackTrace();
         }
     }
-    
+
     public <B extends BaseFragment> B getFragment(int index) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -363,9 +366,9 @@ public class FragmentChangeUtil {
             log("错误：要获取的 index=" + index + " 超出了已添加的列表范围：" + fragmentList.size());
             return null;
         }
-        return (B)fragmentList.get(index);
+        return (B) fragmentList.get(index);
     }
-    
+
     public <B extends BaseFragment> B getFragment(String instanceKey) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -373,12 +376,12 @@ public class FragmentChangeUtil {
         }
         for (BaseFragment fragment : fragmentList) {
             if (fragment.getInstanceKey().equals(instanceKey)) {
-                return (B)fragment;
+                return (B) fragment;
             }
         }
         return null;
     }
-    
+
     public <B extends BaseFragment> B getFragment(Class c) {
         if (me == null || frameLayoutResId == 0 || fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -386,21 +389,21 @@ public class FragmentChangeUtil {
         }
         for (BaseFragment b : fragmentList) {
             if (b.getClass().equals(c)) {
-                return (B)b;
+                return (B) b;
             }
         }
         return null;
     }
-    
+
     public OnFragmentChangeListener getOnFragmentChangeListener() {
         return onFragmentChangeListener;
     }
-    
+
     public FragmentChangeUtil setOnFragmentChangeListener(OnFragmentChangeListener onFragmentChangeListener) {
         this.onFragmentChangeListener = onFragmentChangeListener;
         return this;
     }
-    
+
     public int size() {
         if (fragmentList == null) {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
@@ -408,7 +411,7 @@ public class FragmentChangeUtil {
         }
         return fragmentList.size();
     }
-    
+
     public FragmentChangeUtil anim(int enterAnimResId, int exitAnimResId) {
         this.enterAnimResId = enterAnimResId;
         this.exitAnimResId = exitAnimResId;

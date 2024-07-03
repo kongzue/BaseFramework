@@ -22,7 +22,7 @@ import java.util.UUID;
  * CreateTime: 2018/9/30 03:22
  */
 public class BaseFrameworkSettings {
-    
+
     private static OnBugReportListener onBugReportListener;
     
     //是否开启debug模式，此开关影响打印Log日志等行为
@@ -202,4 +202,7 @@ public class BaseFrameworkSettings {
     //使用DataBinding
     @Deprecated
     public static boolean useDataBinding = false;
+
+    //使用overrideActivityTransition而不是overridePendingTransition，警告，该 API 在某些情况下不生效，原因不明
+    public static boolean supportOverrideActivityTransition=false;
 }

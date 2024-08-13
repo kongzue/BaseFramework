@@ -466,6 +466,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
 
     @Override
     public void finish() {
+        if (getParameter() != null) {
+            getParameter().cleanAll();
+        }
         AppManager.getInstance().killActivity(me);
         if (exitHoldAnimResId != -1 && exitAnimResId != -1) {
             jumpAnim(exitAnimResId, exitHoldAnimResId,true);
@@ -1440,9 +1443,6 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         isAlive = false;
         logG("\n" + me.getClass().getSimpleName(), "onDestroy");
         info(2, me.getClass().getSimpleName() + ":onDestroy");
-        if (getParameter() != null) {
-            getParameter().cleanAll();
-        }
         AppManager.getInstance().deleteActivity(me);
         if (lifeCircleListener != null) {
             lifeCircleListener.onDestroy();

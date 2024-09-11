@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -308,6 +307,10 @@ public class FragmentChangeUtil {
             transaction.commit();
         }
         if (containerView instanceof ViewPager) {
+            int focusIndex = fragmentList.indexOf(focusFragment);
+            if (!fragmentList.contains(focusFragment)) {
+                focusFragment = focusIndex >= 0 && focusIndex < fragmentList.size() ? fragmentList.get(focusIndex) : fragmentList.get(0);
+            }
             fragmentList.remove(fragment);
             fragmentPagerAdapter.notifyDataSetChanged();
             if (focusFragment == fragment) {
@@ -339,7 +342,11 @@ public class FragmentChangeUtil {
             log("错误：请先执行build(...)方法初始化FragmentChangeUtil");
             return -1;
         }
-        return fragmentList.indexOf(focusFragment);
+        int focusIndex = fragmentList.indexOf(focusFragment);
+        if (!fragmentList.contains(focusFragment)) {
+            focusFragment = focusIndex >= 0 && focusIndex < fragmentList.size() ? fragmentList.get(focusIndex) : fragmentList.get(0);
+        }
+        return focusIndex;
     }
 
     //简易Log
@@ -422,8 +429,18 @@ public class FragmentChangeUtil {
         return fragmentList;
     }
 
-    public FragmentChangeUtil setFragmentPagerAdapter(FragmentPagerAdapter fragmentPagerAdapter) {
+    public FragmentChangeUtil setFragmentPagerAdapter(PagerAdapter fragmentPagerAdapter) {
         this.fragmentPagerAdapter = fragmentPagerAdapter;
+        return this;
+    }
+
+    public FragmentChangeUtil rebuildDefaultPagerAdapter() {
+        if (containerView instanceof ViewPager) {
+            ViewPager viewPager = (ViewPager) containerView;
+            fragmentPagerAdapter = new DefaultViewPagerAdapter(me.getSupportFragmentManager(), fragmentList);
+            viewPager.setAdapter(fragmentPagerAdapter);
+            viewPager.setCurrentItem(getFocusFragmentIndex());
+        }
         return this;
     }
 }

@@ -38,7 +38,8 @@ public abstract class BaseBindingActivity<VB extends ViewBinding> extends BaseAc
             Type type = parameterizedType.getActualTypeArguments()[0];
             try {
                 Class<VB> clazz = (Class<VB>) type;
-                binding = (VB) clazz.getMethod("inflate", getLayoutInflater().getClass()).invoke(null, getLayoutInflater());
+                LayoutInflater layoutInflater = LayoutInflater.from(this);
+                binding = (VB) clazz.getMethod("inflate", LayoutInflater.class).invoke(null, layoutInflater);
                 return binding.getRoot();
             } catch (Exception e) {
                 throw new RuntimeException("ViewBinding creation failed", e);

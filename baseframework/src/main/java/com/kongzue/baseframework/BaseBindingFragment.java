@@ -40,10 +40,11 @@ public abstract class BaseBindingFragment<ME extends BaseActivity, VB extends Vi
         Type superclass = getClass().getGenericSuperclass();
         if (superclass instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) superclass;
-            Type type = parameterizedType.getActualTypeArguments()[1];
+            Type type = parameterizedType.getActualTypeArguments()[0];
             try {
                 Class<VB> clazz = (Class<VB>) type;
-                binding = (VB) clazz.getMethod("inflate", getLayoutInflater().getClass()).invoke(null, getLayoutInflater());
+                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                binding = (VB) clazz.getMethod("inflate", LayoutInflater.class).invoke(null, layoutInflater);
                 return binding.getRoot();
             } catch (Exception e) {
                 throw new RuntimeException("ViewBinding creation failed", e);

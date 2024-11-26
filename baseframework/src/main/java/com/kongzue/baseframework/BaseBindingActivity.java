@@ -8,8 +8,10 @@ import androidx.viewbinding.ViewBinding;
 import com.kongzue.baseframework.util.JumpParameter;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
-public abstract class BaseBindingActivity<VB extends ViewBinding> extends BaseActivity{
+public abstract class BaseBindingActivity<VB extends ViewBinding> extends BaseActivity {
 
     protected VB binding;
 
@@ -30,21 +32,17 @@ public abstract class BaseBindingActivity<VB extends ViewBinding> extends BaseAc
     }
 
     private View userDataBindingCreateLayout() {
-        String className = getClass().getSimpleName();
-        if (className.endsWith("Activity")) {
-            className = className.substring(0, className.length() - 8);
-        }
-        String bindingClassName = getPackageName() + ".databinding.Activity" + className + "Binding";
-
-        try {
-            // 通过反射实例化Binding对象
-            Class<?> bindingClass = Class.forName(bindingClassName);
-            Method inflateMethod = bindingClass.getMethod("inflate", LayoutInflater.class);
-            binding = (VB) inflateMethod.invoke(null, getLayoutInflater());
-
-            return binding.getRoot();
-        } catch (Exception e) {
-            e.printStackTrace();
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) superclass;
+            Type type = parameterizedType.getActualTypeArguments()[0];
+            try {
+                Class<VB> clazz = (Class<VB>) type;
+                binding = (VB) clazz.getMethod("inflate", getLayoutInflater().getClass()).invoke(null, getLayoutInflater());
+                return binding.getRoot();
+            } catch (Exception e) {
+                throw new RuntimeException("ViewBinding creation failed", e);
+            }
         }
         return null;
     }

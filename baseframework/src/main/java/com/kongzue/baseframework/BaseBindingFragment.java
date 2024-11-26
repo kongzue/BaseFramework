@@ -7,6 +7,7 @@ import androidx.viewbinding.ViewBinding;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 public abstract class BaseBindingFragment<ME extends BaseActivity, VB extends ViewBinding> extends BaseFragment<ME> {
 
@@ -36,30 +37,18 @@ public abstract class BaseBindingFragment<ME extends BaseActivity, VB extends Vi
     public abstract void setEvents();
 
     private View userDataBindingCreateLayout() {
-        if (binding == null) {
-            String bindingClassName = getViewBindClassName();
+        Type superclass = getClass().getGenericSuperclass();
+        if (superclass instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) superclass;
+            Type type = parameterizedType.getActualTypeArguments()[1];
             try {
-                // 通过反射实例化Binding对象
-                Class<?> bindingClass = Class.forName(bindingClassName);
-                Method inflateMethod = bindingClass.getMethod("inflate", LayoutInflater.class);
-                binding = (VB) inflateMethod.invoke(null, getLayoutInflater());
+                Class<VB> clazz = (Class<VB>) type;
+                binding = (VB) clazz.getMethod("inflate", getLayoutInflater().getClass()).invoke(null, getLayoutInflater());
                 return binding.getRoot();
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new RuntimeException("ViewBinding creation failed", e);
             }
-            return null;
-        } else {
-            return binding.getRoot();
         }
-    }
-
-    private String getViewBindClassName() {
-        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
-        String type = genericSuperclass.getActualTypeArguments()[1].toString();
-        if (type.contains(" ")) {
-            String[] splitType = type.split(" ");
-            type = splitType[splitType.length - 1];
-        }
-        return type;
+        return null;
     }
 }

@@ -349,11 +349,11 @@ public abstract class BaseFragment<ME extends BaseActivity> extends Fragment {
         if (me != null) Toaster.build(me).show(obj.toString());
     }
 
-    public void log(final Object obj) {
+    public void log(final Object... obj) {
         if (me != null) me.log(obj);
     }
 
-    public void errorLog(final Object obj) {
+    public void errorLog(final Object... obj) {
         if (me != null) me.errorLog(obj);
     }
 

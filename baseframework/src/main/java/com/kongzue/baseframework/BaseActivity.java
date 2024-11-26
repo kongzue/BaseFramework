@@ -471,10 +471,10 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         }
         AppManager.getInstance().killActivity(me);
         if (exitHoldAnimResId != -1 && exitAnimResId != -1) {
-            jumpAnim(exitAnimResId, exitHoldAnimResId,true);
-        }else{
+            jumpAnim(exitAnimResId, exitHoldAnimResId, true);
+        } else {
             if (BaseFrameworkSettings.defaultActivityExitInAnimRes != 0 && BaseFrameworkSettings.defaultActivityExitOutAnimRes != 0) {
-                jumpAnim(BaseFrameworkSettings.defaultActivityExitInAnimRes, BaseFrameworkSettings.defaultActivityExitOutAnimRes,true);
+                jumpAnim(BaseFrameworkSettings.defaultActivityExitInAnimRes, BaseFrameworkSettings.defaultActivityExitOutAnimRes, true);
             }
         }
     }
@@ -799,7 +799,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
 
     //简易Log
-    public void log(final Object obj) {
+    public void log(final Object... obj) {
         DebugLogG.LogI(obj);
     }
 
@@ -807,7 +807,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         DebugLogG.LogI(obj, showStack);
     }
 
-    public void errorLog(final Object obj) {
+    public void errorLog(final Object... obj) {
         DebugLogG.LogE(obj);
     }
 
@@ -1324,9 +1324,11 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
         int version = Integer.valueOf(Build.VERSION.SDK_INT);
         if (version > 5) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && BaseFrameworkSettings.supportOverrideActivityTransition) {
-                overrideActivityTransition(isExit ? OVERRIDE_TRANSITION_CLOSE : OVERRIDE_TRANSITION_OPEN, enterAnim, exitAnim);
+                overrideActivityTransition(isExit ? OVERRIDE_TRANSITION_CLOSE : OVERRIDE_TRANSITION_OPEN,
+                        isExit ? exitAnim : enterAnim
+                        , isExit ? enterAnim : exitAnim);
             } else {
-                overridePendingTransition(enterAnim, exitAnim);
+                overridePendingTransition(isExit ? exitAnim : enterAnim, isExit ? enterAnim : exitAnim);
             }
         }
     }

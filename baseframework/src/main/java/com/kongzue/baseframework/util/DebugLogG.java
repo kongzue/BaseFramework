@@ -30,19 +30,25 @@ import static com.kongzue.baseframework.BaseFrameworkSettings.DEBUGMODE;
  * CreateTime: 2018/9/30 03:38
  */
 public class DebugLogG {
-    
+
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");
-    
+
     private static File logFile;
     private static FileWriter logWriter;
-    
-    public static void LogI(Object obj) {
+
+    public static void LogI(Object... obj) {
         LogI(obj, false);
     }
-    
+
     public static void LogI(Object obj, boolean showStack) {
         try {
             if (DEBUGMODE) {
+                if (obj instanceof Object[]) {
+                    for (Object o : (Object[]) obj) {
+                        LogI(o);
+                    }
+                    return;
+                }
                 if (obj instanceof Map) {
                     String logStr = getCodeLineStr(showStack) + "Map: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " {\n";
                     Set keySet = ((Map) obj).keySet();
@@ -100,7 +106,7 @@ public class DebugLogG {
             e.printStackTrace();
         }
     }
-    
+
     public static String getCodeLineStr(boolean showStack) {
         String result = "";
         if (!BaseFrameworkSettings.DEBUG_DETAILS) {
@@ -131,10 +137,16 @@ public class DebugLogG {
         if (line == -1) return "";
         return result;
     }
-    
+
     public static void LogE(Object obj) {
         try {
             if (DEBUGMODE) {
+                if (obj instanceof Object[]) {
+                    for (Object o : (Object[]) obj) {
+                        LogE(o);
+                    }
+                    return;
+                }
                 if (obj instanceof Map) {
                     Log.e(">>>>>>", "Map: " + obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode()) + " {\n");
                     Set keySet = ((Map) obj).keySet();
@@ -170,7 +182,7 @@ public class DebugLogG {
             e.printStackTrace();
         }
     }
-    
+
     public static void bigLog(String msg, boolean error) {
         Log.i(">>>bigLog", "BIGLOG.start=================================");
         if (isNull(msg)) {
@@ -201,7 +213,7 @@ public class DebugLogG {
         }
         Log.i(">>>bigLog", "BIGLOG.end=================================");
     }
-    
+
     public static void LogG(String s) {
         if (!BETA_PLAN) {
             return;
@@ -213,7 +225,7 @@ public class DebugLogG {
             logWriter = new FileWriter(logFile, true);
             logWriter.write(s + "\n");
         } catch (Exception e) {
-        
+
         } finally {
             try {
                 logWriter.close();
@@ -221,7 +233,7 @@ public class DebugLogG {
             }
         }
     }
-    
+
     public static void catchException(Throwable e) {
         if (logFile == null) {
             createWriter();
@@ -234,7 +246,7 @@ public class DebugLogG {
         }
         showInfo(e);
     }
-    
+
     private static void showInfo(Throwable e) {
         if (!DEBUGMODE) {
             return;
@@ -245,12 +257,12 @@ public class DebugLogG {
             Log.e(">>>>>>", line);
         }
     }
-    
+
     public static void createWriter() {
         try {
             logFile = new File(BaseApp.getPrivateInstance().getCacheDir(), System.currentTimeMillis() + ".bfl");
             logWriter = new FileWriter(logFile, true);
-            
+
             logWriter.write("BaseApp.Start===============" +
                     "\npackageName>>>" + BaseApp.getPrivateInstance().getPackageName() +
                     "\nappVer>>>" + BaseApp.getPrivateInstance().getPackageManager().getPackageInfo(BaseApp.getPrivateInstance().getPackageName(), 0).versionName + "(" + BaseApp.getPrivateInstance().getPackageManager().getPackageInfo(BaseApp.getPrivateInstance().getPackageName(), 0).versionCode + ")" +
@@ -262,10 +274,10 @@ public class DebugLogG {
             );
             logWriter.close();
         } catch (Exception e) {
-        
+
         }
     }
-    
+
     public static String getExceptionInfo(Throwable e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw, true);

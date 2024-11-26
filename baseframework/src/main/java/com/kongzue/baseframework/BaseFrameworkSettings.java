@@ -24,24 +24,24 @@ import java.util.UUID;
 public class BaseFrameworkSettings {
 
     private static OnBugReportListener onBugReportListener;
-    
+
     //是否开启debug模式，此开关影响打印Log日志等行为
     public static boolean DEBUGMODE = true;
-    
+
     //Debug模式详细版，会打印日志位置
     public static boolean DEBUG_DETAILS = true;
-    
+
     //是否开启beta计划，详情请参阅 https://github.com/kongzue/BaseFramework
     public static boolean BETA_PLAN = false;
-    
+
     //语言设置
     public static Locale selectLocale;
-    
+
     private static boolean running = true;
-    
+
     //隐私权限设置
     public static boolean PRIVACY_ALLOWED = true;
-    
+
     //设置开启崩溃监听
     public static void turnOnReadErrorInfoPermissions(Context context, OnBugReportListener listener) {
         onBugReportListener = listener;
@@ -50,7 +50,7 @@ public class BaseFrameworkSettings {
             onBugReportListener.onReporter(new File(reporterFile));
             Preferences.getInstance().commit(context, "cache", "bugReporterFile", "");
         }
-        
+
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -69,7 +69,7 @@ public class BaseFrameworkSettings {
                 }
             }
         });
-        
+
         Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread t, final Throwable e) {
@@ -77,7 +77,7 @@ public class BaseFrameworkSettings {
                     @Override
                     public void run() {
                         DebugLogG.catchException(e);
-                        
+
                         if (onBugReportListener != null) {
                             Looper.prepare();
                             onBugReportListener.onReporter(new File(reporterFile));
@@ -97,9 +97,9 @@ public class BaseFrameworkSettings {
             }
         });
     }
-    
+
     public static boolean setNavigationBarHeightZero = false;
-    
+
     public static void log(Object s) {
         if (DEBUGMODE) {
             String logStr = String.valueOf(s);
@@ -112,7 +112,7 @@ public class BaseFrameworkSettings {
             }
         }
     }
-    
+
     public static void bigLog(String msg) {
         Log.i(">>>bigLog", "BIGLOG.start=================================");
         if (isNull(msg)) {
@@ -134,24 +134,24 @@ public class BaseFrameworkSettings {
         }
         Log.i(">>>bigLog", "BIGLOG.end=================================");
     }
-    
+
     private static boolean isNull(String s) {
         if (s == null || s.trim().isEmpty() || "null".equals(s) || "(null)".equals(s)) {
             return true;
         }
         return false;
     }
-    
+
     public static void exitApp() {
         android.os.Process.killProcess(android.os.Process.myPid());
     }
-    
+
     private static String androidId;
-    
+
     public static void setAndroidId(String androidId) {
         BaseFrameworkSettings.androidId = androidId;
     }
-    
+
     public static String getAndroidId() {
         if (PRIVACY_ALLOWED) {
             if (!isNull(androidId)) {
@@ -177,11 +177,11 @@ public class BaseFrameworkSettings {
             return createDeviceId();
         }
     }
-    
+
     private static String getSystemAndroidId() {
         return android.provider.Settings.Secure.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
     }
-    
+
     private static String createDeviceId() {
         String id = BaseApp.Settings("device").getString("id");
         if (isNull(id)) {
@@ -190,11 +190,11 @@ public class BaseFrameworkSettings {
         }
         return id;
     }
-    
+
     //全局 Activity 默认入场动画
     public static int defaultActivityEnterInAnimRes = 0;
     public static int defaultActivityEnterOutAnimRes = 0;
-    
+
     //全局 Activity 默认退出动画
     public static int defaultActivityExitInAnimRes = 0;
     public static int defaultActivityExitOutAnimRes = 0;
@@ -204,5 +204,5 @@ public class BaseFrameworkSettings {
     public static boolean useDataBinding = false;
 
     //使用overrideActivityTransition而不是overridePendingTransition，警告，该 API 在某些情况下不生效，原因不明
-    public static boolean supportOverrideActivityTransition=false;
+    public static boolean supportOverrideActivityTransition = false;
 }

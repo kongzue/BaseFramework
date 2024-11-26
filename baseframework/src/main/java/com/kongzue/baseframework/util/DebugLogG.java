@@ -43,9 +43,9 @@ public class DebugLogG {
     public static void LogI(Object obj, boolean showStack) {
         try {
             if (DEBUGMODE) {
-                if (obj instanceof Object[]) {
+                if (obj instanceof Object[] && ((Object[]) obj).length > 1) {
                     for (Object o : (Object[]) obj) {
-                        LogI(o);
+                        LogI(o, showStack);
                     }
                     return;
                 }
@@ -131,9 +131,7 @@ public class DebugLogG {
                 stackStr = stackStr + "[" + stackTraceElements[i].getMethodName() + "](" + stackTraceElements[i].getFileName() + ":" + stackTraceElements[i].getLineNumber() + ")\n";
             }
         }
-        result = "Log." +
-                stackStr +
-                "[" + stackTraceElements[line].getMethodName() + "](" + stackTraceElements[line].getFileName() + ":" + stackTraceElements[line].getLineNumber() + ")\n";
+        result = "Log." + stackStr + "[" + stackTraceElements[line].getMethodName() + "](" + stackTraceElements[line].getFileName() + ":" + stackTraceElements[line].getLineNumber() + ")\n";
         if (line == -1) return "";
         return result;
     }
@@ -141,7 +139,7 @@ public class DebugLogG {
     public static void LogE(Object obj) {
         try {
             if (DEBUGMODE) {
-                if (obj instanceof Object[]) {
+                if (obj instanceof Object[] && ((Object[]) obj).length > 1) {
                     for (Object o : (Object[]) obj) {
                         LogE(o);
                     }
@@ -263,15 +261,7 @@ public class DebugLogG {
             logFile = new File(BaseApp.getPrivateInstance().getCacheDir(), System.currentTimeMillis() + ".bfl");
             logWriter = new FileWriter(logFile, true);
 
-            logWriter.write("BaseApp.Start===============" +
-                    "\npackageName>>>" + BaseApp.getPrivateInstance().getPackageName() +
-                    "\nappVer>>>" + BaseApp.getPrivateInstance().getPackageManager().getPackageInfo(BaseApp.getPrivateInstance().getPackageName(), 0).versionName + "(" + BaseApp.getPrivateInstance().getPackageManager().getPackageInfo(BaseApp.getPrivateInstance().getPackageName(), 0).versionCode + ")" +
-                    "\nmanufacturer>>>" + android.os.Build.BRAND.toLowerCase() +
-                    "\nmodel>>>" + android.os.Build.MODEL.toLowerCase() +
-                    "\nos-ver>>>" + android.os.Build.VERSION.RELEASE.toLowerCase() +
-                    "\nandroidId>>>" + android.provider.Settings.System.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.System.ANDROID_ID) +
-                    "\n\nLog.Start===============\n"
-            );
+            logWriter.write("BaseApp.Start===============" + "\npackageName>>>" + BaseApp.getPrivateInstance().getPackageName() + "\nappVer>>>" + BaseApp.getPrivateInstance().getPackageManager().getPackageInfo(BaseApp.getPrivateInstance().getPackageName(), 0).versionName + "(" + BaseApp.getPrivateInstance().getPackageManager().getPackageInfo(BaseApp.getPrivateInstance().getPackageName(), 0).versionCode + ")" + "\nmanufacturer>>>" + android.os.Build.BRAND.toLowerCase() + "\nmodel>>>" + android.os.Build.MODEL.toLowerCase() + "\nos-ver>>>" + android.os.Build.VERSION.RELEASE.toLowerCase() + "\nandroidId>>>" + android.provider.Settings.System.getString(BaseApp.getPrivateInstance().getContentResolver(), android.provider.Settings.System.ANDROID_ID) + "\n\nLog.Start===============\n");
             logWriter.close();
         } catch (Exception e) {
 

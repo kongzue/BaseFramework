@@ -37,7 +37,7 @@ public class DebugLogG {
     private static FileWriter logWriter;
 
     public static void LogI(Object... obj) {
-        LogI(obj, false);
+        LogI(obj != null && obj.length == 1 ? obj[0] : obj, false);
     }
 
     public static void LogI(Object obj, boolean showStack) {

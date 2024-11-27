@@ -99,7 +99,7 @@ public abstract class BaseApp<YourApp extends BaseApp> extends Application {
         return this;
     }
     
-    public void log(final Object obj) {
+    public void log(final Object... obj) {
         DebugLogG.LogI(obj);
     }
     

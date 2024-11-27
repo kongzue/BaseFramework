@@ -599,6 +599,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
             setStatusBarDarkIconInFlyme(getWindow(), darkStatusBarThemeValue);
         }
         Window window = getWindow();
+        if (window == null) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                     | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);

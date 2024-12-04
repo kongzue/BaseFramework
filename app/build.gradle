@@ -7,7 +7,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 30
         versionCode 141
-        versionName "7.0.5"
+        versionName "7.0.6"
     }
     buildTypes {
         release {

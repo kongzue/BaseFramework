@@ -40,7 +40,7 @@ public abstract class BaseBindingFragment<ME extends BaseActivity, VB extends Vi
         Type superclass = getClass().getGenericSuperclass();
         if (superclass instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) superclass;
-            Type type = parameterizedType.getActualTypeArguments()[0];
+            Type type = parameterizedType.getActualTypeArguments()[1];
             try {
                 Class<VB> clazz = (Class<VB>) type;
                 LayoutInflater layoutInflater = LayoutInflater.from(getContext());

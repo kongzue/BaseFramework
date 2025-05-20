@@ -993,7 +993,7 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
                 if (onPermissionResponseListener != null) {
                     onPermissionResponseListener.onFail();
                 }
-                showTipsDialog();
+                showPermissionFailedTipsDialog(permissions);
             }
         }
     }
@@ -1014,9 +1014,9 @@ public abstract class BaseActivity extends AppCompatActivity implements SwipeBac
     }
 
     /**
-     * 显示提示对话框
+     * 显示提示对话框，如需修改请直接override
      */
-    private void showTipsDialog() {
+    public void showPermissionFailedTipsDialog(String[] permissions) {
         new AlertDialog.Builder(this)
                 .setTitle("警告")
                 .setMessage("需要必要的权限才可以正常使用该功能，您已拒绝获得该权限。\n如果需要重新授权，您可以点击“允许”按钮进入系统设置进行授权")
